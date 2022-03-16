@@ -29,7 +29,7 @@ exports.GetSafePath = GetSafePath;
  */
 var saveFile = function (url, file) {
     fs_1.default.writeFile((0, exports.GetSafePath)(url), file, { encoding: 'utf-8' }, function (err) {
-        console.log(err);
+        // console.log(err);
     });
 };
 exports.saveFile = saveFile;

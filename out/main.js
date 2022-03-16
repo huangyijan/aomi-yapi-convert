@@ -35,35 +35,54 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var saveFile_1 = require("./saveFile");
+var utils_1 = require("./utils");
 var request_1 = require("./request");
+var format_1 = __importDefault(require("./format"));
 var baseUrl = "http://yapi.miguatech.com"; // 基礎前綴
 var demoUrl = '/api/interface/list?page=1&limit=200&project_id=445'; // 接口分頁
 var projectMenuUrl = '/api/interface/list_menu?project_id=445'; // 菜單列表
-var LongPathNameRegex = /^\/([a-zA-Z0-9-_]+)\/.+/; // 长接口捕获路径名
-var ShortPathNameRegex = /^\/([a-zA-Z0-9-_]+)/; // 短接口捕获路径名
-var NameRegex = /[-|_]([a-zA-Z])/g; // 重命名捕获替换字符串
-/** 将下划线和短横线命名的重命名为驼峰命名法 */
-var toHumpName = function (str) {
-    return str.replace(NameRegex, function (_keb, item) { return item.toUpperCase(); });
+var ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g; // 獲取接口名稱
+var pathHasParamsRegex = /\{(.*)\}/g; // 獲取接口名稱
+var getOneApiConfig = function (path) {
+    var dealNamePath = path.startsWith('/') ? path.substring(1) : path;
+    var isHaveName = pathHasParamsRegex.test(dealNamePath);
+    var requestParams = '(options)';
+    var requestPath = isHaveName ? "`".concat(path.replace(pathHasParamsRegex, function (item, p1) {
+        requestParams = "(".concat(p1, ", options)");
+        return "$".concat(item);
+    }), "`") : "'".concat(path, "'");
+    var requestName = dealNamePath.replace(ApiNameRegex, function (_, item) {
+        return item.toUpperCase();
+    });
+    requestName = requestName.substring(requestName.length - 1) === '}' ? requestName.substring(0, requestName.length - 1) : requestName;
+    return { requestName: requestName, requestPath: requestPath, requestParams: requestParams };
 };
-/** 捕获路径名作为API文件夹名称 */
-var getPathName = function (path) {
-    var patchChunk = null;
-    if (LongPathNameRegex.test(path)) {
-        patchChunk = path.match(LongPathNameRegex);
-    }
-    else {
-        patchChunk = path.match(ShortPathNameRegex);
-    }
-    if (!patchChunk)
-        return 'common'; // 捕获不到就用common作为路径文件夹
-    return toHumpName(patchChunk[1]);
+var configApiFileBuffer = function (fileBufferStringChunk) {
+    fileBufferStringChunk.unshift('export default {');
+    fileBufferStringChunk.unshift("import { fetch } from '@/service/fetch/index'");
+    fileBufferStringChunk.push('}');
+    return (0, format_1.default)(fileBufferStringChunk);
 };
-var getMaxTimesObjectKeyName = function (obj) {
-    var times = Object.values(obj);
-    var max = Math.max.apply(Math, times);
-    return Object.keys(obj).find(function (key) { return obj[key] === max; }) || 'common';
+var getPathSet = function (list) {
+    var pathSet = {}; // 处理文件夹命名的容器
+    var fileBufferStringChunk = [];
+    list.forEach(function (item) {
+        // 配置注釋
+        fileBufferStringChunk.push("/**\n   * api: ".concat(item.title, "\n   * updateTime: ").concat(new Date(item.up_time * 1000).toLocaleDateString(), "\n   */"));
+        // 配置接口Item項
+        var _a = getOneApiConfig(item.path), requestName = _a.requestName, requestPath = _a.requestPath, requestParams = _a.requestParams;
+        fileBufferStringChunk.push("".concat(requestName, ": ").concat(requestParams, " => {\n    return fetch(").concat(requestPath, ", {\n    ...options,\n    method: '").concat(item.method, "'\n    })\n  },"));
+        // 统计接口名
+        var pathName = (0, utils_1.getPathName)(item.path);
+        pathSet[pathName] ? pathSet[pathName]++ : pathSet[pathName] = 1;
+    });
+    var fileBufferString = configApiFileBuffer(fileBufferStringChunk);
+    return { pathSet: pathSet, fileBufferString: fileBufferString };
 };
 var getApiDoc = function (url) { return __awaiter(void 0, void 0, void 0, function () {
     var fileString, MenuList, data;
@@ -78,16 +97,10 @@ var getApiDoc = function (url) { return __awaiter(void 0, void 0, void 0, functi
                     data.forEach(function (item) {
                         console.log("\u5F53\u524D\u6784\u5EFA\u83DC\u5355\u540D\u79F0\uFF1A".concat(item.name));
                         var list = item.list;
-                        var pathSet = {};
-                        list.forEach(function (item, index) {
-                            console.log("\u7B2C".concat(index + 1, "\u4E2A\u63A5\u53E3\u62C9\u53D6\u6570\u636E\uFF1A"));
-                            console.log("\u63A5\u53E3\u540D\u79F0: ".concat(item.title));
-                            console.log("\u63A5\u53E3\u8DEF\u5F84: ".concat(item.path));
-                            var pathName = getPathName(item.path);
-                            console.log("\u63A5\u53E3\u540D\uFF1A".concat(getPathName(item.path)));
-                            pathSet[pathName] ? pathSet[pathName]++ : pathSet[pathName] = 1;
-                        });
-                        console.log("\u63A8\u8350\u4F7F\u7528\u83DC\u5355\u540D\uFF1A ".concat(getMaxTimesObjectKeyName(pathSet)));
+                        var _a = getPathSet(list), pathSet = _a.pathSet, fileBufferString = _a.fileBufferString;
+                        var FileName = (0, utils_1.getMaxTimesObjectKeyName)(pathSet);
+                        console.log("\u63A8\u8350\u4F7F\u7528\u83DC\u5355\u540D\uFF1A ".concat(FileName));
+                        (0, saveFile_1.saveFile)("./api/".concat(FileName, ".js"), fileBufferString);
                     });
                 }
                 catch (error) {

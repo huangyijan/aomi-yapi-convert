@@ -28,7 +28,7 @@ export const saveFile = (url: string, file: string | NodeJS.ArrayBufferView) => 
     file,
     { encoding: 'utf-8' },
     (err) => {
-      console.log(err);
+      // console.log(err);
     }
   )
 }

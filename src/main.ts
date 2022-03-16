@@ -1,99 +1,64 @@
+import { saveFile } from './saveFile';
+import { getMaxTimesObjectKeyName, getPathName } from "./utils";
 import { request } from "./request";
+import format from './format';
 
 const baseUrl = `http://yapi.miguatech.com` // 基礎前綴
 const demoUrl = '/api/interface/list?page=1&limit=200&project_id=445' // 接口分頁
 const projectMenuUrl = '/api/interface/list_menu?project_id=445' // 菜單列表
 
-interface MenuItem {
-  index: number,
-  parent_id: number,
-  _id: number,
-  name: string,
-  project_id: number,
-  desc: string,
-  uid: number,
-  add_tim: number,
-  up_time: number,
-  list: Array<apiSimpleItem>
-  // req_body_type: string,
-  // res_body_type: string,
-  // req_body_form: Array<ReqBodyForm>,
-  // req_headers: Array<ReqHeaders>
-  // req_params: Array<ReqParams>
-}
-interface apiSimpleItem {
-  edit_uid: number,
-  status: string,
-  index: number,
-  tag: Array<any>,
-  isFeign: number,
-  _id: number,
-  method: string,
-  catid: number,
-  title: string,
-  path: string,
-  project_id: string,
-  uid: number,
-  add_tim: number,
-  up_time: number,
-}
-interface MenuList {
-  errcode: number,
-  errmsg: string,
-  data: Array<MenuItem>
+const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
+const pathHasParamsRegex = /\{(.*)\}/g // 獲取接口名稱
+
+const getOneApiConfig = (path: string) => {
+  const dealNamePath = path.startsWith('/') ? path.substring(1) : path
+  const isHaveName = pathHasParamsRegex.test(dealNamePath)
+  let requestParams = '(options)'
+  const requestPath = isHaveName ? `\`${path.replace(pathHasParamsRegex, (item, p1) => {
+    requestParams = `(${p1}, options)`
+    return `$${item}`
+  })}\`` : `'${path}'`
+  
+  let requestName = dealNamePath.replace(ApiNameRegex, (_, item) => {
+    return item.toUpperCase()
+  })
+  requestName = requestName.substring(requestName.length - 1) === '}' ? requestName.substring(0, requestName.length - 1) : requestName
+  return { requestName, requestPath, requestParams }
 }
 
-interface ReqBodyForm {
-  name: string,
-  type: string,
-  example: string,
-  desc: string,
-  required: string
+const configApiFileBuffer = (fileBufferStringChunk: Array<string>) => {
+  fileBufferStringChunk.unshift('export default {')
+  fileBufferStringChunk.unshift(`import { fetch } from '@/service/fetch/index'`)
+  fileBufferStringChunk.push('}')
+  return format(fileBufferStringChunk)
+}
+const getPathSet = (list: Array<apiSimpleItem>) => {
+  const pathSet: TimesObject = {} // 处理文件夹命名的容器
+  const fileBufferStringChunk: Array<string> = []
+  list.forEach((item) => {
+    // 配置注釋
+    fileBufferStringChunk.push(`/**
+   * api: ${item.title}
+   * updateTime: ${new Date(item.up_time*1000).toLocaleDateString()}
+   */`)
+    // 配置接口Item項
+    const { requestName, requestPath, requestParams } = getOneApiConfig(item.path)
+    fileBufferStringChunk.push(`${requestName}: ${requestParams} => {
+    return fetch(${requestPath}, {
+    ...options,
+    method: '${item.method}'
+    })
+  },`)
+
+    // 统计接口名
+    const pathName = getPathName(item.path)
+    pathSet[pathName] ? pathSet[pathName]++ : pathSet[pathName] = 1
+  })
+
+  const fileBufferString = configApiFileBuffer(fileBufferStringChunk)
+  return { pathSet, fileBufferString }
 }
 
-interface ReqHeaders {
-  name: string,
-  type: string,
-  example: string,
-  desc: string,
-  required: string
-}
-
-interface ReqParams {
-  name: string,
-  example: string,
-  desc: string
-}
-
-interface TimesObject {
-  [key: string]: number
-}
-
-const LongPathNameRegex = /^\/([a-zA-Z0-9-_]+)\/.+/ // 长接口捕获路径名
-const ShortPathNameRegex = /^\/([a-zA-Z0-9-_]+)/ // 短接口捕获路径名
-const NameRegex = /[-|_]([a-zA-Z])/g // 重命名捕获替换字符串
-
-
-/** 将下划线和短横线命名的重命名为驼峰命名法 */
-const toHumpName = (str: string) => {
-  return str.replace(NameRegex, function (_keb, item) { return item.toUpperCase(); })
-}
-/** 捕获路径名作为API文件夹名称 */
-const getPathName = (path: string) => {
-  let patchChunk: RegExpMatchArray  | null = null
-  if (LongPathNameRegex.test(path)) {
-    patchChunk = path.match(LongPathNameRegex)
-  } else {
-    patchChunk = path.match(ShortPathNameRegex)
-  }
-  if(!patchChunk) return 'common' // 捕获不到就用common作为路径文件夹
-  return toHumpName(patchChunk[1])
-}
-const getMaxTimesObjectKeyName = (obj: TimesObject): string => {
-  const times = Object.values(obj)
-  const max = Math.max(...times)
-  return Object.keys(obj).find(key => obj[key] === max) || 'common'
-}
 
 const getApiDoc = async (url: string) => {
   const fileString = await request(url) as any
@@ -103,17 +68,11 @@ const getApiDoc = async (url: string) => {
     data.forEach((item: MenuItem) => {
       console.log(`当前构建菜单名称：${item.name}`);
       const { list } = item
-      const pathSet: TimesObject = {} 
-      list.forEach((item, index) => {
-        console.log(`第${index+1}个接口拉取数据：`);
-        console.log(`接口名称: ${item.title}`);
-        console.log(`接口路径: ${item.path}`);
-        const pathName = getPathName(item.path)
-        console.log(`接口名：${getPathName(item.path)}`)
-        pathSet[pathName] ? pathSet[pathName]++ : pathSet[pathName] = 1
-      })
-      console.log(`推荐使用菜单名： ${getMaxTimesObjectKeyName(pathSet)}`)
+      const { pathSet, fileBufferString } = getPathSet(list)
 
+      const FileName = getMaxTimesObjectKeyName(pathSet)
+      console.log(`推荐使用菜单名： ${FileName}`)
+      saveFile(`./api/${FileName}.js`, fileBufferString)
     });
   } catch (error) {
     console.log(error);
