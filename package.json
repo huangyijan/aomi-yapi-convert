@@ -1,0 +1,21 @@
+{
+  "name": "aomi-yapi-convert",
+  "version": "0.0.1",
+  "description": "application for aomi yapi web turn to .ts or .js api file",
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "dev": "rollup",
+    "test": "jest",
+    "build": "rollup -c"
+  },
+  "author": "yijian",
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "jest": "^27.5.1",
+    "rollup": "^2.70.1",
+    "rollup-plugin-typescript2": "^0.31.2",
+    "ts-jest": "^27.1.3",
+    "typescript": "^4.6.2"
+  }
+}
