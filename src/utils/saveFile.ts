@@ -25,7 +25,7 @@ export const GetSafePath = function (relativePath: string) {
 export const saveFile = (url: string, file: string | NodeJS.ArrayBufferView) => {
     fs.writeFile(GetSafePath(url), file, { encoding: 'utf-8' },
         (res) => {
-            console.log(`Api文件${url}:存储${res ? '失败' : '成功'}`)
+            console.log('\n\x1b[33m', `Api文件${url}:存储${res ? '失败' : '成功'}`)
         }
     )
 }
