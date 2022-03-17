@@ -1,8 +1,6 @@
-const LongPathNameRegex = /^\/([a-zA-Z0-9-_]+)\/.+/ // 长接口捕获路径名
+const LongPathNameRegex = /^\/\{{0,1}([a-zA-Z0-9-_]+)\}{0,1}\/.+/ // 长接口捕获路径名
 const ShortPathNameRegex = /^\/([a-zA-Z0-9-_]+)/ // 短接口捕获路径名
 const NameRegex = /[-|_]([a-zA-Z])/g // 重命名捕获替换字符串
-
-
 
 
 /** 将下划线和短横线命名的重命名为驼峰命名法 */
