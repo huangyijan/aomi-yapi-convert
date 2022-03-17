@@ -1,6 +1,5 @@
-import { request } from "../src/request";
+import { request } from './../src/utils/request'
 import fs from 'fs'
-
 
 const demoUrl = 'http://yapi.miguatech.com/api/interface/list?page=1&limit=20&project_id=445'
 
@@ -19,5 +18,5 @@ const getApiDoc = async (url: string) => {
 
 getApiDoc(demoUrl)
 test('request yapi docs', () => {
-  expect('1').toBe(String(1));
-});
+  expect('1').toBe(String(1))
+})

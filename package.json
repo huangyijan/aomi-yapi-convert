@@ -7,11 +7,15 @@
   "scripts": {
     "dev": "rollup",
     "test": "jest",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "lint": "eslint --ext .ts src/ --fix"
   },
   "author": "yijian",
   "devDependencies": {
     "@types/jest": "^27.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.15.0",
+    "@typescript-eslint/parser": "^5.15.0",
+    "eslint": "^8.11.0",
     "jest": "^27.5.1",
     "rollup": "^2.70.1",
     "rollup-plugin-typescript2": "^0.31.2",
