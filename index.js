@@ -1,2 +1,3 @@
-import api from './api/activity'
-api.activity()
+import api from './api/groupBuy'
+api.groupBuyPatch(1, {})
+

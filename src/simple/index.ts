@@ -1,21 +1,22 @@
 import { getOneApiConfig } from '../utils/str-operate'
-import { saveFile } from '../utils/saveFile'
-import { getMaxTimesObjectKeyName, getPathName } from '../utils/utils'
+import { saveFile } from '../utils/file'
+import { getMaxTimesObjectKeyName, getPathName } from '../utils'
 import { request } from '../utils/request'
 import format from '../utils/format'
 /** 配置文件头尾 */
-const configFileHeadFoot = (fileBufferStringChunk: Array<string>) => {
+export const configFileHeadFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>) => {
     fileBufferStringChunk.unshift('export default {')
     fileBufferStringChunk.unshift('import { fetch } from \'@/service/fetch/index\'')
     fileBufferStringChunk.push('}')
+    fileBufferStringChunk.push(...noteStringChunk)
     return format(fileBufferStringChunk)
 }
 
 /** 配置注释 */
 const getNoteStringItem = (item: apiSimpleItem, project_id: number) => {
     return `/**
-   * api: ${item.title}
-   * updateTime: ${new Date(item.up_time * 1000).toLocaleDateString()}
+   * ${item.title}
+   * 更新时间: ${new Date(item.up_time * 1000).toLocaleDateString()}
    * @link: http://yapi.miguatech.com/project/${project_id}/interface/api/${item._id}
    */`
 }
@@ -36,7 +37,7 @@ const getMainMethodItem = (item: apiSimpleItem) => {
  * @param item 接口菜单单项
  * @returns {Object} {文件名：string, 单个API文件流主容器: string}
  */
-const getPathSet = (item: MenuItem) => {
+const getApiFileConfig = (item: MenuItem) => {
     const { list, project_id } = item
 
     const pathSet: TimesObject = {} // 处理文件夹命名的容器
@@ -55,7 +56,7 @@ const getPathSet = (item: MenuItem) => {
         pathSet[pathName] ? pathSet[pathName]++ : pathSet[pathName] = 1
     })
 
-    // 文件名取名策略：获取路径上名字出现最多词的路径名称，需要将一些短横线下划线转为驼峰命名法
+    // 文件名取名策略：获取路径上名字出现最多词的路径名称，需要将一些短横线下划线转为驼峰命名法, TODO: 会出现重名问题
     const FileName = getMaxTimesObjectKeyName(pathSet)
 
 
@@ -67,20 +68,20 @@ const generatorFileList = ({ data }: { data: Array<MenuItem> }) => {
     const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
 
     data.forEach((item: MenuItem) => {
-        const { FileName, fileBufferStringChunk } = getPathSet(item)
+        const { FileName, fileBufferStringChunk } = getApiFileConfig(item)
         if (!fileBufferStringChunk.length) return
 
         let FileNameTimes = nameChunk.get(FileName)
 
         const savePath = `./api/${FileName}${FileNameTimes ? FileNameTimes++ : ''}.js`
-        saveFile(savePath, configFileHeadFoot(fileBufferStringChunk))
+        saveFile(savePath, configFileHeadFoot(fileBufferStringChunk, []))
 
         nameChunk.set(FileName, FileNameTimes ? FileNameTimes : 1)
     })
 }
 
 /** 生成没有注释的API文件，注释有文档链接，可以直接跳转 */
-export const getApiDoc = async (url: string) => {
+export const getApiDocWithNoNote = async (url: string) => {
     const fileString = await request(url)
     try {
         const MenuList = JSON.parse(fileString)

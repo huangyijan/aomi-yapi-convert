@@ -9,6 +9,20 @@ export const getAppendRequestParams = (path: string) => {
     requestParams = `(${requestParams}options)`
     return requestParams
 }
+
+/**
+ * 处理传Id的API请求参数
+ * @param path 请求路径
+ * @param paramsName 传输使用的参数名，配合JsDoc文档数据，Get请求使用params, Post, Put, Delete 请求使用data
+ * @returns {string} 函数请求使用的参数表达式
+ */
+export const getAppendRequestParamsJsdoc = (path: string, paramsName: string) => {
+    let requestParams = ''
+    path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}, `)
+    requestParams = `(${requestParams}${paramsName})`
+    return requestParams
+}
+
 /** 处理传Id的API请求URL */
 export const getAppendPath = (path: string) => {
     return `\`${path.replace(pathHasParamsRegex, (_, p1) => `/$\{${p1}\}`)}\``
@@ -28,6 +42,20 @@ export const getOneApiConfig = (path: string): requestConfig => {
     const isHaveParams = pathHasParamsRegex.test(path) // 地址栏上是否有参数
     const requestPath = isHaveParams ? getAppendPath(path) : `'${path}'`
     const requestParams = isHaveParams ? getAppendRequestParams(path) : '(options)'
+    const requestName = getApiName(path)
+    return { requestName, requestPath, requestParams }
+}
+
+/**
+ * 获取单个请求的请求名， 请求路径， 请求参数的字符串配置Jsdoc使用版本
+ * @param path 需要处理的接口地址
+ * @param paramsName 函数传参名称
+ * @returns {Object} {请求名， 请求路径， 请求参数} string
+ */
+export const getOneApiConfigJsdoc = (path: string, paramsName: string): requestConfig => {
+    const isHaveParams = pathHasParamsRegex.test(path) // 地址栏上是否有参数
+    const requestPath = isHaveParams ? getAppendPath(path) : `'${path}'`
+    const requestParams = isHaveParams ? getAppendRequestParamsJsdoc(path, paramsName) : `(${paramsName})`
     const requestName = getApiName(path)
     return { requestName, requestPath, requestParams }
 }

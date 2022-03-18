@@ -1,3 +1,4 @@
+/** 普通网页的菜单接口 */
 declare interface MenuItem {
   index: number,
   parent_id: number,
@@ -9,11 +10,6 @@ declare interface MenuItem {
   add_tim: number,
   up_time: number,
   list: Array<apiSimpleItem>
-  // req_body_type: string,
-  // res_body_type: string,
-  // req_body_form: Array<ReqBodyForm>,
-  // req_headers: Array<ReqHeaders>
-  // req_params: Array<ReqParams>
 }
 declare interface apiSimpleItem {
   edit_uid: number,
@@ -46,6 +42,7 @@ declare interface ReqBodyForm {
 }
 
 declare interface ReqHeaders {
+  _id: string
   name: string,
   type: string,
   example: string,
