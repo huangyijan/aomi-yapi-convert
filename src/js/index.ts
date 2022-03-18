@@ -110,17 +110,17 @@ const getNoteStringItem = (item: JsDocApiItem, isGetMethod: boolean) => {
    * 更新时间: ${new Date(item.up_time * 1000).toLocaleDateString()}
    * @link: http://yapi.miguatech.com/project/${item.project_id}/interface/api/${item._id}
    */`
-    return { methodNote, typeName, reqType}
+    return { methodNote, typeName, reqType, hasNoteData: Boolean(reqType)}
 }
 
 /** 配置请求主方法 */
-const getMainMethodItem = (item: JsDocApiItem, isGetMethod: boolean) => {
+const getMainMethodItem = (item: JsDocApiItem, isGetMethod: boolean, hasNoteData: boolean) => {
     const paramsName = isGetMethod ? 'params' : 'data'
 
-    const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName)
+    const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName, hasNoteData)
     return `${requestName}: ${requestParams} => {
     const method = '${item.method}'
-    return fetch(${requestPath}, { ...${paramsName}, method })
+    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, `: ''}method, ...options })
   },`
 }
 
@@ -136,8 +136,8 @@ const getApiFileConfig = (item: JsDocMenuItem) => {
         if (item.status === 'undone') return
 
         const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
-        const { methodNote, reqType } = getNoteStringItem(item, isGetMethod)
-        const methodStr = getMainMethodItem(item, isGetMethod)
+        const { methodNote, reqType, hasNoteData } = getNoteStringItem(item, isGetMethod)
+        const methodStr = getMainMethodItem(item, isGetMethod, hasNoteData)
         /** 先配置注释再配置请求主方法 */
         fileBufferStringChunk.push(methodNote)
         fileBufferStringChunk.push(methodStr)

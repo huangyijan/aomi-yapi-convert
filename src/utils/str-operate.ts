@@ -16,10 +16,10 @@ export const getAppendRequestParams = (path: string) => {
  * @param paramsName 传输使用的参数名，配合JsDoc文档数据，Get请求使用params, Post, Put, Delete 请求使用data
  * @returns {string} 函数请求使用的参数表达式
  */
-export const getAppendRequestParamsJsdoc = (path: string, paramsName: string) => {
+export const getAppendRequestParamsJsdoc = (path: string, paramsName: string, hasNoteData: boolean) => {
     let requestParams = ''
     path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}, `)
-    requestParams = `(${requestParams}${paramsName})`
+    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}, `: ''}options)`
     return requestParams
 }
 
@@ -52,10 +52,10 @@ export const getOneApiConfig = (path: string): requestConfig => {
  * @param paramsName 函数传参名称
  * @returns {Object} {请求名， 请求路径， 请求参数} string
  */
-export const getOneApiConfigJsdoc = (path: string, paramsName: string): requestConfig => {
+export const getOneApiConfigJsdoc = (path: string, paramsName: string, hasNoteData: boolean): requestConfig => {
     const isHaveParams = pathHasParamsRegex.test(path) // 地址栏上是否有参数
     const requestPath = isHaveParams ? getAppendPath(path) : `'${path}'`
-    const requestParams = isHaveParams ? getAppendRequestParamsJsdoc(path, paramsName) : `(${paramsName})`
+    const requestParams = isHaveParams ? getAppendRequestParamsJsdoc(path, paramsName, hasNoteData) : `(${hasNoteData ? `${paramsName}, `: ''}options)`
     const requestName = getApiName(path)
     return { requestName, requestPath, requestParams }
 }
