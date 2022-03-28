@@ -52,3 +52,11 @@ interface JsDocApiItem {
   uid: number
   up_time: number
 }
+
+interface Properties {
+  [key: string]: {
+    type: string
+    default: string
+    description: string
+  }
+}

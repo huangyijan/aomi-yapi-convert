@@ -3,6 +3,10 @@ const ShortPathNameRegex = /^\/([a-zA-Z0-9-_]+)/ // 短接口捕获路径名
 const NameRegex = /[-|_]([a-zA-Z])/g // 重命名捕获替换字符串
 
 
+const quotaRegex = /(,)\s*\n*.*\}/g // 匹配json字符串最后一个逗号
+const illegalRegex = /(\/\/\s.*)\n/g // 非法json注释匹配
+
+
 /** 将下划线和短横线命名的重命名为驼峰命名法 */
 export const toHumpName = (str: string) => {
     return str.replace(NameRegex, function (_keb, item) { return item.toUpperCase() })
@@ -23,4 +27,84 @@ export const getMaxTimesObjectKeyName = (obj: TimesObject): string => {
     const times = Object.values(obj)
     const max = Math.max(...times)
     return Object.keys(obj).find(key => obj[key] === max) || 'common'
+}
+
+/** 数据结构处理后台嵌套的properties层 */
+export const removeProperties = (data: { [key: string]: any }) => {
+    const isHasKeyProperties = Object.prototype.hasOwnProperty.call(data, 'properties')
+    if (isHasKeyProperties) data = data.properties
+    for (const item in data) { // 这里的properties没有清干净，后面再回来清
+        if (Object.prototype.hasOwnProperty.call(data[item], 'properties')) {
+            const description = data[item].description
+            data[item] = removeProperties(data[item])
+            data[item].__proto__.description = description // 原型上保存描述信息, TODO: 如果rename description 会报错
+        }
+    }
+    return data
+}
+
+// 根据数据类型展示数据
+export const showExampleStrByType = (value: unknown) => {
+    const type = typeof value
+    switch (type) {
+    case 'object':
+        return JSON.stringify(value)
+    default:
+        return value
+    }
+}
+
+/** 后台类型转前端类型 */
+export const transformType = (serviceType: string) => {
+    switch (serviceType) {
+    case 'integer':
+        return 'number'
+    case 'bool':
+        return 'boolean'
+    default:
+        return serviceType
+    }
+}
+
+/** 判断api数据里面的数据类型 */
+const getApiParamsType = (value: { constructor: ArrayConstructor }) => {
+    const jsType = typeof value
+    switch (jsType) {
+    case 'object': // 引用类型都是object，需要处理不同引用类型
+        return value.constructor === Array ? 'array' : 'object'
+    default:
+        return jsType
+    }
+}
+
+/** 处理后台静态类型数据和错误状态的Api */
+export const getCorrectType = (value: any) => {
+    let type = getApiParamsType(value)
+    if (type === 'object') {
+        if (Object.prototype.hasOwnProperty.call(value, 'type')) {
+            type = transformType(value.type)
+        }
+        if (Object.prototype.hasOwnProperty.call(value, 'ordinal')) {
+            type = 'string' // yapi 文档自动生成问题，状态字段一般都是呈现出object，实际为string
+        }
+    }
+    return type
+}
+
+/** 获取请求体（body）传输参数 */
+export const getLegalJson = (reqBody: string) => {
+    if (!reqBody) return ''
+    const isIllegalJsonStr = illegalRegex.test(reqBody) //判断后台返回的字符串是不是合法json字符串
+    try {
+        if (!isIllegalJsonStr) {
+            return JSON.parse(reqBody)
+        } else {
+            const dealStr = reqBody.replace(illegalRegex, '\n') // 删除注释
+            const removeLestQuotaStr = dealStr.replace(quotaRegex, '}') // 删除多余的逗号
+            return JSON.parse(removeLestQuotaStr)
+        }
+    } catch (error) {
+        console.log('json序列化错误', error) // 正则如果没有考虑所有情况将会影响无法输出注释
+    }
+
 }

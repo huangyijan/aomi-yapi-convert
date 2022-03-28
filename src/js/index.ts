@@ -1,55 +1,20 @@
 import { request } from '../utils/request'
 import { readFile, saveFile } from '../utils/file'
-import { getMaxTimesObjectKeyName, getPathName } from '../utils'
+import { getCorrectType, getLegalJson, getMaxTimesObjectKeyName, getPathName, removeProperties, showExampleStrByType } from '../utils'
 import { getOneApiConfig, getOneApiConfigJsdoc } from '../utils/str-operate'
 import { configFileHeadFoot } from '../simple'
 
-const quotaRegex = /(,)\s*\n*.*\}/g // 匹配json字符串最后一个逗号
-const illegalRegex = /(\/\/\s.*)\n/g // 非法json注释匹配
 
-// 根据数据类型展示数据
-const showExampleStrByType = (value: unknown) => {
-    const type = typeof value
-    switch (type) {
-    case 'object':
-        return JSON.stringify(value)
-    default:
-        return value
-    }
-}
-interface Properties {
-    [key: string]: {
-        type: string
-        default: string
-        description: string
-    }
-}
-/** 后台类型转前端类型 */
-const transformType = (serviceType: string) => {
-    switch (serviceType) {
-    case 'integer':
-        return 'number'
-    case 'bool':
-        return 'boolean'
-    default:
-        return serviceType
-    }
-}
 
+// 处理请求体的逻辑规则
 const dealJsonToJsDocParams = (json: { properties: Properties }, requestName: string) => {
     let bodyStr = ''
-    const isNormalSerialize = Object.prototype.hasOwnProperty.call(json, 'properties')
-    if (isNormalSerialize) {
-        const properties = json.properties
-        Object.entries(properties).forEach(([key, value]) => {
-            const { type, description } = value
-            bodyStr += `* @property {${transformType(type)}} [${key}]  ${description}   default: ${showExampleStrByType(value.default) || '无'} \n   `
-        })
-    } else {
-        Object.entries(json).forEach(([key, value]) => {
-            bodyStr += `* @property {${typeof value}} [${key}]    example: ${showExampleStrByType(value) || '无'} \n   ` // TODO 暂时先序列一层
-        })
-    }
+    const properties = removeProperties(json)
+    Object.entries(properties).forEach(([key, value]) => {
+        const {  description } = value
+        const type = configJsdocType(value)
+        bodyStr += `* @property {${type}} [${key}]  ${description}   example: ${showExampleStrByType(value.default) || '无'} \n   `
+    })
 
     if (!bodyStr) return ''
     return (`/** 
@@ -58,23 +23,36 @@ const dealJsonToJsDocParams = (json: { properties: Properties }, requestName: st
 }
 
 
-/** 获取请求体（body）传输参数 */
-const getConfigNoteBody = (reqBody: string) => {
-    if (!reqBody) return ''
-    const isIllegalJsonStr = illegalRegex.test(reqBody) //判断后台返回的字符串是不是合法json字符串
-    try {
-        if (!isIllegalJsonStr) {
-            return JSON.parse(reqBody)
-        } else {
-            const dealStr = reqBody.replace(illegalRegex, '\n') // 删除注释
-            const removeLestQuotaStr = dealStr.replace(quotaRegex, '}') // 删除多余的逗号
-            return JSON.parse(removeLestQuotaStr)
-        }
-    } catch (error) {
-        console.log('json序列化错误', error) // 正则如果没有考虑所有情况将会影响无法输出注释
+/** 处理子序列jsdoc类型 */
+const configJsdocType = (value: any) => {
+    const type = getCorrectType(value) 
+    if (type === 'object') { // 真的要传object， TODO: 子Object 对象序列
+       
     }
-
+    return type
 }
+
+
+/** 处理返回的数据类型处理 */
+const dealJsonToJsDocReturn = (body: object, returnName: string) => {
+    if (typeof body !== 'object') return ''
+    let bodyStr = ''
+    let data = removeProperties(body)
+    const isDetailMsgOut = Object.prototype.hasOwnProperty.call(data, 'detailMsg')
+    if (isDetailMsgOut) data = data.detailMsg
+    Object.entries(data).forEach(([key, value]) => {
+        const type = configJsdocType(value)
+        bodyStr += `* @property {${type}} [${key}]   \n   `
+    })
+
+    if (!bodyStr) return ''
+    return (`/** 
+   * @typedef ${returnName}
+   ${bodyStr}*/\n`)
+}
+
+
+
 
 /** 获取请求参数（params）传输参数 */
 const getConfigNoteParams = (reqQuery: Array<reqQuery>, requestName: string) => {
@@ -88,15 +66,18 @@ const getConfigNoteParams = (reqQuery: Array<reqQuery>, requestName: string) => 
    ${paramsStr}*/`
 }
 
+/** 判断传参名称 */
 const getNoteNameByParamsType = (requestName: string, isGetMethod: boolean) => {
     const ParamsName = requestName.replace(/^([a-zA-Z])/, (_, item: string) => item.toUpperCase())
-    return ParamsName + (isGetMethod? 'Params': 'Data')
+    return ParamsName + (isGetMethod ? 'Params' : 'Data')
 }
 
-/** 配置注释 */
+/** 配置请求注释 */
 const getNoteStringItem = (item: JsDocApiItem, isGetMethod: boolean) => {
+    const { resType, returnName } = getReturnNoteStringItem(item)
+
     const { requestName } = getOneApiConfig(item.path)
-    const body = getConfigNoteBody(item.req_body_other) // 获取合法的json数据
+    const body = getLegalJson(item.req_body_other) // 获取合法的json数据
     const typeName = getNoteNameByParamsType(requestName, isGetMethod)
     let reqType = ''
     if (isGetMethod) {
@@ -104,13 +85,22 @@ const getNoteStringItem = (item: JsDocApiItem, isGetMethod: boolean) => {
     } else {
         reqType = dealJsonToJsDocParams(body, typeName)
     }
-    const methodNote =  `
+    const methodNote = `
   /**
-   * ${item.title}${reqType ? `\n   * @param {${typeName}} ${isGetMethod? 'params': 'data'}` : ''} 
-   * 更新时间: ${new Date(item.up_time * 1000).toLocaleDateString()}
+   * 功能描述：${item.title}${reqType ? `\n   * @param {${typeName}} ${isGetMethod ? 'params' : 'data'}` : ''} 
+   * update_time: ${new Date(item.up_time * 1000).toLocaleDateString()}
    * @link: http://yapi.miguatech.com/project/${item.project_id}/interface/api/${item._id}
+   * @return {Promise<${resType ? returnName : 'any'}>}
    */`
-    return { methodNote, typeName, reqType, hasNoteData: Boolean(reqType)}
+    return { methodNote, typeName, reqType, resType, hasNoteData: Boolean(reqType) }
+}
+/** 配置返回注释 */
+const getReturnNoteStringItem = (item: JsDocApiItem) => {
+    const { requestName } = getOneApiConfig(item.path)
+    const body = getLegalJson(item.res_body) // 获取合法的json数据
+    const returnName = requestName + 'Response'
+    const resType = dealJsonToJsDocReturn(body, returnName)
+    return { returnName, resType }
 }
 
 /** 配置请求主方法 */
@@ -120,7 +110,7 @@ const getMainMethodItem = (item: JsDocApiItem, isGetMethod: boolean, hasNoteData
     const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName, hasNoteData)
     return `${requestName}: ${requestParams} => {
     const method = '${item.method}'
-    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, `: ''}method, ...options })
+    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
   },`
 }
 
@@ -136,7 +126,7 @@ const getApiFileConfig = (item: JsDocMenuItem) => {
         if (item.status === 'undone') return
 
         const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
-        const { methodNote, reqType, hasNoteData } = getNoteStringItem(item, isGetMethod)
+        const { methodNote, reqType, resType, hasNoteData } = getNoteStringItem(item, isGetMethod)
         const methodStr = getMainMethodItem(item, isGetMethod, hasNoteData)
         /** 先配置注释再配置请求主方法 */
         fileBufferStringChunk.push(methodNote)
@@ -144,6 +134,7 @@ const getApiFileConfig = (item: JsDocMenuItem) => {
 
 
         if (reqType) noteStringChunk.push(reqType)
+        if (resType) noteStringChunk.push(resType)
         // 统计名字出现次数，用作文件夹命名依据
         const pathName = getPathName(item.path)
         pathSet[pathName] ? pathSet[pathName]++ : pathSet[pathName] = 1
