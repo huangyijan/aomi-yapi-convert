@@ -10,6 +10,7 @@ api功能：
 ☐ JsDoc版本多层请求参数持续序列化成type
 ☐ jsdoc混入（@mixin）axios请求通用参数
 ☐ 服務名後台不添加的情況
+☐ response列表list字段序列化成对象
 
 代码优化
 ☐ 接口名决策优化方案

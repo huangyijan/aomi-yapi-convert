@@ -29,19 +29,26 @@ export const getMaxTimesObjectKeyName = (obj: TimesObject): string => {
     return Object.keys(obj).find(key => obj[key] === max) || 'common'
 }
 
+/** hasOwnProperty太长了，写一个代理当简写 */
+export const hasProperty = function (obj: object, key: string) {
+    return Object.prototype.hasOwnProperty.call(obj, key)
+}
+
+
 /** 数据结构处理后台嵌套的properties层 */
 export const removeProperties = (data: { [key: string]: any }) => {
-    const isHasKeyProperties = Object.prototype.hasOwnProperty.call(data, 'properties')
-    if (isHasKeyProperties) data = data.properties
-    for (const item in data) { // 这里的properties没有清干净，后面再回来清
-        if (Object.prototype.hasOwnProperty.call(data[item], 'properties')) {
-            const description = data[item].description
-            data[item] = removeProperties(data[item])
-            data[item].__proto__.description = description // 原型上保存描述信息, TODO: 如果rename description 会报错
-        }
+    if (hasProperty(data, 'properties')) {
+        const description = data.description
+        data = data['properties']
+        if(description) data.__proto__.proDesc = description // 将外部的值储存在原型上
+    }
+    for (const item in data) {
+        const type = getTypeByValue(data[item])
+        if (type === 'object') data[item] = removeProperties(data[item])
     }
     return data
 }
+
 
 // 根据数据类型展示数据
 export const showExampleStrByType = (value: unknown) => {
@@ -67,7 +74,7 @@ export const transformType = (serviceType: string) => {
 }
 
 /** 判断api数据里面的数据类型 */
-const getApiParamsType = (value: { constructor: ArrayConstructor }) => {
+export const getTypeByValue = (value: { constructor: ArrayConstructor }) => {
     const jsType = typeof value
     switch (jsType) {
     case 'object': // 引用类型都是object，需要处理不同引用类型
@@ -79,7 +86,7 @@ const getApiParamsType = (value: { constructor: ArrayConstructor }) => {
 
 /** 处理后台静态类型数据和错误状态的Api */
 export const getCorrectType = (value: any) => {
-    let type = getApiParamsType(value)
+    let type = getTypeByValue(value)
     if (type === 'object') {
         if (Object.prototype.hasOwnProperty.call(value, 'type')) {
             type = transformType(value.type)
@@ -107,4 +114,25 @@ export const getLegalJson = (reqBody: string) => {
         console.log('json序列化错误', error) // 正则如果没有考虑所有情况将会影响无法输出注释
     }
 
+}
+
+/** 处理子序列jsdoc类型 */
+export const configJsdocType = (value: any) => {
+    const type = getCorrectType(value)
+    if (type === 'object') { // 真的要传object， TODO: 子Object 对象序列
+    }
+    return type
+}
+
+
+ export const getDescription = (value: { description?: string, proDesc?: string }) => {
+    let description = ''
+
+    //这里做了一个后台的枚举类型的处理，由于
+    if (typeof value === 'object' && value.proDesc) description = value.proDesc
+
+    if (hasProperty(value, 'description')) {
+        description = value.description || ''
+    }
+    return description
 }
