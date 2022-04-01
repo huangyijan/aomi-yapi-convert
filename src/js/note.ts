@@ -1,6 +1,6 @@
 /** 获取请求注释上的param注释字符串 */
 export const getNoteParams = (reqType: string, typeName: string, isGetMethod: boolean) => {
-  if (!typeName) return ''
+  if (!typeName.includes('[]') && !reqType) return ''
   return `\n   * @param {${typeName}} ${isGetMethod ? 'params' : 'data'}`
 }
 
