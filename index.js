@@ -1,5 +1,5 @@
-import api from './api/fileGroup'
-api.fileGroup({}).then(data => {
+import api from './api/cart'
+api.groupBuyGoodsSku().then(data => {
   console.log(data.fo)
 })
 

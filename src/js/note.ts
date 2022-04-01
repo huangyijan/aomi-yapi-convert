@@ -11,3 +11,11 @@ export const getApiLinkAddress = (baseUrl: string, project_id: number, _id: numb
 
 export const getUpdateTime = (time: number) => new Date(time * 1000).toLocaleDateString()
 
+export const getAppendIdNote = (params: Array<ReqParams>) => {
+  
+  return params.reduce((pre, curr) => {
+    const { example, desc, name, _id } = curr
+    if (_id) pre += `\n   * @param { number | string } ${name} ${desc}  example: ${example} `
+    return pre
+  }, '')
+}

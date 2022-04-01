@@ -33,6 +33,7 @@ export const getRequestNoteStringItem = (item: JsDocApiItem): RequestNoteStringI
   const typeName = getArrayTypeName(normalName, body) // 处理数组的情况
   
   const reqType = getReqType(item, typeName, body)
+
   return {reqType, typeName}
 }
 

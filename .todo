@@ -11,7 +11,7 @@ api功能：
 ☐ jsdoc混入（@mixin）axios请求通用参数
 ☐ 服務名後台不添加的情況
 ☐ response列表list字段序列化成对象
-☐ id序列进params注释
+✔ id序列进params注释 @started(22-04-01 17:03) @done(22-04-01 19:25) @lasted(2h22m38s)
 
 代码优化
 ☐ 接口名决策优化方案

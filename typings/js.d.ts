@@ -36,7 +36,6 @@ interface JsDocApiItem {
     path: string
   }
   req_query: Array<reqQuery>
-  req_params: Array 
   req_body_type: string
   req_body_other: string
   res_body: string

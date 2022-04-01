@@ -51,6 +51,7 @@ declare interface ReqHeaders {
 }
 
 declare interface ReqParams {
+  _id: number
   name: string,
   example: string,
   desc: string

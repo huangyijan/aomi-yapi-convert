@@ -5,28 +5,30 @@ import { getOneApiConfigJsdoc } from '../utils/str-operate'
 import { configFileHeadFoot } from '../simple'
 import { getReturnNoteStringItem, getReturnType } from './response/response'
 import { getRequestNoteStringItem } from './request/request'
-import { getNoteParams, getUpdateTime, getApiLinkAddress } from './note'
+import { getNoteParams, getUpdateTime, getApiLinkAddress, getAppendIdNote } from './note'
 
 /** 配置请求注释 */
 export const getNoteStringItem = (item: JsDocApiItem) => {
     const isGetMethod = item.method.toUpperCase() == 'GET'
 
-    const { resType, returnNameWithType } = getReturnNoteStringItem(item)
-
     const { reqType, typeName } = getRequestNoteStringItem(item)
+    const { resType, returnNameWithType } = getReturnNoteStringItem(item)
+    const idNote = getAppendIdNote(item.req_params)
+
     const methodNote = `
   /**
-   * 功能描述：${item.title}${getNoteParams(reqType, typeName, isGetMethod)} 
+   * 功能描述：${item.title}${idNote}${getNoteParams(reqType, typeName, isGetMethod)} 
    * update_time: ${getUpdateTime(item.up_time)}
    * @link: ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
    * @return {Promise<${getReturnType(returnNameWithType, resType)}>}
    */`
-    return { methodNote, typeName, reqType, resType, hasNoteData: Boolean(reqType) }
+    return { methodNote, typeName, reqType, resType }
 }
 
 
 /** 配置请求主方法 */
-const getMainMethodItem = (item: JsDocApiItem, isGetMethod: boolean, hasNoteData: boolean) => {
+const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean) => {
+    const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
     const paramsName = isGetMethod ? 'params' : 'data'
 
     const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName, hasNoteData)
@@ -47,9 +49,13 @@ const getApiFileConfig = (item: JsDocMenuItem) => {
         /** 没有完成的接口不处理 */
         if (item.status === 'undone') return
 
-        const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
-        const { methodNote, reqType, resType, hasNoteData } = getNoteStringItem(item)
-        const methodStr = getMainMethodItem(item, isGetMethod, hasNoteData)
+        
+        const { methodNote, reqType, resType } = getNoteStringItem(item)
+       
+
+        const hasNoteData = Boolean(reqType)
+        const methodStr = getMainMethodItem(item, hasNoteData)
+
         /** 先配置注释再配置请求主方法 */
         fileBufferStringChunk.push(methodNote)
         fileBufferStringChunk.push(methodStr)
@@ -61,7 +67,6 @@ const getApiFileConfig = (item: JsDocMenuItem) => {
         const pathName = getPathName(item.path)
         pathSet[pathName] ? pathSet[pathName]++ : pathSet[pathName] = 1
     })
-
     // 文件名取名策略：获取路径上名字出现最多词的路径名称，需要将一些短横线下划线转为驼峰命名法, TODO: 会出现重名问题
     const FileName = getMaxTimesObjectKeyName(pathSet)
     return { FileName, fileBufferStringChunk, noteStringChunk }
