@@ -34,14 +34,25 @@ export const hasProperty = function (obj: object, key: string) {
     return Object.prototype.hasOwnProperty.call(obj, key)
 }
 
-
-/** 数据结构处理后台嵌套的properties层 */
-export const removeProperties = (data: { [key: string]: any }) => {
+const dealApiObj = (data: any) => {
     if (hasProperty(data, 'properties')) {
         const description = data.description
-        data = data['properties']
-        if(description) data.__proto__.proDesc = description // 将外部的值储存在原型上
+        data = data.properties
+
+        if (data instanceof Object && hasProperty(data, 'name') && hasProperty(data, 'ordinal')) {
+            // 对状态对象处理，yapi 文档自动生成问题，状态字段一般都是呈现出object，实际为string
+            data = { type: 'string', description, default: '无' }
+        }
+
     }
+    return data
+}
+
+/** 数据结构处理后台嵌套的properties层 */
+export const removeProperties = (data: any) => {
+    
+    data = dealApiObj(data)
+  
     for (const item in data) {
         const type = getTypeByValue(data[item])
         if (type === 'object') data[item] = removeProperties(data[item])
@@ -91,9 +102,6 @@ export const getCorrectType = (value: any) => {
         if (Object.prototype.hasOwnProperty.call(value, 'type')) {
             type = transformType(value.type)
         }
-        if (Object.prototype.hasOwnProperty.call(value, 'ordinal')) {
-            type = 'string' // yapi 文档自动生成问题，状态字段一般都是呈现出object，实际为string
-        }
     }
     return type
 }
@@ -125,11 +133,8 @@ export const configJsdocType = (value: any) => {
 }
 
 
- export const getDescription = (value: { description?: string, proDesc?: string }) => {
+ export const getDescription = (value: any) => {
     let description = ''
-
-    //这里做了一个后台的枚举类型的处理，由于
-    if (typeof value === 'object' && value.proDesc) description = value.proDesc
 
     if (hasProperty(value, 'description')) {
         description = value.description || ''

@@ -3,9 +3,26 @@ import { readFile, saveFile } from '../utils/file'
 import { getMaxTimesObjectKeyName, getPathName } from '../utils'
 import { getOneApiConfigJsdoc } from '../utils/str-operate'
 import { configFileHeadFoot } from '../simple'
-import { getNoteStringItem } from './request'
+import { getReturnNoteStringItem, getReturnType } from './response/response'
+import { getRequestNoteStringItem } from './request/request'
+import { getNoteParams, getUpdateTime, getApiLinkAddress } from './note'
 
-// const getCommonJsType = (typeName: )
+/** 配置请求注释 */
+export const getNoteStringItem = (item: JsDocApiItem) => {
+    const isGetMethod = item.method.toUpperCase() == 'GET'
+
+    const { resType, returnNameWithType } = getReturnNoteStringItem(item)
+
+    const { reqType, typeName } = getRequestNoteStringItem(item)
+    const methodNote = `
+  /**
+   * 功能描述：${item.title}${getNoteParams(reqType, typeName, isGetMethod)} 
+   * update_time: ${getUpdateTime(item.up_time)}
+   * @link: ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
+   * @return {Promise<${getReturnType(returnNameWithType, resType)}>}
+   */`
+    return { methodNote, typeName, reqType, resType, hasNoteData: Boolean(reqType) }
+}
 
 
 /** 配置请求主方法 */

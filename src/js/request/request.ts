@@ -1,6 +1,6 @@
-import { getOneApiConfig } from "../utils/str-operate"
-import { removeProperties, configJsdocType, showExampleStrByType, getLegalJson, getDescription, getTypeByValue } from "../utils"
-import { getReturnNoteStringItem, getReturnType } from "./response"
+import { getOneApiConfig } from "../../utils/str-operate"
+import { removeProperties, configJsdocType, showExampleStrByType, getLegalJson, getDescription, getTypeByValue } from "../../utils"
+import { getReturnNoteStringItem, getReturnType } from "../response/response"
 
 interface RequestNoteStringItem {
   reqType: string
@@ -15,6 +15,7 @@ export const dealJsonToJsDocParams = (json: { properties: Properties }, requestN
   if (!Object.keys(properties).length) return '' // 空的对象不做处理，提高性能
 
   Object.entries(properties).forEach(([key, value]) => {
+    
     const description = getDescription(value)
     const type = configJsdocType(value)
     bodyStr += `* @property {${type}} [${key}]  ${description}   example: ${showExampleStrByType(value.default) || '无'} \n   `
@@ -47,17 +48,30 @@ const getNoteNameByParamsType = (item: JsDocApiItem) => {
   return ParamsName + (isGetMethod ? 'Params' : 'Data')
 }
 
+
+/** 获取JSDoc的名称 */
 const getTypeName = (item: JsDocApiItem, body: any) => {
-  const type = getTypeByValue(body)
-  if (type === 'string' || type === 'array') return type 
-
-  return getNoteNameByParamsType(item)
-}
-
-const getReqType = (item: JsDocApiItem, typeName: string, body: any) => {
   const isGetMethod = item.method.toUpperCase() == 'GET'
 
-  if (typeName === 'string' || typeName === 'array') return ''
+  if(!body && !isGetMethod) return '' // 如果没有注释，那就不用命名typeName了
+
+  const type = getTypeByValue(body)
+  const typeName = getNoteNameByParamsType(item)
+
+
+  if (type === 'array') { // 处理数组的typeName
+    return body.length ? `${typeof body[0]}[]`: 'any[]'
+  }
+  return typeName
+}
+
+/** 获取注释的jsDoc类型 */
+export const getReqType = (item: JsDocApiItem, typeName: string, body: any) => {
+  const isGetMethod = item.method.toUpperCase() == 'GET'
+
+  if (typeName.includes('[]')) return ''
+
+
   if (isGetMethod) {
     return getConfigNoteParams(item.req_query, typeName)
   } else {
@@ -66,42 +80,13 @@ const getReqType = (item: JsDocApiItem, typeName: string, body: any) => {
 }
 
 /** 获取请求的参数注释和参数名 */
-const getRequestNoteStringItem = (item: JsDocApiItem): RequestNoteStringItem => {
+export const getRequestNoteStringItem = (item: JsDocApiItem): RequestNoteStringItem => {
   
   const body = getLegalJson(item.req_body_other) // 获取合法的json数据
   
   const typeName = getTypeName(item, body)
- 
-  const reqType = getReqType(item, typeName, body)
 
+  const reqType = getReqType(item, typeName, body)
   return {reqType, typeName}
 }
 
-/** 获取请求注释上的param注释字符串 */
-const getNoteParams = (reqType: string, typeName: string, isGetMethod: boolean) => {
-  let isHaveParams = false
-  if (typeName === 'string' || typeName === 'array' || reqType) isHaveParams = true
-  if(typeName === 'array') typeName = 'string[]'
-  return isHaveParams ? `\n   * @param {${typeName}} ${isGetMethod ? 'params' : 'data'}` : ''
-}
-
-/** 获取文档地址 */
-const getApiLinkAddress = (baseUrl: string, project_id: number, _id: number) => {
-  return `${baseUrl}/project/${project_id}/interface/api/${_id}`
-}
-
-/** 配置请求注释 */
-export const getNoteStringItem = (item: JsDocApiItem) => {
-  const isGetMethod = item.method.toUpperCase() == 'GET'
-
-  const { resType, returnName } = getReturnNoteStringItem(item)
-  const {reqType, typeName} = getRequestNoteStringItem(item)
-  const methodNote = `
-  /**
-   * 功能描述：${item.title}${getNoteParams(reqType, typeName, isGetMethod)} 
-   * update_time: ${new Date(item.up_time * 1000).toLocaleDateString()}
-   * @link: ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
-   * @return {Promise<${getReturnType(returnName, reqType)}>}
-   */`
-  return { methodNote, typeName, reqType, resType, hasNoteData: Boolean(reqType) }
-}

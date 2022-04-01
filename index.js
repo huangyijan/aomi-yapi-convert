@@ -1,5 +1,5 @@
-import api from './api/activity'
-api.activityDelete().then(data => {
+import api from './api/fileGroup'
+api.fileGroup({}).then(data => {
   console.log(data.fo)
 })
 
