@@ -59,3 +59,11 @@ interface Properties {
     description: string
   }
 }
+
+
+interface keyNoteItem {
+  key: string
+  type: string
+  description: string
+  default?: string
+}

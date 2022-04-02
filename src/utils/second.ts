@@ -1,0 +1,99 @@
+import { transformType, hasProperty, getTypeByValue } from "."
+import { getCommandNote } from "./str-operate"
+
+/** 获取不正常序列化的数组对象注释 */
+export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) => {
+  const arrayItem = arrayValue[0]
+  const keyNote = Object.keys(arrayItem)
+
+  const commonArr = keyNote.map(key => {
+    const type = getTypeByValue(arrayItem[key])
+    const description = String(arrayItem[key])
+
+    return {
+      key, type, description, default: ''
+    }
+  })
+  return getCommandNote(commonArr, typeName)
+}
+
+/** 正常的数组对象注释 */
+export const getNormalObjectNote = (data: { [key: string]: any }, typeName: string) => {
+  const keyNote = Object.keys(data)
+  const commonArr: Array<keyNoteItem> = []
+  keyNote.reduce((pre, key) => {
+    const value = data[key]
+    if (!value || typeof value !== 'object') return pre
+    const description = value.description
+    const type = transformType(value.type)
+    const defaultStr = value.default
+    pre.push({ key, description, type, default: defaultStr })
+    return pre
+  }, commonArr)
+  return getCommandNote(commonArr, typeName)
+
+}
+
+export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeName: string) => {
+  if (hasProperty(objectValue, 'mock')) return ''
+  const keys = Object.keys(objectValue)
+  const commonArr = keys.map(key => {
+    const { type, description } = objectValue[key]
+    const defaultStr = objectValue[key].default
+    return { key, type, description, default: defaultStr }
+  })
+  return getCommandNote(commonArr, addTypeName)
+}
+
+/**
+ * 获取数据结构里面的数组对象，这里面有三种情况需要处理
+ * 1、第一种是最外层是item的object对象，但是实际api是要传数组的
+ * 2、string或者number的array对象
+ * 3、没有正常序列的数组对象，object。这样的数据没有正常description字段
+ * @param arrayValue 需要处理的数组对象
+ * @param addTypeName 注释类型名称
+ * @returns {string}
+ */
+export const getArrayTypeNote = (arrayValue: any, addTypeName: string) => {
+  if (!arrayValue.length && hasProperty(arrayValue, 'items')) { //  1、这里处理外部有一层Item
+    const data = arrayValue.items
+    if (hasProperty(data, 'type') && data.type === 'string') return 'string'
+    if (hasProperty(data, 'ordinal') && typeof data.ordinal === 'boolean') return 'string' // 后台状态字符创标志符
+    const note = getNormalObjectNote(data, addTypeName)
+    return note
+  }
+
+  const type = typeof arrayValue[0]
+  if (type !== 'object') return type // 2、第二种情况处理
+
+  const note = getUnNormalObjectNote(arrayValue, addTypeName) // 3、第三种情况处理
+  return note
+}
+
+
+/** 处理第二层级的array和object */
+export const getSecondNoteAndName = (value: any, addTypeName: string, type: string, appendNoteJsdocType: string) => {
+  if (type.includes('array')) {
+    const typeName = addTypeName.substring(0, addTypeName.length - 2)
+    const addNote = getArrayTypeNote(value, typeName)
+
+    if (addNote === 'string') type = 'string[]' // 处理字符串数组和特殊的api自动生成错误
+    if (addNote.includes('@typedef')) { // 有正常序列的Jsdoc
+      type = addTypeName
+      if ('string, boolean, number'.includes(addNote)) type = `${addNote}[]`
+      appendNoteJsdocType += addNote
+    }
+
+  }
+
+
+  if (type.includes('object')) {
+    const addNote = getObjectTypeNote(value, addTypeName)
+    if (addNote) {
+      appendNoteJsdocType = addNote
+      type = addTypeName
+    }
+  }
+
+  return { note: appendNoteJsdocType, name: type }
+}

@@ -10,7 +10,7 @@ api功能：
 ✔ JsDoc版本多层请求参数持续序列化成type(暂时序列两层) @done(22-04-02 16:13)
 ☐ jsdoc混入（@mixin）axios请求通用参数
 ☐ 服務名後台不添加的情況
-✔ request列表对象和数组对象序列化jsdoc对象类型 @done(22-04-02 16:29)
+✔ request列表对象和数组对象序列化jsdoc对象类型 @done(22-04-02 18:16)
 ✔ response列表对象和数组对象序列化jsdoc对象类型 @started(22-04-01 19:29) @done(22-04-02 16:28) @lasted(20h59m54s)
 ✔ id序列进params注释 @started(22-04-01 17:03) @done(22-04-01 19:25) @lasted(2h22m38s)
 

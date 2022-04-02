@@ -71,3 +71,27 @@ export const getOneApiConfigJsdoc = (path: string, paramsName: string, hasNoteDa
 export const getUpperCaseName = (name: string) => {
     return name.replace(/^([a-zA-Z])/, (_, item: string) => item.toUpperCase())
 }
+
+export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) => {
+    return keyNote.reduce((pre, cur, index) => {
+        const { key, type, description } = cur
+        const defaultStr = cur.default ? ` default: ${cur.default}` : ''
+
+        pre += `  * @property {${type}} [${key}] ${description} ${defaultStr} \n`
+        if (index === keyNote.length - 1) pre += `*/\n`
+
+        return pre
+    }, `/** 
+  * @typedef ${typeName}\n`)
+}
+
+/** 处理返回的数据类型typeName */
+export const getType = (type: string, key: string, typeName: string) => {
+    if (type === 'array') {
+        return typeName + getUpperCaseName(key) + '[]'
+    }
+    if (type === 'object') {
+        return typeName + getUpperCaseName(key)
+    }
+    return type
+}
