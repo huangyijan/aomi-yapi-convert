@@ -1,6 +1,6 @@
-import api from './api/cart'
-api.groupBuyGoodsSku().then(data => {
-  console.log(data.fo)
+import api from './api/groupBuy'
+api.groupBuy().then(data => {
+  console.log(data.goods[0])
 })
 
 const array = [undefined, undefined, undefined, 1, 2, 3,undefined,4]

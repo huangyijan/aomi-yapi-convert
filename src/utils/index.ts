@@ -41,7 +41,7 @@ const dealApiObj = (data: any) => {
 
         if (data instanceof Object && hasProperty(data, 'name') && hasProperty(data, 'ordinal')) {
             // 对状态对象处理，yapi 文档自动生成问题，状态字段一般都是呈现出object，实际为string
-            data = { type: 'string', description, default: '无' }
+            data = { type: 'string', description, default: '无', ordinal: true }
         }
 
     }
@@ -74,11 +74,13 @@ export const showExampleStrByType = (value: unknown) => {
 
 /** 后台类型转前端类型 */
 export const transformType = (serviceType: string) => {
+
     switch (serviceType) {
     case 'integer':
         return 'number'
     case 'bool':
-        return 'boolean'
+            return 'boolean'
+    
     default:
         return serviceType
     }
@@ -98,10 +100,13 @@ export const getTypeByValue = (value: { constructor: ArrayConstructor }) => {
 /** 处理后台静态类型数据和错误状态的Api */
 export const getCorrectType = (value: any) => {
     let type = getTypeByValue(value)
+
     if (type === 'object') {
-        if (Object.prototype.hasOwnProperty.call(value, 'type')) {
+        if (hasProperty(value, 'type') && hasProperty(value, 'description')) {
             type = transformType(value.type)
-        }
+        } else if (hasProperty(value, 'name') && hasProperty(value, 'ordinal')) {
+            type = 'string' // 状态字段处理
+        } 
     }
     return type
 }
@@ -127,8 +132,7 @@ export const getLegalJson = (reqBody: string) => {
 /** 处理子序列jsdoc类型 */
 export const configJsdocType = (value: any) => {
     const type = getCorrectType(value)
-    if (type === 'object') { // 真的要传object， TODO: 子Object 对象序列
-    }
+
     return type
 }
 

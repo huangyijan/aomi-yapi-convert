@@ -65,3 +65,9 @@ export const getOneApiConfigJsdoc = (path: string, paramsName: string, hasNoteDa
     const requestName = getApiName(path)
     return { requestName, requestPath, requestParams }
 }
+
+
+/** 首字母大写 */
+export const getUpperCaseName = (name: string) => {
+    return name.replace(/^([a-zA-Z])/, (_, item: string) => item.toUpperCase())
+}

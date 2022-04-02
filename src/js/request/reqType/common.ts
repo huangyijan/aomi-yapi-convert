@@ -1,10 +1,6 @@
 import { getTypeByValue } from '../../../utils'
-import { getOneApiConfig } from '../../../utils/str-operate'
+import { getOneApiConfig, getUpperCaseName } from '../../../utils/str-operate'
 
-/** 首字母大写 */
-export const getUpperCaseName = (name: string) => {
-  return name.replace(/^([a-zA-Z])/, (_, item: string) => item.toUpperCase())
-}
 
 /** 获取传参名称 */
 export const getNoteNameByParamsType = (item: JsDocApiItem) => {
