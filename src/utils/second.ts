@@ -8,8 +8,7 @@ export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) 
 
   const commonArr = keyNote.map(key => {
     const type = getTypeByValue(arrayItem[key])
-    const description = String(arrayItem[key])
-
+    const description = String(arrayItem[key]) // 暂时只是序列了两层，超过了三层的没有处理,
     return {
       key, type, description, default: ''
     }
@@ -37,11 +36,14 @@ export const getNormalObjectNote = (data: { [key: string]: any }, typeName: stri
 export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeName: string) => {
   if (hasProperty(objectValue, 'mock')) return ''
   const keys = Object.keys(objectValue)
-  const commonArr = keys.map(key => {
-    const { type, description } = objectValue[key]
-    const defaultStr = objectValue[key].default
+  const commonArr = keys.map(key => { // TODO： 在不是正常的object对象处理
+    let type = getTypeByValue(objectValue[key].default)
+
+    const description = objectValue[key].description
+    const defaultStr = objectValue[key].default || ''
     return { key, type, description, default: defaultStr }
   })
+
   return getCommandNote(commonArr, addTypeName)
 }
 
@@ -73,6 +75,7 @@ export const getArrayTypeNote = (arrayValue: any, addTypeName: string) => {
 
 /** 处理第二层级的array和object */
 export const getSecondNoteAndName = (value: any, addTypeName: string, type: string, appendNoteJsdocType: string) => {
+
   if (type.includes('array')) {
     const typeName = addTypeName.substring(0, addTypeName.length - 2)
     const addNote = getArrayTypeNote(value, typeName)

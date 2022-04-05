@@ -73,13 +73,13 @@ export const getUpperCaseName = (name: string) => {
 }
 
 export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) => {
+    
     return keyNote.reduce((pre, cur, index) => {
-        const { key, type, description } = cur
+        const { key, type, description= '' } = cur
         const defaultStr = cur.default ? ` default: ${cur.default}` : ''
-
+        
         pre += `  * @property {${type}} [${key}] ${description} ${defaultStr} \n`
         if (index === keyNote.length - 1) pre += `*/\n`
-
         return pre
     }, `/** 
   * @typedef ${typeName}\n`)
