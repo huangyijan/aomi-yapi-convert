@@ -1,0 +1,91 @@
+import inquirer from 'inquirer'
+import { saveFile } from '../utils/file'
+
+const ask = function () {
+  return new Promise(resolve => {
+    inquirer.prompt([
+      {
+        message: '请输入yapi地址：',
+        name: 'yapiURL',
+        type: 'input',
+        validate(input) {
+          if (!input) return 'it\'s reuqired'
+          if (!/https?/.test(input)) return 'it need to start with http or https'
+          return true
+        },
+      },
+      {
+        message: 'choose documents',
+        name: 'group',
+        type: 'checkbox',
+        when(answers) {
+          if (/\.html([?#].*)?$/.test(answers.yapiURL)) {
+            answers.yapiURL = String(answers.yapiURL)
+              .replace(/(https?:\/\/[^/]*\/[^/]*).*/, '$1')
+            return true
+          }
+          return false
+        },
+        async choices({ yapiURL }) {
+          console.log(yapiURL)
+          resolve(yapiURL)
+          // const url = yapiURL + '/yapi-resources'
+          // const resources = await request(url)
+          // if (!(resources instanceof Array)) throw `${yapiURL} may not a yapi document url`
+          // return Array.from(resources).map(item => ({
+          //   name: item.name,
+          //   value: yapiURL + String(item.url).replace(/#.*/, '').replace(/\?.*/, $ => (
+          //     $.replace(/=([^&]*)(?=&?)/g, (_, $1) => '=' + encodeURIComponent($1))
+          //   )),
+          // }))
+        },
+      },
+      {
+        message: 'what\'s kind of the file?',
+        name: 'version',
+        type: 'list',
+        choices: [
+          { name: 'javascript', value: 'js' },
+          { name: 'typescript', value: 'ts' },
+        ]
+      },
+      {
+        message: 'where to output?',
+        name: 'output',
+        type: 'input',
+        default: ({ version }) => 'src/api.' + version,
+      },
+      {
+        message: 'need to save a config file?',
+        name: 'saveConfig',
+        type: 'confirm',
+        default: true
+      },
+    ]).then(answers => {
+      answers = Object.assign({}, answers, {
+        axiosFrom: '',
+        customResponse: '',
+        addHostToBaseUrl: false,
+        protocol: 'https',
+      })
+      if (answers.group) {
+        answers.yapiURL = answers.group
+        delete answers.group
+      }
+      if (typeof answers.yapiURL === 'string')
+        answers.yapiURL = [answers.yapiURL]
+      if (answers.saveConfig) {
+        delete answers.saveConfig
+        delete answers.group
+        saveFile(
+          'api.config.json',
+          JSON.stringify(answers, null, 2) + '\n',
+          () => console.log('save config file success: api.config.json')
+        )
+      }
+      resolve(answers)
+    })
+  })
+}
+
+export default ask

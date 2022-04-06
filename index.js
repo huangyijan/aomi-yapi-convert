@@ -17,3 +17,5 @@ const target = array.reduce((pre, curr) => {
 }, [])
 console.log(target)
 
+
+const testAgrex = /(\[[\d.]+\s?,\s?[\d.]+\],?)/
