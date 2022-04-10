@@ -90,9 +90,9 @@ const generatorFileList = (data: Array<JsDocMenuItem>) => {
 
 
 /** 生成带有注释的api-js文件，注释有文档链接，可以直接跳转文档页面 */
-export const getApiDocWithJsDoc = async (url: string) => {
-    // const fileString = await request(url)
-    const fileString = await readFile(url) // 本地文件流测试用
+export const getApiDocWithJsDoc = async (url: string, token: string) => {
+    const fileString = await request(url, token)
+    // const fileString = await readFile(url) // 本地文件流测试用
     try {
         const MenuList: Array<JsDocMenuItem> = JSON.parse(fileString)
         generatorFileList(MenuList)

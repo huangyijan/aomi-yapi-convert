@@ -8,7 +8,7 @@ const projectRegex = /^(https?:)\/\/(.*)\/project\/(\d+)\/.*/
 let menus: any[] = []
 
 const ask = function () {
-  return new Promise(resolve => {
+  return new Promise<ApiConfig>(resolve => {
     inquirer.prompt([
       {
         message: '请输入yapi地址(含projectId)：',
@@ -28,7 +28,7 @@ const ask = function () {
         type: 'input',
         validate(input) {
           if (!input) return '请复制粘贴你的token到这, example:eyJhbGciOiJIUzI ...... pz7uXMwOO9CVwSR8c'
-          if (input.length<100) return 'token长度不够，请问是否粘贴了其他字段'
+          if (input.length < 100) return 'token长度不够，请问是否粘贴了其他字段'
           return true
         },
       },
@@ -43,7 +43,7 @@ const ask = function () {
         name: 'group',
         type: 'checkbox',
         when: (answers) => answers.isLoadFullApi === false,
-        async choices(answers: {yapiURL: string, token: string}) { 
+        async choices(answers: { yapiURL: string, token: string }) {
           const { yapiURL, token } = answers
           const [_, protocol, host, projectId] = yapiURL.match(projectRegex) as RegExpMatchArray
           const MenuUrl = `${protocol}//${host}/api/interface/list_menu?project_id=${projectId}`
@@ -60,7 +60,7 @@ const ask = function () {
             } else {
               throw `${MenuRes.errmsg}`
             }
- 
+
           } catch (error) {
             throw `无法解析文档地址，请检查token是否过期或者yapi地址不正确`
           }
@@ -93,41 +93,44 @@ const ask = function () {
         type: 'confirm',
         default: true
       },
-    ]).then(answers => {
+    ]).then((answers: Answers) => {
 
-      const { yapiURL, group, outputDir } = answers as Answers
+      const { yapiURL, group, outputDir, isLoadFullApi } = answers
       const [_, protocol, host, projectId] = yapiURL.match(projectRegex) as RegExpMatchArray
-      
-      
 
-      const project: any = {
+
+
+      const projects: any = {
         projectId: projectId,
         outputDir,
+        isLoadFullApi
       }
       if (group) {
-       const groupDetails = group.map(catId => {
-         const {name} = menus.find(item => item._id === catId)
-         return {catId, name}
-       })
-        project.projects = [groupDetails]
+        const groupDetails = group.map(catId => {
+          const { name } = menus.find(item => item._id === catId)
+          return { catId, name }
+        })
+        projects.group = [groupDetails]
       }
 
-      answers = Object.assign({}, answers, {
+      const config = Object.assign({}, answers, {
         axiosFrom: '',
-        protocol, host, project
+        protocol, host, projects: [projects]
       })
 
-      if (answers.saveConfig) {
-        delete answers.saveConfig
-        delete answers.group
+      if (config.saveConfig) {
+        delete config.saveConfig
+        delete config.group
+        delete config.isLoadFullApi
+        delete config.outputDir
 
         saveFile(
           'api.config.json',
-          JSON.stringify(answers, null, 2) + '\n',
+          JSON.stringify(config, null, 2) + '\n',
           () => console.log('配置文件生成成功: api.config.json')
         )
       }
-      resolve(answers)
+      resolve(config)
     })
   })
 }

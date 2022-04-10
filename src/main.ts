@@ -7,22 +7,22 @@ const demoUrl = baseUrl + '/api/interface/list?page=1&limit=200&project_id=445' 
 const projectMenuUrl = baseUrl + '/api/interface/list_menu?project_id=445' // 菜單列表
 const jsonUrl = 'http://yapi.miguatech.com/api/plugin/export?type=json&pid=445&status=all&isWiki=false'
 const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjQ2NiwiaWF0IjoxNjQ3NDA1MjA0LCJleHAiOjE2NDgwMTAwMDR9.2IIdw5ZFCzxHLoOwRay4Sn76M1pz7uXMwOO9CVwSR8c'
-enum Type {
+export enum Type {
     Simple,
     Normal,
     Ts
 }
 
-const getDocByType = (type: Type) => {
+export const getDocByType = (type: Type, token: string, url: string) => {
     switch (type) {
     case Type.Simple:
-        getApiDocWithNoNote(projectMenuUrl, token)
+        getApiDocWithNoNote(url, token)
         break
     case Type.Normal:
-        // getApiDocWithJsDoc(jsonUrl)
-        getApiDocWithJsDoc('./api/fullApi.js')
+        getApiDocWithJsDoc(url, token)
+        // getApiDocWithJsDoc('./api/fullApi.js')
         break
     }
 }
 
-getDocByType(Type.Normal)
+// getDocByType(Type.Normal, token, jsonUrl)

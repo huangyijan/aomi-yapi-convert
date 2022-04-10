@@ -1,75 +1,16 @@
 {
   "yapiURL": "http://yapi.miguatech.com/project/445/interface/api",
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjQ2NiwiaWF0IjoxNjQ5MjQ3OTExLCJleHAiOjE2NDk4NTI3MTF9.e62S6eut_9as_xxAIFaHYH2-fhT1tug__kuCnEPI_34",
-  "isLoadFullApi": false,
   "version": "js",
   "isNeedType": true,
-  "outputDir": "src/api/",
   "axiosFrom": "",
   "protocol": "http:",
   "host": "yapi.miguatech.com",
-  "project": {
-    "projectId": "445",
-    "outputDir": "src/api/",
-    "projects": [
-      [
-        {
-          "catId": 8366,
-          "name": "公共分类"
-        },
-        {
-          "catId": 8546,
-          "name": "客户端"
-        },
-        {
-          "catId": 8564,
-          "name": "前端分类"
-        },
-        {
-          "catId": 8627,
-          "name": "图片组功能"
-        },
-        {
-          "catId": 8663,
-          "name": "阶梯运费"
-        },
-        {
-          "catId": 8672,
-          "name": "营销分类"
-        },
-        {
-          "catId": 8714,
-          "name": "后端分类"
-        },
-        {
-          "catId": 8731,
-          "name": "售后管理"
-        },
-        {
-          "catId": 8735,
-          "name": "商品模板"
-        },
-        {
-          "catId": 8879,
-          "name": "超市瀑布流"
-        },
-        {
-          "catId": 8939,
-          "name": "站点配置"
-        },
-        {
-          "catId": 8987,
-          "name": "公告"
-        },
-        {
-          "catId": 9059,
-          "name": "首页"
-        },
-        {
-          "catId": 9077,
-          "name": "新人有礼"
-        }
-      ]
-    ]
-  }
+  "projects": [
+    {
+      "projectId": "445",
+      "outputDir": "src/api/",
+      "isLoadFullApi": true
+    }
+  ]
 }
