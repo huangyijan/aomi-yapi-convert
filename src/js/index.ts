@@ -105,8 +105,8 @@ export const getApiDocWithJsDoc = async (url: string) => {
 
 
 
-export const getFullDoc = async (url: string) => {
-    const file = await request(url)
+export const getFullDoc = async (url: string, token: string) => {
+    const file = await request(url, token)
     saveFile('./api/fullApi.js', file)
 
 }

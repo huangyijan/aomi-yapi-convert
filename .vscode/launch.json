@@ -7,11 +7,24 @@
     {
       "type": "node",
       "request": "launch",
-      "name": " Launch Program",
+      "name": "常规调试",
       "skipFiles": [
         "<node_internals>/**"
       ],
       "program": "${workspaceFolder}/out/main.js",
+      "outFiles": [
+        "${workspaceFolder}/out/**/*.js"
+      ]
+    },
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "inquire调试",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/out/enter/index.js",
+      "console": "integratedTerminal",
       "outFiles": [
         "${workspaceFolder}/out/**/*.js"
       ]

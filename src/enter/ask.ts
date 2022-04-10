@@ -1,86 +1,130 @@
 import inquirer from 'inquirer'
+import { hasProperty } from '../utils'
 import { saveFile } from '../utils/file'
+import { request } from '../utils/request'
+
+const projectRegex = /^(https?:)\/\/(.*)\/project\/(\d+)\/.*/
+
+let menus: any[] = []
 
 const ask = function () {
   return new Promise(resolve => {
     inquirer.prompt([
       {
-        message: '请输入yapi地址：',
+        message: '请输入yapi地址(含projectId)：',
         name: 'yapiURL',
         type: 'input',
         validate(input) {
-          if (!input) return 'it\'s reuqired'
-          if (!/https?/.test(input)) return 'it need to start with http or https'
+          if (!input) return '请复制粘贴你的yapi文档到这'
+          if (!/https?/.test(input)) return '地址需要以http或https开头'
+          const isLegalUrl = projectRegex.test(input)
+          if (!isLegalUrl) return '地址栏请包含projectId,example: http://{hostname}/project/{projectId}/***'
           return true
         },
       },
       {
-        message: 'choose documents',
-        name: 'group',
-        type: 'checkbox',
-        when(answers) {
-          if (/\.html([?#].*)?$/.test(answers.yapiURL)) {
-            answers.yapiURL = String(answers.yapiURL)
-              .replace(/(https?:\/\/[^/]*\/[^/]*).*/, '$1')
-            return true
-          }
-          return false
-        },
-        async choices({ yapiURL }) {
-          console.log(yapiURL)
-          resolve(yapiURL)
-          // const url = yapiURL + '/yapi-resources'
-          // const resources = await request(url)
-          // if (!(resources instanceof Array)) throw `${yapiURL} may not a yapi document url`
-          // return Array.from(resources).map(item => ({
-          //   name: item.name,
-          //   value: yapiURL + String(item.url).replace(/#.*/, '').replace(/\?.*/, $ => (
-          //     $.replace(/=([^&]*)(?=&?)/g, (_, $1) => '=' + encodeURIComponent($1))
-          //   )),
-          // }))
+        message: '请粘贴yapi token(打开网站network 接口header可看)：',
+        name: 'token',
+        type: 'input',
+        validate(input) {
+          if (!input) return '请复制粘贴你的token到这, example:eyJhbGciOiJIUzI ...... pz7uXMwOO9CVwSR8c'
+          if (input.length<100) return 'token长度不够，请问是否粘贴了其他字段'
+          return true
         },
       },
       {
-        message: 'what\'s kind of the file?',
+        message: '是否需要加载全部接口？',
+        name: 'isLoadFullApi',
+        type: 'confirm',
+        default: true
+      },
+      {
+        message: '选择需要加载的api模块: ',
+        name: 'group',
+        type: 'checkbox',
+        when: (answers) => answers.isLoadFullApi === false,
+        async choices(answers: {yapiURL: string, token: string}) { 
+          const { yapiURL, token } = answers
+          const [_, protocol, host, projectId] = yapiURL.match(projectRegex) as RegExpMatchArray
+          const MenuUrl = `${protocol}//${host}/api/interface/list_menu?project_id=${projectId}`
+          try {
+            const fileString = await request(MenuUrl, token)
+            const MenuRes = JSON.parse(fileString)
+            if (!hasProperty(MenuRes, 'errcode')) throw "cannot find errcode, maybe service error"
+            if (!MenuRes.errcode) {
+              menus = MenuRes.data
+              return menus.map((menu: any) => ({
+                name: menu.name,
+                value: menu._id
+              }))
+            } else {
+              throw `${MenuRes.errmsg}`
+            }
+ 
+          } catch (error) {
+            throw `无法解析文档地址，请检查token是否过期或者yapi地址不正确`
+          }
+        },
+      },
+      {
+        message: '请选择生成文件类型',
         name: 'version',
         type: 'list',
         choices: [
-          { name: 'javascript', value: 'js' },
-          { name: 'typescript', value: 'ts' },
+          { name: 'javascript(暂时只有jsDoc版本)', value: 'js' },
+          // { name: 'typescript', value: 'ts' }, // 下个版本再搞ts
         ]
       },
       {
-        message: 'where to output?',
-        name: 'output',
-        type: 'input',
-        default: ({ version }) => 'src/api.' + version,
+        message: '是否需要提示？(recommend!)',
+        name: 'isNeedType',
+        type: 'confirm',
+        default: true
       },
       {
-        message: 'need to save a config file?',
+        message: '请选择在哪个文件夹下输出生成的api文件?',
+        name: 'outputDir',
+        type: 'input',
+        default: 'src/api/'
+      },
+      {
+        message: '是否需要生成一份配置文件?(recommend!)',
         name: 'saveConfig',
         type: 'confirm',
         default: true
       },
     ]).then(answers => {
+
+      const { yapiURL, group, outputDir } = answers as Answers
+      const [_, protocol, host, projectId] = yapiURL.match(projectRegex) as RegExpMatchArray
+      
+      
+
+      const project: any = {
+        projectId: projectId,
+        outputDir,
+      }
+      if (group) {
+       const groupDetails = group.map(catId => {
+         const {name} = menus.find(item => item._id === catId)
+         return {catId, name}
+       })
+        project.projects = [groupDetails]
+      }
+
       answers = Object.assign({}, answers, {
         axiosFrom: '',
-        customResponse: '',
-        addHostToBaseUrl: false,
-        protocol: 'https',
+        protocol, host, project
       })
-      if (answers.group) {
-        answers.yapiURL = answers.group
-        delete answers.group
-      }
-      if (typeof answers.yapiURL === 'string')
-        answers.yapiURL = [answers.yapiURL]
+
       if (answers.saveConfig) {
         delete answers.saveConfig
         delete answers.group
+
         saveFile(
           'api.config.json',
           JSON.stringify(answers, null, 2) + '\n',
-          () => console.log('save config file success: api.config.json')
+          () => console.log('配置文件生成成功: api.config.json')
         )
       }
       resolve(answers)

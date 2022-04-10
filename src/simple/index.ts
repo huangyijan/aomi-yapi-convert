@@ -81,8 +81,8 @@ const generatorFileList = ({ data }: { data: Array<MenuItem> }) => {
 }
 
 /** 生成没有注释的API文件，注释有文档链接，可以直接跳转 */
-export const getApiDocWithNoNote = async (url: string) => {
-    const fileString = await request(url)
+export const getApiDocWithNoNote = async (url: string, token: string) => {
+    const fileString = await request(url, token)
     try {
         const MenuList = JSON.parse(fileString)
         generatorFileList(MenuList)

@@ -18,4 +18,26 @@ const target = array.reduce((pre, curr) => {
 console.log(target)
 
 
-const testAgrex = /(\[[\d.]+\s?,\s?[\d.]+\],?)/
+const testRegex = /(\[[\d.]+\s?,\s?[\d.]+\],?)/
+
+/** 设计一下配置文件 */
+const targetJson = {
+  protocol: '',
+  host: '',
+  token: '',
+  version: '',
+  axiosFrom: '',
+  projects: [
+    {
+      projectId: 445,
+      outputDir: '',
+      group: [
+        {
+          catId: 8366,
+          outputDir: '',
+          fileName: ''
+        }
+      ]
+    }
+  ]
+}
