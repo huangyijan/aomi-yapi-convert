@@ -89,5 +89,4 @@ export const getApiDocWithNoNote = async (url: string, token: string) => {
     } catch (error) {
         console.log(error)
     }
-    console.log(fileString)
 }

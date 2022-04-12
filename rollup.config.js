@@ -1,8 +1,8 @@
 import typescript from 'rollup-plugin-typescript2';
 export default {
-  input: 'src/saveFile.ts',
+  input: 'src/enter/index.ts',
   output: {
-    file: 'dist/bundle.js',
+    file: 'dist/index.js',
     format: 'cjs'
   },
   plugins: [

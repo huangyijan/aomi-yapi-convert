@@ -1,7 +1,8 @@
 node_modules
 coverage
-dist
+dist/*
 yarn-error.log
 .DS_Store
 api/*
 out/*
+api.config.json

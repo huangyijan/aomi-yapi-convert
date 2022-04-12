@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "description": "application for aomi yapi web turn to .ts or .js api file",
   "license": "ISC",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "bin": {
+    "aomi-yapi-convert": "./bin/index.js"
+  },
   "scripts": {
     "dev": "rollup",
     "test": "jest",
