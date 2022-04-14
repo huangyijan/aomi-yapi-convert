@@ -14,7 +14,10 @@
       "program": "${workspaceFolder}/out/main.js",
       "outFiles": [
         "${workspaceFolder}/out/**/*.js"
-      ]
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      }
     },
     {
       "type": "pwa-node",

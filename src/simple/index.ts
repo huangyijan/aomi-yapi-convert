@@ -1,4 +1,4 @@
-import { getOneApiConfig } from '../utils/str-operate'
+import { getOneApiConfig, getOneApiConfigJsdoc } from '../utils/str-operate'
 import { saveFile } from '../utils/file'
 import { getMaxTimesObjectKeyName, getPathName } from '../utils'
 import { request } from '../utils/request'
@@ -22,13 +22,13 @@ const getNoteStringItem = (item: apiSimpleItem, project_id: number) => {
 }
 
 /** 配置请求主方法 */
-const getMainMethodItem = (item: apiSimpleItem) => {
-    const { requestName, requestPath, requestParams } = getOneApiConfig(item.path)
+const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean) => {
+    const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
+    const paramsName = isGetMethod ? 'params' : 'data'
+    const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName, hasNoteData)
     return `${requestName}: ${requestParams} => {
-    return fetch(${requestPath}, {
-    ...options,
-    method: '${item.method}'
-    })
+    const method = '${item.method}'
+    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
   },`
 }
 
@@ -49,7 +49,7 @@ const getApiFileConfig = (item: MenuItem) => {
 
         /** 先配置注释再配置请求主方法 */
         fileBufferStringChunk.push(getNoteStringItem(item, project_id))
-        fileBufferStringChunk.push(getMainMethodItem(item))
+        fileBufferStringChunk.push(getMainMethodItem(item, false))
 
         // 统计名字出现次数，用作文件夹命名依据
         const pathName = getPathName(item.path)
@@ -64,7 +64,7 @@ const getApiFileConfig = (item: MenuItem) => {
 }
 
 /** 处理API文件列表的生成 */
-const generatorFileList = ({ data }: { data: Array<MenuItem> }) => {
+const generatorFileList = ( data: Array<MenuItem> ) => {
     const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
 
     data.forEach((item: MenuItem) => {
