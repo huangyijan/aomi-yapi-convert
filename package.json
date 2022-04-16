@@ -21,6 +21,9 @@
     "lint": "eslint --ext .ts src/ --fix"
   },
   "repository": "https://github.com/huangyijan/aomi-yapi-convert",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "author": "yijian",
   "devDependencies": {
     "@types/inquirer": "^8.2.1",
