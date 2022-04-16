@@ -35,7 +35,7 @@ $ npx aomi-yapi-convert
 
 以添加script为示例，我们看下实际生成的效果
 
-![exampleTerminal](/example/yapi-terminal.png)
+![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-terminal.png)
 
 然后你就会发现在根目录会生成一个api.config.json的配置文件。目前暂时的配置约定是这样的
 
@@ -46,7 +46,7 @@ const targetJson = {
   token: '',
   version: '',
   "isNeedType": boolean, 这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
-  axiosFrom: '',
+  axiosFrom: '', // 这里配置自定义的请求目录，考虑到大部分时候我们都用axios的包，所以使用axios作为默认请求，你也可以使用自定义的请求。
   projects: [
     {
       projectId: 445,
@@ -66,9 +66,9 @@ const targetJson = {
 
 好了，走到一步了，如果没有出现意外的话，你会在src/api（如果输出文件没有修改的话）目录下看到由插件自动化生成api文件。示例：
 
-![exampleTerminal](/example/yapi-code.png)
+![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code.png)
 
 然后就可以愉快使用了。使用的时候将会获得非常良好的提示体验。
 
 使用示例：
-![exampleTerminal](/example/yapi-use-demo.png)
+![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-use-demo.png)
