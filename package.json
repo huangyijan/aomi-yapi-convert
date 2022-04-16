@@ -1,6 +1,6 @@
 {
   "name": "aomi-yapi-convert",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "application for aomi yapi web turn to .ts or .js api file",
   "license": "ISC",
   "main": "dist/index.js",
@@ -16,6 +16,7 @@
   "scripts": {
     "dev": "rollup",
     "test": "jest",
+    "build:api": "node out/enter/index.js",
     "build": "rollup -c",
     "lint": "eslint --ext .ts src/ --fix"
   },

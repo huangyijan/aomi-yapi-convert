@@ -71,7 +71,7 @@ const ask = function () {
         name: 'version',
         type: 'list',
         choices: [
-          { name: 'javascript(暂时只有jsDoc版本)', value: 'js' },
+          { name: 'javascript(暂时只有js版本，ts下个版本)', value: 'js' },
           // { name: 'typescript', value: 'ts' }, // 下个版本再搞ts
         ]
       },
@@ -93,9 +93,15 @@ const ask = function () {
         type: 'confirm',
         default: true
       },
+      {
+        message: '是否需要马上生成api文件?(ps: 非全量更新可以先自定义配置api文件的具体路径)',
+        name: 'runNow',
+        type: 'confirm',
+        default: true,
+      },
     ]).then((answers: Answers) => {
 
-      const { yapiURL, group, outputDir, isLoadFullApi } = answers
+      const { yapiURL, group, outputDir, isLoadFullApi, runNow } = answers
       const [_, protocol, host, projectId] = yapiURL.match(projectRegex) as RegExpMatchArray
 
 
@@ -110,7 +116,7 @@ const ask = function () {
           const { name } = menus.find(item => item._id === catId)
           return { catId, name }
         })
-        projects.group = [groupDetails]
+        projects.group = groupDetails
       }
 
       const config = Object.assign({}, answers, {
@@ -123,14 +129,14 @@ const ask = function () {
         delete config.group
         delete config.isLoadFullApi
         delete config.outputDir
-
+        delete config.runNow
         saveFile(
           'api.config.json',
           JSON.stringify(config, null, 2) + '\n',
           () => console.log('配置文件生成成功: api.config.json')
         )
       }
-      resolve(config)
+      resolve({ ...config, runNow})
     })
   })
 }

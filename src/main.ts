@@ -7,23 +7,30 @@ const demoUrl = baseUrl + '/api/interface/list?page=1&limit=200&project_id=445' 
 const projectMenuUrl = baseUrl + '/api/interface/list_menu?project_id=445' // 菜單列表
 const jsonUrl = 'http://yapi.miguatech.com/api/plugin/export?type=json&pid=445&status=all&isWiki=false'
 const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjQ2NiwiaWF0IjoxNjQ5ODU5NzM0LCJleHAiOjE2NTA0NjQ1MzR9.hy77MubuqPcNTLKFxcpoagJ-6Xa3rtPRZOC7ul3M6Nc'
+
+const config = {
+    projectId: 445,
+    outputDir: "src/api/",
+    isLoadFullApi: false
+}
+
 export enum Type {
     Simple,
     Normal,
     Ts
 }
 
-export const getDocByType = (type: Type, token: string, url: string) => {
+export const getDocByType = (type: Type, token: string, url: string, config: ProjectConfig) => {
     switch (type) {
     case Type.Simple:
-        getApiDocWithNoNote(url, token)
+        getApiDocWithNoNote(url, token, config)
         break
     case Type.Normal:
-        getApiDocWithJsDoc(url, token)
+            getApiDocWithJsDoc(url, token, config)
         // getApiDocWithJsDoc('./api/fullApi.js')
         break
     }
 }
 
 const { NODE_ENV } = process.env
-if(NODE_ENV === 'development') getDocByType(Type.Simple, token, jsonUrl)
+if(NODE_ENV === 'development') getDocByType(Type.Simple, token, jsonUrl, config)

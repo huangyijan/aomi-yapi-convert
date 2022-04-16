@@ -12,15 +12,18 @@ interface Answers {
   version: Version,
   isNeedType: boolean,
   saveConfig?: boolean,
-  outputDir?: string
+  outputDir?: string,
+  runNow?: boolean
 }
 
 interface ProjectConfig {
   projectId: number | string,
   outputDir: string,
   isLoadFullApi: boolean
-  group: Array<{
+  group?: Array<{
     catId: number | string
+    fileName: string
+    outputDir: string
     name: string
   }>
 }
@@ -32,5 +35,6 @@ interface ApiConfig {
   axiosFrom: string
   protocol: string
   host: string
+  runNow?: boolean
   projects: Array<ProjectConfig>
 }

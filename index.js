@@ -31,6 +31,7 @@ const targetJson = {
     {
       projectId: 445,
       outputDir: '',
+      isLoadFullApi: false,
       group: [
         {
           catId: 8366,

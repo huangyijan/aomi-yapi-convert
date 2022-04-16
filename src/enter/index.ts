@@ -9,17 +9,18 @@ async function run() {
     config = require(configPath)
   } catch (_) {
     config = await ask()
+    if(!config.runNow) return 
   }
   const { token, protocol, host, isNeedType, projects } = config
   projects.forEach(item => {
-    const { projectId, outputDir } = item
+    const { projectId } = item
     const baseUrl = `${protocol}//${host}`
     const jsonUrl = `${baseUrl}/api/plugin/export?type=json&pid=${projectId}&status=all&isWiki=false`
     const menuUrl = `${baseUrl}/api/interface/list_menu?project_id=${projectId}`
     if (isNeedType) {
-      getDocByType(Type.Normal, token, jsonUrl)
+      getDocByType(Type.Normal, token, jsonUrl, item)
     } else {
-      getDocByType(Type.Simple, token, menuUrl)
+      getDocByType(Type.Simple, token, menuUrl, item)
     }
   })
 }

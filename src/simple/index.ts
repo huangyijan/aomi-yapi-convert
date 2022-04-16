@@ -1,6 +1,6 @@
 import { getOneApiConfig, getOneApiConfigJsdoc } from '../utils/str-operate'
 import { saveFile } from '../utils/file'
-import { getMaxTimesObjectKeyName, getPathName } from '../utils'
+import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
 import { request } from '../utils/request'
 import format from '../utils/format'
 /** 配置文件头尾 */
@@ -63,29 +63,37 @@ const getApiFileConfig = (item: MenuItem) => {
     return { FileName, fileBufferStringChunk }
 }
 
-/** 处理API文件列表的生成 */
-const generatorFileList = ( data: Array<MenuItem> ) => {
-    const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
 
+
+/** 处理API文件列表的生成 */
+const generatorFileList = ({ data }: { data: Array<MenuItem> }, config: ProjectConfig) => {
+    const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
+    const {outputDir, group, isLoadFullApi} = config
     data.forEach((item: MenuItem) => {
-        const { FileName, fileBufferStringChunk } = getApiFileConfig(item)
+        let { FileName, fileBufferStringChunk } = getApiFileConfig(item)
         if (!fileBufferStringChunk.length) return
+        
+        let dir = outputDir
+        const fileConfig = group?.find(menu => menu.catId === item._id)
+        if(!isLoadFullApi && !fileConfig) return
+        if (fileConfig && hasProperty(fileConfig, 'fileName')) FileName = fileConfig.fileName
+        if (fileConfig && hasProperty(fileConfig, 'outputDir')) dir = fileConfig.outputDir
 
         let FileNameTimes = nameChunk.get(FileName)
-
-        const savePath = `./api/${FileName}${FileNameTimes ? FileNameTimes++ : ''}.js`
+        
+        const savePath = `${dir}/${FileName}${FileNameTimes ? FileNameTimes++ : ''}.js`
         saveFile(savePath, configFileHeadFoot(fileBufferStringChunk, []))
-
+        
         nameChunk.set(FileName, FileNameTimes ? FileNameTimes : 1)
     })
 }
 
 /** 生成没有注释的API文件，注释有文档链接，可以直接跳转 */
-export const getApiDocWithNoNote = async (url: string, token: string) => {
+export const getApiDocWithNoNote = async (url: string, token: string, config: ProjectConfig) => {
     const fileString = await request(url, token)
     try {
         const MenuList = JSON.parse(fileString)
-        generatorFileList(MenuList)
+        generatorFileList(MenuList, config)
     } catch (error) {
         console.log(error)
     }

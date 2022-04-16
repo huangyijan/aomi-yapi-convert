@@ -1,6 +1,6 @@
 import { request } from '../utils/request'
 import { readFile, saveFile } from '../utils/file'
-import { getMaxTimesObjectKeyName, getPathName } from '../utils'
+import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
 import { getOneApiConfigJsdoc } from '../utils/str-operate'
 import { configFileHeadFoot } from '../simple'
 import { getReturnNoteStringItem, getReturnType } from './response/response'
@@ -73,15 +73,22 @@ const getApiFileConfig = (item: JsDocMenuItem) => {
 }
 
 /** 处理API文件列表的生成 */
-const generatorFileList = (data: Array<JsDocMenuItem>) => {
+const generatorFileList = (data: Array<JsDocMenuItem>, config: ProjectConfig) => {
     const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
+    const { outputDir, group, isLoadFullApi } = config
     data.forEach((item: JsDocMenuItem) => {
-        const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item)
-        if (!fileBufferStringChunk.length) return
+        let { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item)
+        if (!item.list.length || !fileBufferStringChunk.length) return
+        
+        let dir = outputDir
+        const fileConfig = group?.find(menu => menu.catId === item.list[0].catid)
+        if (!isLoadFullApi && !fileConfig) return
+        if (fileConfig && hasProperty(fileConfig, 'fileName')) FileName = fileConfig.fileName
+        if (fileConfig && hasProperty(fileConfig, 'outputDir')) dir = fileConfig.outputDir
 
         let FileNameTimes = nameChunk.get(FileName)
 
-        const savePath = `./api/${FileName}${FileNameTimes ? FileNameTimes++ : ''}.js`
+        const savePath = `${dir}/${FileName}${FileNameTimes ? FileNameTimes++ : ''}.js`
         saveFile(savePath, configFileHeadFoot(fileBufferStringChunk, noteStringChunk))
 
         nameChunk.set(FileName, FileNameTimes ? FileNameTimes : 1)
@@ -90,12 +97,12 @@ const generatorFileList = (data: Array<JsDocMenuItem>) => {
 
 
 /** 生成带有注释的api-js文件，注释有文档链接，可以直接跳转文档页面 */
-export const getApiDocWithJsDoc = async (url: string, token: string) => {
+export const getApiDocWithJsDoc = async (url: string, token: string, config: ProjectConfig) => {
     const fileString = await request(url, token)
     // const fileString = await readFile(url) // 本地文件流测试用
     try {
         const MenuList: Array<JsDocMenuItem> = JSON.parse(fileString)
-        generatorFileList(MenuList)
+        generatorFileList(MenuList, config)
     } catch (error) {
         console.log(error)
     }

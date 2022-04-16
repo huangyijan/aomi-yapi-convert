@@ -16,7 +16,7 @@
         "${workspaceFolder}/out/**/*.js"
       ],
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "development" // 配置方便调试
       }
     },
     {

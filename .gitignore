@@ -4,5 +4,6 @@ dist/*
 yarn-error.log
 .DS_Store
 api/*
+src/api/*
 out/*
 api.config.json
