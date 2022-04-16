@@ -79,7 +79,7 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
         const defaultStr = cur.default ? ` default: ${cur.default}` : ''
         
         pre += `  * @property {${type}} [${key}] ${description} ${defaultStr} \n`
-        if (index === keyNote.length - 1) pre += `*/\n`
+        if (index === keyNote.length - 1) pre += '*/\n'
         return pre
     }, `/** 
   * @typedef ${typeName}\n`)

@@ -16,16 +16,18 @@ interface Answers {
   runNow?: boolean
 }
 
+interface CatConfig {
+  catId: number | string
+  fileName: string
+  outputDir: string
+  name: string
+}
+
 interface ProjectConfig {
   projectId: number | string,
   outputDir: string,
   isLoadFullApi: boolean
-  group?: Array<{
-    catId: number | string
-    fileName: string
-    outputDir: string
-    name: string
-  }>
+  group?: Array<CatConfig>
 }
 interface ApiConfig {
   yapiURL: string

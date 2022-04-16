@@ -1,5 +1,5 @@
 import { request } from '../utils/request'
-import { readFile, saveFile } from '../utils/file'
+import { saveFile } from '../utils/file'
 import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
 import { getOneApiConfigJsdoc } from '../utils/str-operate'
 import { configFileHeadFoot } from '../simple'
@@ -71,27 +71,38 @@ const getApiFileConfig = (item: JsDocMenuItem) => {
     const FileName = getMaxTimesObjectKeyName(pathSet)
     return { FileName, fileBufferStringChunk, noteStringChunk }
 }
+/** 获取文件存储的路径 */
+const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: CatConfig | undefined, nameChunk: Map<string, number>) => {
+    let fileName = recommendName 
+    let dir = project.outputDir
+    // 判断用户是否有自定义配置，如果有取配置文件的。（TODO:用户配置不当可能会导致出错）
+    if (fileConfig && hasProperty(fileConfig, 'fileName')) fileName = fileConfig.fileName
+    if (fileConfig && hasProperty(fileConfig, 'outputDir')) dir = fileConfig.outputDir
+
+    let FileNameTimes = nameChunk.get(recommendName)
+    if (FileNameTimes) FileNameTimes++ // 如果map已经有值那我们就+1，防止用户命名冲突，虽然不太优雅
+    
+    const path =  `${dir}/${fileName}${FileNameTimes || ''}.js`
+    nameChunk.set(fileName, FileNameTimes || 1)
+    return path
+}
 
 /** 处理API文件列表的生成 */
 const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectConfig, config: ApiConfig) => {
     const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
-    const { outputDir, group, isLoadFullApi } = project
+    const { group, isLoadFullApi } = project
     data.forEach((item: JsDocMenuItem) => {
-        let { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item)
+        const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item)
         if (!item.list.length || !fileBufferStringChunk.length) return
         
-        let dir = outputDir
         const fileConfig = group?.find(menu => menu.catId === item.list[0].catid)
         if (!isLoadFullApi && !fileConfig) return
-        if (fileConfig && hasProperty(fileConfig, 'fileName')) FileName = fileConfig.fileName
-        if (fileConfig && hasProperty(fileConfig, 'outputDir')) dir = fileConfig.outputDir
 
-        let FileNameTimes = nameChunk.get(FileName)
+        const savePath = getSavePath(FileName, project, fileConfig, nameChunk)
+        const saveFileBuffer = configFileHeadFoot(fileBufferStringChunk, noteStringChunk, config) 
+        saveFile(savePath, saveFileBuffer)
 
-        const savePath = `${dir}/${FileName}${FileNameTimes ? FileNameTimes++ : ''}.js`
-        saveFile(savePath, configFileHeadFoot(fileBufferStringChunk, noteStringChunk, config))
-
-        nameChunk.set(FileName, FileNameTimes ? FileNameTimes : 1)
+        
     })
 }
 
@@ -99,7 +110,6 @@ const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectConfig, c
 /** 生成带有注释的api-js文件，注释有文档链接，可以直接跳转文档页面 */
 export const getApiDocWithJsDoc = async (url: string, config: ApiConfig, project: ProjectConfig) => {
     const fileString = await request(url, config.token)
-    // const fileString = await readFile(url) // 本地文件流测试用
     try {
         const MenuList: Array<JsDocMenuItem> = JSON.parse(fileString)
         generatorFileList(MenuList,project, config)
@@ -108,14 +118,3 @@ export const getApiDocWithJsDoc = async (url: string, config: ApiConfig, project
     }
 }
 
-
-
-
-
-export const getFullDoc = async (url: string, token: string) => {
-    const file = await request(url, token)
-    saveFile('./api/fullApi.js', file)
-
-}
-// 生成全部api.json文件
-// getFullDoc('http://yapi.miguatech.com/api/plugin/export?type=json&pid=445&status=all&isWiki=false')

@@ -1,4 +1,4 @@
-import { getOneApiConfig, getOneApiConfigJsdoc } from '../utils/str-operate'
+import { getOneApiConfigJsdoc } from '../utils/str-operate'
 import { saveFile } from '../utils/file'
 import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
 import { request } from '../utils/request'
@@ -64,28 +64,37 @@ const getApiFileConfig = (item: MenuItem) => {
     return { FileName, fileBufferStringChunk }
 }
 
+/** 获取文件存储的路径 */
+const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: CatConfig | undefined, nameChunk: Map<string, number>) => {
+    let fileName = recommendName
+    let dir = project.outputDir
+    // 判断用户是否有自定义配置，如果有取配置文件的。（TODO:用户配置不当可能会导致出错）
+    if (fileConfig && hasProperty(fileConfig, 'fileName')) fileName = fileConfig.fileName
+    if (fileConfig && hasProperty(fileConfig, 'outputDir')) dir = fileConfig.outputDir
 
+    let FileNameTimes = nameChunk.get(recommendName)
+    if (FileNameTimes) FileNameTimes++ // 如果map已经有值那我们就+1，防止用户命名冲突，虽然不太优雅
+
+    const path = `${dir}/${fileName}${FileNameTimes || ''}.js`
+    nameChunk.set(fileName, FileNameTimes || 1)
+    return path
+}
 
 /** 处理API文件列表的生成 */
 const generatorFileList = ({ data }: { data: Array<MenuItem> }, project: ProjectConfig, config: ApiConfig) => {
     const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
-    const {outputDir, group, isLoadFullApi} = project
+    const {group, isLoadFullApi} = project
     data.forEach((item: MenuItem) => {
-        let { FileName, fileBufferStringChunk } = getApiFileConfig(item)
+        const { FileName, fileBufferStringChunk } = getApiFileConfig(item)
         if (!fileBufferStringChunk.length) return
         
-        let dir = outputDir
         const fileConfig = group?.find(menu => menu.catId === item._id)
         if(!isLoadFullApi && !fileConfig) return
-        if (fileConfig && hasProperty(fileConfig, 'fileName')) FileName = fileConfig.fileName
-        if (fileConfig && hasProperty(fileConfig, 'outputDir')) dir = fileConfig.outputDir
 
-        let FileNameTimes = nameChunk.get(FileName)
+        const savePath = getSavePath(FileName, project, fileConfig, nameChunk)
+        const saveFileBuffer = configFileHeadFoot(fileBufferStringChunk, [], config) 
+        saveFile(savePath, saveFileBuffer)
         
-        const savePath = `${dir}/${FileName}${FileNameTimes ? FileNameTimes++ : ''}.js`
-        saveFile(savePath, configFileHeadFoot(fileBufferStringChunk, [], config))
-        
-        nameChunk.set(FileName, FileNameTimes ? FileNameTimes : 1)
     })
 }
 
