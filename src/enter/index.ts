@@ -18,9 +18,9 @@ async function run() {
     const jsonUrl = `${baseUrl}/api/plugin/export?type=json&pid=${projectId}&status=all&isWiki=false`
     const menuUrl = `${baseUrl}/api/interface/list_menu?project_id=${projectId}`
     if (isNeedType) {
-      getDocByType(Type.Normal, token, jsonUrl, item)
+      getDocByType(Type.Normal, config, jsonUrl, item)
     } else {
-      getDocByType(Type.Simple, token, menuUrl, item)
+      getDocByType(Type.Simple, config, menuUrl, item)
     }
   })
 }

@@ -20,17 +20,17 @@ export enum Type {
     Ts
 }
 
-export const getDocByType = (type: Type, token: string, url: string, config: ProjectConfig) => {
+export const getDocByType = (type: Type, config: ApiConfig, url: string, project: ProjectConfig) => {
     switch (type) {
     case Type.Simple:
-        getApiDocWithNoNote(url, token, config)
+            getApiDocWithNoNote(url, config, project)
         break
     case Type.Normal:
-            getApiDocWithJsDoc(url, token, config)
+            getApiDocWithJsDoc(url, config, project)
         // getApiDocWithJsDoc('./api/fullApi.js')
         break
     }
 }
 
 const { NODE_ENV } = process.env
-if(NODE_ENV === 'development') getDocByType(Type.Simple, token, jsonUrl, config)
+// if(NODE_ENV === 'development') getDocByType(Type.Simple, token, jsonUrl, config)

@@ -4,9 +4,10 @@ import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
 import { request } from '../utils/request'
 import format from '../utils/format'
 /** 配置文件头尾 */
-export const configFileHeadFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>) => {
+export const configFileHeadFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>, config: ApiConfig) => {
+    const axiosFrom = config.axiosFrom || 'import fetch from \'axios\''
     fileBufferStringChunk.unshift('export default {')
-    fileBufferStringChunk.unshift('import { fetch } from \'@/service/fetch/index\'')
+    fileBufferStringChunk.unshift(axiosFrom)
     fileBufferStringChunk.push('}')
     fileBufferStringChunk.push(...noteStringChunk)
     return format(fileBufferStringChunk)
@@ -66,9 +67,9 @@ const getApiFileConfig = (item: MenuItem) => {
 
 
 /** 处理API文件列表的生成 */
-const generatorFileList = ({ data }: { data: Array<MenuItem> }, config: ProjectConfig) => {
+const generatorFileList = ({ data }: { data: Array<MenuItem> }, project: ProjectConfig, config: ApiConfig) => {
     const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
-    const {outputDir, group, isLoadFullApi} = config
+    const {outputDir, group, isLoadFullApi} = project
     data.forEach((item: MenuItem) => {
         let { FileName, fileBufferStringChunk } = getApiFileConfig(item)
         if (!fileBufferStringChunk.length) return
@@ -82,18 +83,18 @@ const generatorFileList = ({ data }: { data: Array<MenuItem> }, config: ProjectC
         let FileNameTimes = nameChunk.get(FileName)
         
         const savePath = `${dir}/${FileName}${FileNameTimes ? FileNameTimes++ : ''}.js`
-        saveFile(savePath, configFileHeadFoot(fileBufferStringChunk, []))
+        saveFile(savePath, configFileHeadFoot(fileBufferStringChunk, [], config))
         
         nameChunk.set(FileName, FileNameTimes ? FileNameTimes : 1)
     })
 }
 
 /** 生成没有注释的API文件，注释有文档链接，可以直接跳转 */
-export const getApiDocWithNoNote = async (url: string, token: string, config: ProjectConfig) => {
-    const fileString = await request(url, token)
+export const getApiDocWithNoNote = async (url: string, config: ApiConfig, project: ProjectConfig) => {
+    const fileString = await request(url, config.token)
     try {
         const MenuList = JSON.parse(fileString)
-        generatorFileList(MenuList, config)
+        generatorFileList(MenuList, project, config)
     } catch (error) {
         console.log(error)
     }
