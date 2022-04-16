@@ -41,24 +41,29 @@ $ npx aomi-yapi-convert
 
 ```
 const targetJson = {
-  protocol: '', // 这些让程序自动生成就好了，看一眼就明白
-  host: '',
-  token: '',
-  version: '',
+  protocol: '', // 协议头https: 或http: 由文档地址决定
+  host: '', // example: baidu.com
+  token: '', // 如果token失效了，请通过yapi文档里面的cookie获取最新的token，这里token失效比较麻烦，后面再考虑有没有更好的方法
+  version: '', // 目前只支持jsdoc版本，设置默认就可以了
   "isNeedType": boolean, 这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
   axiosFrom: '', // 这里配置自定义的请求目录，考虑到大部分时候我们都用axios的包，所以使用axios作为默认请求，你也可以使用自定义的请求。
-  projects: [
+  projects: [ // 可以通过传入多个project项来完成添加不同项目的api文件
     {
-      projectId: 445,
+      projectId: 445, // 项目id
       outputDir: '', // 统一的文件生成路径，请注意默认文件夹是src/api目录，如果该目录下已经有文件了，建议在该目录起一个子目录名称：ep: src/api/auto/.
-      isLoadFullApi: false, // 这里配置是否全量加载api文件
+      isLoadFullApi: false, // 这里配置是否全量加载api文件，原有项目已经有api的文件，请设置为false局部更新，全量更新会生成重复代码，徒增冗余
       group: [
         {
-          catId: 8366, // 后台的菜单id
+          catId: 8366, // 后台项目下的菜单id
           outputDir: '', // 可以自定义生成文件路径，不设置继承project的路径
           fileName: '' // 如果不喜欢程序生成的文件名可以自定义文件名
         }
       ]
+    },
+    { 
+      projectId: 220,
+      outputDir: '',
+      isLoadFullApi: true
     }
   ]
 }
