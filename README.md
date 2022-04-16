@@ -45,11 +45,12 @@ const targetJson = {
   host: '',
   token: '',
   version: '',
+  "isNeedType": boolean, 这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
   axiosFrom: '',
   projects: [
     {
       projectId: 445,
-      outputDir: '', // 统一的文件生成路径
+      outputDir: '', // 统一的文件生成路径，请注意默认文件夹是src/api目录，如果该目录下已经有文件了，建议在该目录起一个子目录名称：ep: src/api/auto/.
       isLoadFullApi: false, // 这里配置是否全量加载api文件
       group: [
         {
@@ -63,3 +64,11 @@ const targetJson = {
 }
 ```
 
+好了，走到一步了，如果没有出现意外的话，你会在src/api（如果输出文件没有修改的话）目录下看到由插件自动化生成api文件。示例：
+
+![exampleTerminal](/example/yapi-code.png)
+
+然后就可以愉快使用了。使用的时候将会获得非常良好的提示体验。
+
+使用示例：
+![exampleTerminal](/example/yapi-use-demo.png)
