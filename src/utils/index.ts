@@ -79,7 +79,7 @@ export const transformType = (serviceType: string) => {
     case 'integer':
         return 'number'
     case 'bool':
-            return 'boolean'
+        return 'boolean'
     
     default:
         return serviceType
@@ -137,7 +137,7 @@ export const configJsdocType = (value: any) => {
 }
 
 
- export const getDescription = (value: any) => {
+export const getDescription = (value: any) => {
     let description = ''
 
     if (hasProperty(value, 'description')) {

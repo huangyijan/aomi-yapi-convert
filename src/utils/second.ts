@@ -1,50 +1,50 @@
-import { transformType, hasProperty, getTypeByValue } from "."
-import { getCommandNote } from "./str-operate"
+import { transformType, hasProperty, getTypeByValue } from '.'
+import { getCommandNote } from './str-operate'
 
 /** 获取不正常序列化的数组对象注释 */
 export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) => {
-  const arrayItem = arrayValue[0]
-  const keyNote = Object.keys(arrayItem)
+    const arrayItem = arrayValue[0]
+    const keyNote = Object.keys(arrayItem)
 
-  const commonArr = keyNote.map(key => {
-    const type = getTypeByValue(arrayItem[key])
-    const description = String(arrayItem[key]) // 暂时只是序列了两层，超过了三层的没有处理,
-    return {
-      key, type, description, default: ''
-    }
-  })
-  return getCommandNote(commonArr, typeName)
+    const commonArr = keyNote.map(key => {
+        const type = getTypeByValue(arrayItem[key])
+        const description = String(arrayItem[key]) // 暂时只是序列了两层，超过了三层的没有处理,
+        return {
+            key, type, description, default: ''
+        }
+    })
+    return getCommandNote(commonArr, typeName)
 }
 
 /** 正常的数组对象注释 */
 export const getNormalObjectNote = (data: { [key: string]: any }, typeName: string) => {
-  const keyNote = Object.keys(data)
-  const commonArr: Array<keyNoteItem> = []
-  keyNote.reduce((pre, key) => {
-    const value = data[key]
-    if (!value || typeof value !== 'object') return pre
-    const description = value.description
-    const type = transformType(value.type)
-    const defaultStr = value.default
-    pre.push({ key, description, type, default: defaultStr })
-    return pre
-  }, commonArr)
-  return getCommandNote(commonArr, typeName)
+    const keyNote = Object.keys(data)
+    const commonArr: Array<keyNoteItem> = []
+    keyNote.reduce((pre, key) => {
+        const value = data[key]
+        if (!value || typeof value !== 'object') return pre
+        const description = value.description
+        const type = transformType(value.type)
+        const defaultStr = value.default
+        pre.push({ key, description, type, default: defaultStr })
+        return pre
+    }, commonArr)
+    return getCommandNote(commonArr, typeName)
 
 }
 
 export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeName: string) => {
-  if (hasProperty(objectValue, 'mock')) return ''
-  const keys = Object.keys(objectValue)
-  const commonArr = keys.map(key => { // TODO： 在不是正常的object对象处理
-    let type = getTypeByValue(objectValue[key].default)
+    if (hasProperty(objectValue, 'mock')) return ''
+    const keys = Object.keys(objectValue)
+    const commonArr = keys.map(key => { // TODO： 在不是正常的object对象处理
+        const type = getTypeByValue(objectValue[key].default)
 
-    const description = objectValue[key].description
-    const defaultStr = objectValue[key].default || ''
-    return { key, type, description, default: defaultStr }
-  })
+        const description = objectValue[key].description
+        const defaultStr = objectValue[key].default || ''
+        return { key, type, description, default: defaultStr }
+    })
 
-  return getCommandNote(commonArr, addTypeName)
+    return getCommandNote(commonArr, addTypeName)
 }
 
 /**
@@ -57,46 +57,46 @@ export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeNa
  * @returns {string}
  */
 export const getArrayTypeNote = (arrayValue: any, addTypeName: string) => {
-  if (!arrayValue.length && hasProperty(arrayValue, 'items')) { //  1、这里处理外部有一层Item
-    const data = arrayValue.items
-    if (hasProperty(data, 'type') && data.type === 'string') return 'string'
-    if (hasProperty(data, 'ordinal') && typeof data.ordinal === 'boolean') return 'string' // 后台状态字符创标志符
-    const note = getNormalObjectNote(data, addTypeName)
+    if (!arrayValue.length && hasProperty(arrayValue, 'items')) { //  1、这里处理外部有一层Item
+        const data = arrayValue.items
+        if (hasProperty(data, 'type') && data.type === 'string') return 'string'
+        if (hasProperty(data, 'ordinal') && typeof data.ordinal === 'boolean') return 'string' // 后台状态字符创标志符
+        const note = getNormalObjectNote(data, addTypeName)
+        return note
+    }
+
+    const type = typeof arrayValue[0]
+    if (type !== 'object') return type // 2、第二种情况处理
+
+    const note = getUnNormalObjectNote(arrayValue, addTypeName) // 3、第三种情况处理
     return note
-  }
-
-  const type = typeof arrayValue[0]
-  if (type !== 'object') return type // 2、第二种情况处理
-
-  const note = getUnNormalObjectNote(arrayValue, addTypeName) // 3、第三种情况处理
-  return note
 }
 
 
 /** 处理第二层级的array和object */
 export const getSecondNoteAndName = (value: any, addTypeName: string, type: string, appendNoteJsdocType: string) => {
 
-  if (type.includes('array')) {
-    const typeName = addTypeName.substring(0, addTypeName.length - 2)
-    const addNote = getArrayTypeNote(value, typeName)
+    if (type.includes('array')) {
+        const typeName = addTypeName.substring(0, addTypeName.length - 2)
+        const addNote = getArrayTypeNote(value, typeName)
 
-    if (addNote === 'string') type = 'string[]' // 处理字符串数组和特殊的api自动生成错误
-    if (addNote.includes('@typedef')) { // 有正常序列的Jsdoc
-      type = addTypeName
-      if ('string, boolean, number'.includes(addNote)) type = `${addNote}[]`
-      appendNoteJsdocType += addNote
+        if (addNote === 'string') type = 'string[]' // 处理字符串数组和特殊的api自动生成错误
+        if (addNote.includes('@typedef')) { // 有正常序列的Jsdoc
+            type = addTypeName
+            if ('string, boolean, number'.includes(addNote)) type = `${addNote}[]`
+            appendNoteJsdocType += addNote
+        }
+
     }
 
-  }
 
-
-  if (type.includes('object')) {
-    const addNote = getObjectTypeNote(value, addTypeName)
-    if (addNote) {
-      appendNoteJsdocType = addNote
-      type = addTypeName
+    if (type.includes('object')) {
+        const addNote = getObjectTypeNote(value, addTypeName)
+        if (addNote) {
+            appendNoteJsdocType = addNote
+            type = addTypeName
+        }
     }
-  }
 
-  return { note: appendNoteJsdocType, name: type }
+    return { note: appendNoteJsdocType, name: type }
 }

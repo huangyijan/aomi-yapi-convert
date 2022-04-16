@@ -1,6 +1,6 @@
-import { getOneApiConfig, getType } from "../../utils/str-operate"
-import { removeProperties, hasProperty, configJsdocType, getLegalJson, getDescription, getTypeByValue } from "../../utils"
-import { getSecondNoteAndName } from "../../utils/second"
+import { getOneApiConfig, getType } from '../../utils/str-operate'
+import { removeProperties, hasProperty, configJsdocType, getLegalJson, getDescription, getTypeByValue } from '../../utils'
+import { getSecondNoteAndName } from '../../utils/second'
 
 interface ReturnNoteStringItem {
     returnNameWithType: string
@@ -16,7 +16,7 @@ export const getReturnType = (returnName: string, resType: string) => {
 
 /** 获取返回的参数名 */
 const getReturnName = (requestName: string, value: any) => {
-    let returnName = requestName + 'Response'
+    const returnName = requestName + 'Response'
 
     const type = getTypeByValue(value)
     if (type === 'string' || type === 'array') return type // 如果是字符串或者数组，直接返回类型作为类型名
