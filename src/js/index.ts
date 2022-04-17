@@ -17,9 +17,9 @@ export const getNoteStringItem = (item: JsDocApiItem, project: ProjectConfig) =>
 
     const methodNote = `
   /**
-   * 功能描述：${item.title}${idNote}${getNoteParams(reqType, typeName, isGetMethod)} 
-   * update_time: ${getUpdateTime(item.up_time)}
-   * @link: ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
+   * @description ${item.title}${idNote}${getNoteParams(reqType, typeName, isGetMethod)} 
+   * @apiUpdateTime ${getUpdateTime(item.up_time)}
+   * @link ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
    * @return {Promise<${getReturnType(returnNameWithType, resType)}>}
    */`
     return { methodNote, typeName, reqType, resType }

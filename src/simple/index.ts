@@ -3,22 +3,36 @@ import { saveFile } from '../utils/file'
 import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
 import { request } from '../utils/request'
 import format from '../utils/format'
+
+/** 获取文件头部描述文件 */
+const getHeaderInfo = () => {
+    return `
+/** eslint-disable */
+/**
+ * @file 该文件由aomi-yapi-convert自动生成，请不要改动这个文件。
+ * @docUpdateTime ${new Date().toLocaleDateString()}
+ */
+    `
+}
+
 /** 配置文件头尾 */
 export const configFileHeadFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>, config: ApiConfig) => {
     const axiosFrom = config.axiosFrom || 'import fetch from \'axios\''
     fileBufferStringChunk.unshift('export default {')
     fileBufferStringChunk.unshift(axiosFrom)
+    fileBufferStringChunk.unshift(getHeaderInfo())
     fileBufferStringChunk.push('}')
     fileBufferStringChunk.push(...noteStringChunk)
     return format(fileBufferStringChunk)
 }
 
 /** 配置注释 */
-const getNoteStringItem = (item: apiSimpleItem, project_id: number) => {
+const getNoteStringItem = (item: apiSimpleItem, project_id: number, config: ApiConfig) => {
+    const {protocol, host} = config
     return `/**
-   * ${item.title}
-   * 更新时间: ${new Date(item.up_time * 1000).toLocaleDateString()}
-   * @link: http://yapi.miguatech.com/project/${project_id}/interface/api/${item._id}
+   * @description ${item.title} 
+   * @apiUpdateTime ${new Date(item.up_time * 1000).toLocaleDateString()}
+   * @link ${protocol}//${host}/project/${project_id}/interface/api/${item._id}
    */`
 }
 
@@ -40,7 +54,7 @@ const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean, project: P
  * @param project 项目组文件的配置
  * @returns {Object} {文件名：string, 单个API文件流主容器: string}
  */
-const getApiFileConfig = (item: MenuItem, project: ProjectConfig) => {
+const getApiFileConfig = (item: MenuItem, project: ProjectConfig, config: ApiConfig) => {
     const { list, project_id } = item
 
     const pathSet: TimesObject = {} // 处理文件夹命名的容器
@@ -51,7 +65,7 @@ const getApiFileConfig = (item: MenuItem, project: ProjectConfig) => {
         if (item.status === 'undone') return
 
         /** 先配置注释再配置请求主方法 */
-        fileBufferStringChunk.push(getNoteStringItem(item, project_id))
+        fileBufferStringChunk.push(getNoteStringItem(item, project_id, config))
         fileBufferStringChunk.push(getMainMethodItem(item, false, project))
 
         // 统计名字出现次数，用作文件夹命名依据
@@ -87,7 +101,7 @@ const generatorFileList = ({ data }: { data: Array<MenuItem> }, project: Project
     const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
     const {group, isLoadFullApi} = project
     data.forEach((item: MenuItem) => {
-        const { FileName, fileBufferStringChunk } = getApiFileConfig(item, project)
+        const { FileName, fileBufferStringChunk } = getApiFileConfig(item, project, config)
         if (!fileBufferStringChunk.length) return
         
         const fileConfig = group?.find(menu => menu.catId === item._id)
@@ -102,8 +116,8 @@ const generatorFileList = ({ data }: { data: Array<MenuItem> }, project: Project
 
 /** 生成没有注释的API文件，注释有文档链接，可以直接跳转 */
 export const getApiDocWithNoNote = async (url: string, config: ApiConfig, project: ProjectConfig) => {
-    const fileString = await request(url, config.token)
     try {
+        const fileString = await request(url, config.token)
         const MenuList = JSON.parse(fileString)
         generatorFileList(MenuList, project, config)
     } catch (error) {

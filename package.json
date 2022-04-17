@@ -11,8 +11,10 @@
     "node": ">=12.0.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "typings/index.d.ts"
   ],
+  "types": "./typings/index.d.ts",
   "scripts": {
     "dev": "rollup",
     "test": "jest",
