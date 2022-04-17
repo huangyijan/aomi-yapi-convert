@@ -25,13 +25,13 @@ const getReturnName = (requestName: string, value: any) => {
 }
 
 /** 配置返回注释 */
-export const getReturnNoteStringItem = (item: JsDocApiItem): ReturnNoteStringItem => {
+export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConfig): ReturnNoteStringItem => {
 
     const body = getLegalJson(item.res_body) // 获取合法的json数据
 
     if (typeof body !== 'object') return { returnNameWithType: 'string', resType: '' }
 
-    const { requestName } = getOneApiConfig(item.path)
+    const { requestName } = getOneApiConfig(item.path, project)
 
     const data = removeProperties(body) // 删除后台传回来的多余嵌套的属性数据
 

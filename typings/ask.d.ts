@@ -27,6 +27,7 @@ interface ProjectConfig {
   projectId: number | string,
   outputDir: string,
   isLoadFullApi: boolean
+  prefix?: string
   group?: Array<CatConfig>
 }
 interface ApiConfig {
