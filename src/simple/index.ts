@@ -4,23 +4,26 @@ import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
 import { request } from '../utils/request'
 import format from '../utils/format'
 
-/** 获取文件头部描述文件 */
-const getHeaderInfo = () => {
+/** 设置api文件头部文件 */
+const getHeaderInfo = (config: ApiConfig) => {
+    const axiosFrom = config.axiosFrom || 'import fetch from \'axios\''
+
     return `
 /** eslint-disable */
 /**
  * @file 该文件由aomi-yapi-convert自动生成，请不要改动这个文件。
  * @docUpdateTime ${new Date().toLocaleDateString()}
  */
+
+import { axiosConfig } from 'aomi-yapi-convert'
+${axiosFrom}
     `
 }
 
 /** 配置文件头尾 */
 export const configFileHeadFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>, config: ApiConfig) => {
-    const axiosFrom = config.axiosFrom || 'import fetch from \'axios\''
     fileBufferStringChunk.unshift('export default {')
-    fileBufferStringChunk.unshift(axiosFrom)
-    fileBufferStringChunk.unshift(getHeaderInfo())
+    fileBufferStringChunk.unshift(getHeaderInfo(config))
     fileBufferStringChunk.push('}')
     fileBufferStringChunk.push(...noteStringChunk)
     return format(fileBufferStringChunk)
@@ -31,6 +34,7 @@ const getNoteStringItem = (item: apiSimpleItem, project_id: number, config: ApiC
     const {protocol, host} = config
     return `/**
    * @description ${item.title} 
+   * @param {axiosConfig} options
    * @apiUpdateTime ${new Date(item.up_time * 1000).toLocaleDateString()}
    * @link ${protocol}//${host}/project/${project_id}/interface/api/${item._id}
    */`
