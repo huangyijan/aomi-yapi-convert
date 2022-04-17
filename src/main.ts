@@ -40,7 +40,7 @@ const config = {
     'yapiURL': 'http://yapi.miguatech.com/project/445/interface/api',
     'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjQ2NiwiaWF0IjoxNjQ5ODU5NzM0LCJleHAiOjE2NTA0NjQ1MzR9.hy77MubuqPcNTLKFxcpoagJ-6Xa3rtPRZOC7ul3M6Nc',
     'version': 'js',
-    'isNeedType': true,
+    'isNeedType': false,
     'axiosFrom': 'import { fetch } from \'@/service/fetch/index\'',
     'protocol': 'http:',
     'host': 'yapi.miguatech.com',
