@@ -24,11 +24,11 @@ export const getReqType = (item: JsDocApiItem, typeName: string, body: any) => {
 
 
 /** 获取请求的参数注释和参数名 */
-export const getRequestNoteStringItem = (item: JsDocApiItem): RequestNoteStringItem => {
+export const getRequestNoteStringItem = (item: JsDocApiItem, project: ProjectConfig): RequestNoteStringItem => {
   
     const body = getLegalJson(item.req_body_other) // 获取合法的json数据
   
-    const normalName = getNoteNameByParamsType(item) // 正常object使用的名字
+    const normalName = getNoteNameByParamsType(item, project) // 正常object使用的名字
 
     const typeName = getArrayTypeName(normalName, body) // 处理数组的情况
   

@@ -3,9 +3,9 @@ import { getOneApiConfig, getUpperCaseName } from '../../../utils/str-operate'
 
 
 /** 获取传参名称 */
-export const getNoteNameByParamsType = (item: JsDocApiItem) => {
+export const getNoteNameByParamsType = (item: JsDocApiItem, project: ProjectConfig) => {
     const isGetMethod = item.method.toUpperCase() == 'GET'
-    const { requestName } = getOneApiConfig(item.path)
+    const { requestName } = getOneApiConfig(item.path, project)
     const ParamsName = getUpperCaseName(requestName)
     return ParamsName + (isGetMethod ? 'Params' : 'Data')
 }

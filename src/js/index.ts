@@ -8,11 +8,11 @@ import { getRequestNoteStringItem } from './request/request'
 import { getNoteParams, getUpdateTime, getApiLinkAddress, getAppendIdNote } from './note'
 
 /** 配置请求注释 */
-export const getNoteStringItem = (item: JsDocApiItem) => {
+export const getNoteStringItem = (item: JsDocApiItem, project: ProjectConfig) => {
     const isGetMethod = item.method.toUpperCase() == 'GET'
 
-    const { reqType, typeName } = getRequestNoteStringItem(item)
-    const { resType, returnNameWithType } = getReturnNoteStringItem(item)
+    const { reqType, typeName } = getRequestNoteStringItem(item, project)
+    const { resType, returnNameWithType } = getReturnNoteStringItem(item, project)
     const idNote = getAppendIdNote(item.req_params)
 
     const methodNote = `
@@ -27,18 +27,18 @@ export const getNoteStringItem = (item: JsDocApiItem) => {
 
 
 /** 配置请求主方法 */
-const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean) => {
+const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: ProjectConfig) => {
     const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
     const paramsName = isGetMethod ? 'params' : 'data'
 
-    const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName, hasNoteData)
+    const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName, hasNoteData, project)
     return `${requestName}: ${requestParams} => {
     const method = '${item.method}'
     return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
   },`
 }
 
-const getApiFileConfig = (item: JsDocMenuItem) => {
+const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig) => {
     const { list } = item
 
     const pathSet: TimesObject = {} // 处理文件夹命名的容器
@@ -50,11 +50,11 @@ const getApiFileConfig = (item: JsDocMenuItem) => {
         if (item.status === 'undone') return
 
         
-        const { methodNote, reqType, resType } = getNoteStringItem(item)
+        const { methodNote, reqType, resType } = getNoteStringItem(item, project)
        
 
         const hasNoteData = Boolean(reqType)
-        const methodStr = getMainMethodItem(item, hasNoteData)
+        const methodStr = getMainMethodItem(item, hasNoteData, project)
 
         /** 先配置注释再配置请求主方法 */
         fileBufferStringChunk.push(methodNote)
@@ -92,7 +92,7 @@ const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectConfig, c
     const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
     const { group, isLoadFullApi } = project
     data.forEach((item: JsDocMenuItem) => {
-        const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item)
+        const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item, project)
         if (!item.list.length || !fileBufferStringChunk.length) return
         
         const fileConfig = group?.find(menu => menu.catId === item.list[0].catid)

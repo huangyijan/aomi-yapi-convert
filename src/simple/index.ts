@@ -23,10 +23,11 @@ const getNoteStringItem = (item: apiSimpleItem, project_id: number) => {
 }
 
 /** 配置请求主方法 */
-const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean) => {
+const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean, project: ProjectConfig) => {
+
     const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
     const paramsName = isGetMethod ? 'params' : 'data'
-    const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName, hasNoteData)
+    const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName, hasNoteData, project)
     return `${requestName}: ${requestParams} => {
     const method = '${item.method}'
     return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
@@ -36,9 +37,10 @@ const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean) => {
 /**
  * 获取单个API文件的保存文件名和写入的文件流字符串
  * @param item 接口菜单单项
+ * @param project 项目组文件的配置
  * @returns {Object} {文件名：string, 单个API文件流主容器: string}
  */
-const getApiFileConfig = (item: MenuItem) => {
+const getApiFileConfig = (item: MenuItem, project: ProjectConfig) => {
     const { list, project_id } = item
 
     const pathSet: TimesObject = {} // 处理文件夹命名的容器
@@ -50,7 +52,7 @@ const getApiFileConfig = (item: MenuItem) => {
 
         /** 先配置注释再配置请求主方法 */
         fileBufferStringChunk.push(getNoteStringItem(item, project_id))
-        fileBufferStringChunk.push(getMainMethodItem(item, false))
+        fileBufferStringChunk.push(getMainMethodItem(item, false, project))
 
         // 统计名字出现次数，用作文件夹命名依据
         const pathName = getPathName(item.path)
@@ -85,7 +87,7 @@ const generatorFileList = ({ data }: { data: Array<MenuItem> }, project: Project
     const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
     const {group, isLoadFullApi} = project
     data.forEach((item: MenuItem) => {
-        const { FileName, fileBufferStringChunk } = getApiFileConfig(item)
+        const { FileName, fileBufferStringChunk } = getApiFileConfig(item, project)
         if (!fileBufferStringChunk.length) return
         
         const fileConfig = group?.find(menu => menu.catId === item._id)
