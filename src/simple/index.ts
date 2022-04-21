@@ -10,6 +10,7 @@ const getHeaderInfo = (config: ApiConfig) => {
 
     return `
 /** eslint-disable */
+// @ts-nocheck
 /**
  * @file 该文件由aomi-yapi-convert自动生成，请不要改动这个文件。
  * @docUpdateTime ${new Date().toLocaleDateString()}
@@ -85,7 +86,7 @@ const getApiFileConfig = (item: MenuItem, project: ProjectConfig, config: ApiCon
 }
 
 /** 获取文件存储的路径 */
-const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: CatConfig | undefined, nameChunk: Map<string, number>) => {
+const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: CatConfig | undefined, nameChunk: Map<string, number>, config: ApiConfig) => {
     let fileName = recommendName
     let dir = project.outputDir
     // 判断用户是否有自定义配置，如果有取配置文件的。（TODO:用户配置不当可能会导致出错）
@@ -95,7 +96,8 @@ const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: 
     let FileNameTimes = nameChunk.get(recommendName)
     if (FileNameTimes) FileNameTimes++ // 如果map已经有值那我们就+1，防止用户命名冲突，虽然不太优雅
 
-    const path = `${dir}/${fileName}${FileNameTimes || ''}.js`
+    const {version} = config
+    const path = `${dir}/${fileName}${FileNameTimes || ''}.${version}`
     nameChunk.set(fileName, FileNameTimes || 1)
     return path
 }
@@ -111,7 +113,7 @@ const generatorFileList = ({ data }: { data: Array<MenuItem> }, project: Project
         const fileConfig = group?.find(menu => menu.catId === item._id)
         if(!isLoadFullApi && !fileConfig) return
 
-        const savePath = getSavePath(FileName, project, fileConfig, nameChunk)
+        const savePath = getSavePath(FileName, project, fileConfig, nameChunk, config)
         const saveFileBuffer = configFileHeadFoot(fileBufferStringChunk, [], config) 
         saveFile(savePath, saveFileBuffer)
         

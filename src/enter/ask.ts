@@ -72,7 +72,7 @@ const ask = function () {
                 type: 'list',
                 choices: [
                     { name: 'javascript(暂时只有js版本，ts下个版本)', value: 'js' },
-                    // { name: 'typescript', value: 'ts' }, // 下个版本再搞ts
+                    { name: 'typescript', value: 'ts' }, // 下个版本再搞ts
                 ]
             },
             {

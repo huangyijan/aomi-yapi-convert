@@ -74,7 +74,6 @@ export const showExampleStrByType = (value: unknown) => {
 
 /** 后台类型转前端类型 */
 export const transformType = (serviceType: string) => {
-
     switch (serviceType) {
     case 'integer':
         return 'number'
