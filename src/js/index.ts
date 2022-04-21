@@ -2,7 +2,7 @@ import { request } from '../utils/request'
 import { saveFile } from '../utils/file'
 import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
 import { getOneApiConfigJsdoc } from '../utils/str-operate'
-import { configFileHeadFoot } from '../simple'
+import { configFileHeadFoot } from '../common'
 import { getReturnNoteStringItem, getReturnType } from './response/response'
 import { getRequestNoteStringItem } from './request/request'
 import { getNoteParams, getUpdateTime, getApiLinkAddress, getAppendIdNote } from './note'
@@ -73,7 +73,7 @@ const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig) => {
     return { FileName, fileBufferStringChunk, noteStringChunk }
 }
 /** 获取文件存储的路径 */
-const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: CatConfig | undefined, nameChunk: Map<string, number>) => {
+const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: CatConfig | undefined, nameChunk: Map<string, number>, config: ApiConfig) => {
     let fileName = recommendName 
     let dir = project.outputDir
     // 判断用户是否有自定义配置，如果有取配置文件的。（TODO:用户配置不当可能会导致出错）
@@ -82,8 +82,9 @@ const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: 
 
     let FileNameTimes = nameChunk.get(recommendName)
     if (FileNameTimes) FileNameTimes++ // 如果map已经有值那我们就+1，防止用户命名冲突，虽然不太优雅
-    
-    const path =  `${dir}/${fileName}${FileNameTimes || ''}.js`
+
+    const { version } = config
+    const path =  `${dir}/${fileName}${FileNameTimes || ''}.${version}`
     nameChunk.set(fileName, FileNameTimes || 1)
     return path
 }
@@ -99,7 +100,7 @@ const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectConfig, c
         const fileConfig = group?.find(menu => menu.catId === item.list[0].catid)
         if (!isLoadFullApi && !fileConfig) return
 
-        const savePath = getSavePath(FileName, project, fileConfig, nameChunk)
+        const savePath = getSavePath(FileName, project, fileConfig, nameChunk, config)
         const saveFileBuffer = configFileHeadFoot(fileBufferStringChunk, noteStringChunk, config) 
         saveFile(savePath, saveFileBuffer)
 

@@ -283,3 +283,5 @@ export interface axiosConfig {
     FormData?: new (...args: any[]) => object;
   };
 }
+
+export type IdType = string | number
