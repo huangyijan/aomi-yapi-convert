@@ -112,7 +112,7 @@ export const getCorrectType = (value: any) => {
 
 /** 获取请求体（body）传输参数 */
 export const getLegalJson = (reqBody: string) => {
-    if (!reqBody) return ''
+    if (!reqBody|| reqBody.length<20) return ''
     const isIllegalJsonStr = illegalRegex.test(reqBody) //判断后台返回的字符串是不是合法json字符串
     try {
         if (!isIllegalJsonStr) {
@@ -124,6 +124,7 @@ export const getLegalJson = (reqBody: string) => {
         }
     } catch (error) {
         console.log('json序列化错误', error) // 正则如果没有考虑所有情况将会影响无法输出注释
+        return {}
     }
 
 }

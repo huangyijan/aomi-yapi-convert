@@ -22,6 +22,8 @@ export const getApiFileConfig = (item: MenuItem, project: ProjectConfig, config:
         /** 没有完成的接口不处理 */
         if (item.status === 'undone') return
 
+        if (item.path.includes('?')) item.path = item.path.split('?')[0] // 处理一些后台在地址栏上加参数的问题,难搞
+
         configFunctionName(fileBufferStringChunk, item, project, config)
 
         // 统计名字出现次数，用作文件夹命名依据

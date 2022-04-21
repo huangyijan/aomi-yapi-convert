@@ -15,7 +15,7 @@ export const getAppendRequestParams = (path: string) => {
 /** 处理传Id的API请求URL */
 export const getAppendPath = (path: string, project: ProjectConfig) => {
     let { prefix = '' } = project
-    if (prefix) prefix = prefix.endsWith('/') ? prefix.slice(0, prefix.length-1) : prefix
+    if (prefix) prefix = prefix.endsWith('/') ? prefix.slice(0, prefix.length-1) : prefix // 兼容两种写法
 
     const isHaveParams = pathHasParamsRegex.test(path) // 地址栏上是否有参数
     if (!isHaveParams) return `'${prefix}${path}'`
