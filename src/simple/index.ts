@@ -1,77 +1,28 @@
-import { getOneApiConfigJsdoc } from '../utils/str-operate'
 import { saveFile } from '../utils/file'
-import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
 import { request } from '../utils/request'
-import format from '../utils/format'
-
-/** 设置api文件头部文件 */
-const getHeaderInfo = (config: ApiConfig) => {
-    const axiosFrom = config.axiosFrom || 'import fetch from \'axios\''
-
-    return `
-/** eslint-disable */
-// @ts-nocheck
-/**
- * @file 该文件由aomi-yapi-convert自动生成，请不要改动这个文件。
- * @docUpdateTime ${new Date().toLocaleDateString()}
- */
-
-import { axiosConfig } from 'aomi-yapi-convert'
-${axiosFrom}
-    `
-}
-
-/** 配置文件头尾 */
-export const configFileHeadFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>, config: ApiConfig) => {
-    fileBufferStringChunk.unshift('export default {')
-    fileBufferStringChunk.unshift(getHeaderInfo(config))
-    fileBufferStringChunk.push('}')
-    fileBufferStringChunk.push(...noteStringChunk)
-    return format(fileBufferStringChunk)
-}
-
-/** 配置注释 */
-const getNoteStringItem = (item: apiSimpleItem, project_id: number, config: ApiConfig) => {
-    const {protocol, host} = config
-    return `/**
-   * @description ${item.title} 
-   * @param {axiosConfig} options
-   * @apiUpdateTime ${new Date(item.up_time * 1000).toLocaleDateString()}
-   * @link ${protocol}//${host}/project/${project_id}/interface/api/${item._id}
-   */`
-}
-
-/** 配置请求主方法 */
-const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean, project: ProjectConfig) => {
-
-    const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
-    const paramsName = isGetMethod ? 'params' : 'data'
-    const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName, hasNoteData, project)
-    return `${requestName}: ${requestParams} => {
-    const method = '${item.method}'
-    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
-  },`
-}
+import { configFileHeadFoot } from '../common'
+import { handleJsFileString } from './js'
+import { handleTsFileString } from './ts'
+import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
 
 /**
- * 获取单个API文件的保存文件名和写入的文件流字符串
+ * 获取Js文件的单个API文件的保存文件名和写入的文件流字符串
  * @param item 接口菜单单项
  * @param project 项目组文件的配置
  * @returns {Object} {文件名：string, 单个API文件流主容器: string}
  */
-const getApiFileConfig = (item: MenuItem, project: ProjectConfig, config: ApiConfig) => {
-    const { list, project_id } = item
+export const getApiFileConfig = (item: MenuItem, project: ProjectConfig, config: ApiConfig) => {
+    const { list } = item
 
     const pathSet: TimesObject = {} // 处理文件夹命名的容器
     const fileBufferStringChunk: Array<string> = [] // 单个API文件流
+    const configFunctionName = config.version === 'ts' ? handleTsFileString : handleJsFileString
     list.forEach((item) => {
 
         /** 没有完成的接口不处理 */
         if (item.status === 'undone') return
 
-        /** 先配置注释再配置请求主方法 */
-        fileBufferStringChunk.push(getNoteStringItem(item, project_id, config))
-        fileBufferStringChunk.push(getMainMethodItem(item, false, project))
+        configFunctionName(fileBufferStringChunk, item, project, config)
 
         // 统计名字出现次数，用作文件夹命名依据
         const pathName = getPathName(item.path)
@@ -102,10 +53,12 @@ const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: 
     return path
 }
 
+
 /** 处理API文件列表的生成 */
 const generatorFileList = ({ data }: { data: Array<MenuItem> }, project: ProjectConfig, config: ApiConfig) => {
     const nameChunk = new Map() // TODO 处理重名问题，后面考虑有没有更佳良好取名策略
     const {group, isLoadFullApi} = project
+    
     data.forEach((item: MenuItem) => {
         const { FileName, fileBufferStringChunk } = getApiFileConfig(item, project, config)
         if (!fileBufferStringChunk.length) return
