@@ -1,27 +1,13 @@
 import { getOneApiConfig, getType } from '../../utils/str-operate'
-import { removeProperties, hasProperty, configJsdocType, getLegalJson, getDescription, getTypeByValue } from '../../utils'
+import { removeProperties, configJsdocType, getLegalJson, getDescription } from '../../utils'
 import { getSecondNoteAndName } from '../../utils/second'
+import { dealResponseData, getReturnName } from '../note'
 
 interface ReturnNoteStringItem {
     returnNameWithType: string
     resType: string
 }
 
-/** 获取放在Promise<xxx>的名字 */
-export const getReturnType = (returnName: string, resType: string) => {
-
-    if (returnName === 'array') return '[]'
-    return resType ? returnName : 'any'
-}
-
-/** 获取返回的参数名 */
-const getReturnName = (requestName: string, value: any) => {
-    const returnName = requestName + 'Response'
-    const type = getTypeByValue(value)
-    if (type === 'string' || type === 'array') return type // 如果是字符串或者数组，直接返回类型作为类型名
-
-    return returnName
-}
 
 /** 配置返回注释 */
 export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConfig): ReturnNoteStringItem => {
@@ -47,18 +33,6 @@ export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConf
     return { returnNameWithType, resType }
 }
 
-/** 专门用来处理一下detailMsg最外层和数组的序列对象 */
-const dealResponseData = (res: any) => {
-    let isArray = false // 是否为数组对象
-    if (hasProperty(res, 'detailMsg')) {
-        res = res.detailMsg
-        if (hasProperty(res, 'items') && res.type === 'array') { // 数组的结构专门处理
-            res = res.items
-            isArray = true
-        }
-    }
-    return { res, isArray }
-}
 
 
 /** 处理返回的数据类型处理 */
@@ -78,6 +52,7 @@ export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
         const addTypeName = getType(type, key, returnName)
 
         const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
+   
         appendNoteJsdocType = note
         if(name !== type) type = name
 
