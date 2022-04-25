@@ -76,7 +76,7 @@ const ask = function () {
                 ]
             },
             {
-                message: '是否需要提示？(recommend!)',
+                message: '是否需要智能提示？(recommend!)',
                 name: 'isNeedType',
                 type: 'confirm',
                 default: true
