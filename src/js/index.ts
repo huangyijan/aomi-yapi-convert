@@ -71,6 +71,7 @@ const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig) => {
     })
     // 文件名取名策略：获取路径上名字出现最多词的路径名称，需要将一些短横线下划线转为驼峰命名法, TODO: 会出现重名问题
     const FileName = getMaxTimesObjectKeyName(pathSet)
+
     return { FileName, fileBufferStringChunk, noteStringChunk }
 }
 /** 获取文件存储的路径 */

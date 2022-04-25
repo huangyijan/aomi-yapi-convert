@@ -78,6 +78,7 @@ export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
         const addTypeName = getType(type, key, returnName)
 
         const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
+   
         appendNoteJsdocType = note
         if(name !== type) type = name
 

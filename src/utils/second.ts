@@ -43,7 +43,7 @@ export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeNa
         const defaultStr = objectValue[key].default || ''
         return { key, type, description, default: defaultStr }
     })
-
+    if(!commonArr.length) return ''
     return getCommandNote(commonArr, addTypeName)
 }
 
@@ -60,6 +60,8 @@ export const getArrayTypeNote = (arrayValue: any, addTypeName: string) => {
     if (!arrayValue.length && hasProperty(arrayValue, 'items')) { //  1、这里处理外部有一层Item
         const data = arrayValue.items
         if (hasProperty(data, 'type') && data.type === 'string') return 'string'
+        if (hasProperty(data, 'type') && data.type === 'integer') return 'number'
+
         if (hasProperty(data, 'ordinal') && typeof data.ordinal === 'boolean') return 'string' // 后台状态字符创标志符
         const note = getNormalObjectNote(data, addTypeName)
         return note
@@ -76,11 +78,13 @@ export const getArrayTypeNote = (arrayValue: any, addTypeName: string) => {
 /** 处理第二层级的array和object */
 export const getSecondNoteAndName = (value: any, addTypeName: string, type: string, appendNoteJsdocType: string) => {
 
+
     if (type.includes('array')) {
         const typeName = addTypeName.substring(0, addTypeName.length - 2)
         const addNote = getArrayTypeNote(value, typeName)
-
+    
         if (addNote === 'string') type = 'string[]' // 处理字符串数组和特殊的api自动生成错误
+        if (addNote === 'number') type = 'number[]' // 处理字符串数组和特殊的api自动生成错误
         if (addNote.includes('@typedef')) { // 有正常序列的Jsdoc
             type = addTypeName
             if ('string, boolean, number'.includes(addNote)) type = `${addNote}[]`
@@ -96,6 +100,7 @@ export const getSecondNoteAndName = (value: any, addTypeName: string, type: stri
             appendNoteJsdocType = addNote
             type = addTypeName
         }
+   
     }
 
     return { note: appendNoteJsdocType, name: type }
