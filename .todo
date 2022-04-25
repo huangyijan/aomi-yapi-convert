@@ -15,6 +15,7 @@ api功能：
 ✔ response列表对象和数组对象序列化jsdoc对象类型 @started(22-04-01 19:29) @done(22-04-02 16:28) @lasted(20h59m54s)
 ✔ id序列进params注释 @started(22-04-01 17:03) @done(22-04-01 19:25) @lasted(2h22m38s)
 ☐ ts版本用户自定义returnType
+☐ token过期做提示
 
 配置优化
 ✔ 根据配置文件指定路径输出api文件 @started(22-04-16 12:51) @done(22-04-16 16:15) @lasted(3h24m3s)
