@@ -1,33 +1,22 @@
 
 import { getReturnNoteStringItem } from './response/js'
 import { getRequestNoteStringItem } from './request/js'
-import { getNoteParams, getUpdateTime, getApiLinkAddress, getReturnType } from './note'
-import { getOneApiConfigJsdoc } from '../utils/str-operate'
+import { getNoteParams, getUpdateTime, getApiLinkAddress } from './note'
+import { getOneApiConfigTsType } from '../utils/str-operate'
 
-/** 配置地址栏上面的id jsdoc 注释 */
-const getAppendIdNote = (params: Array<ReqParams>) => {
-    return params.reduce((pre, curr) => {
-        const { example, desc, name, _id } = curr
-        if (_id) pre += `\n   * @param { number | string } ${name} ${desc}  example: ${example} `
-        return pre
-    }, '')
-}
 
 /** 配置请求注释 */
 const getNoteStringItem = (item: JsDocApiItem, project: ProjectConfig) => {
     const isGetMethod = item.method.toUpperCase() == 'GET'
 
     const { reqType, typeName } = getRequestNoteStringItem(item, project)
-    const { resType, returnNameWithType } = getReturnNoteStringItem(item, project)
-    const idNote = getAppendIdNote(item.req_params)
+    const { resType } = getReturnNoteStringItem(item, project)
 
     const methodNote = `
   /**
-   * @description ${item.title}${idNote}${getNoteParams(reqType, typeName, isGetMethod)} 
-   * @param {axiosConfig} options
+   * @description ${item.title}${getNoteParams(reqType, typeName, isGetMethod)} 
    * @apiUpdateTime ${getUpdateTime(item.up_time)}
    * @link ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
-   * @return {Promise<${getReturnType(returnNameWithType, resType)}>}
    */`
     return { methodNote, typeName, reqType, resType }
 }
@@ -38,14 +27,14 @@ const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: Pr
     const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
     const paramsName = isGetMethod ? 'params' : 'data'
 
-    const { requestName, requestPath, requestParams } = getOneApiConfigJsdoc(item.path, paramsName, hasNoteData, project)
+    const { requestName, requestPath, requestParams } = getOneApiConfigTsType(item.path, paramsName, hasNoteData, project)
     return `${requestName}: ${requestParams} => {
     const method = '${item.method}'
     return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
   },`
 }
 
-export const handleJsdocFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig, noteStringChunk: Array<string>) => {
+export const handleTsTypeFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig, noteStringChunk: Array<string>) => {
     const { methodNote, reqType, resType } = getNoteStringItem(item, project)
 
 
@@ -56,6 +45,6 @@ export const handleJsdocFileString = (fileBufferStringChunk: Array<string>, item
     fileBufferStringChunk.push(methodNote)
     fileBufferStringChunk.push(methodStr)
 
-    if (reqType) noteStringChunk.push(reqType)
-    if (resType) noteStringChunk.push(resType)
+    // if (reqType) noteStringChunk.push(reqType)
+    // if (resType) noteStringChunk.push(resType)
 }

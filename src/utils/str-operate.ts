@@ -65,6 +65,18 @@ export const getOneApiConfigJsdoc = (path: string, paramsName: string, hasNoteDa
     const requestName = getApiName(path)
     return { requestName, requestPath, requestParams }
 }
+/**
+ * 获取单个请求的请求名， 请求路径， 请求参数的字符串配置TsType使用版本
+ * @param path 需要处理的接口地址
+ * @param paramsName 函数传参名称
+ * @returns {Object} {请求名， 请求路径， 请求参数} string
+ */
+export const getOneApiConfigTsType = (path: string, paramsName: string, hasNoteData: boolean, project: ProjectConfig): requestConfig => {
+    const requestPath = getAppendPath(path, project)
+    const requestParams = getAppendRequestParamsTsType(path, paramsName, hasNoteData)
+    const requestName = getApiName(path)
+    return { requestName, requestPath, requestParams }
+}
 
 /**
  * 获取单个请求的请求名， 请求路径， 请求参数的字符串配置Ts使用版本
@@ -89,6 +101,18 @@ export const getAppendRequestParamsJsdoc = (path: string, paramsName: string, ha
     let requestParams = ''
     path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}, `)
     requestParams = `(${requestParams}${hasNoteData ? `${paramsName}, ` : ''}options)`
+    return requestParams
+}
+/**
+ * 处理传Id的API请求参数
+ * @param path 请求路径
+ * @param paramsName 传输使用的参数名，配合JsDoc文档数据，Get请求使用params, Post, Put, Delete 请求使用data
+ * @returns {string} 函数请求使用的参数表达式
+ */
+export const getAppendRequestParamsTsType = (path: string, paramsName: string, hasNoteData: boolean) => {
+    let requestParams = ''
+    path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}: string | number, `)
+    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}, ` : ''}options: axiosConfig)`
     return requestParams
 }
 /**

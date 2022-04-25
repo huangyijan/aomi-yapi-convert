@@ -6,6 +6,7 @@ import { handleJsFileString } from '../simple/js'
 import { handleTsFileString } from '../simple/ts'
 
 import {handleJsdocFileString} from '../prompt/jsdoc'
+import { handleTsTypeFileString } from '../prompt/ts-type'
 
 
 /** 设置api文件头部文件 */
@@ -57,7 +58,7 @@ const generateSimpleBufferStringByVersion = (version: Version) => {
 }
 /** 根据文件类型获取生成智能提示版本的方法名 */
 const generateTypeBufferStringByVersion = (version: Version) => {
-    const configFunctionName = version === 'ts' ? handleJsdocFileString : handleJsdocFileString
+    const configFunctionName = version === 'ts' ? handleTsTypeFileString : handleJsdocFileString
     return configFunctionName
 }
 
