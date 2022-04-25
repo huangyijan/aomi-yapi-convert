@@ -123,6 +123,8 @@ export const getLegalJson = (reqBody: string) => {
             return JSON.parse(removeLestQuotaStr)
         }
     } catch (error) {
+        const dealStr = reqBody.replace(illegalRegex, '\n') // 删除注释
+        const removeLestQuotaStr = dealStr.replace(quotaRegex, '}') // 删除多余的逗号
         console.log('json序列化错误', error) // 正则如果没有考虑所有情况将会影响无法输出注释
         return {}
     }

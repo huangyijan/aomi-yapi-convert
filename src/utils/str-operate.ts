@@ -1,6 +1,15 @@
 /* eslint-disable no-useless-escape */
 const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
+const illegalRegex = /[^a-zA-Z0-9]/g // 用来剔除不合法的符号
 export const pathHasParamsRegex = /\/\{([a-zA-Z0-9]*)\}/g // 獲取接口参数名稱
+
+/** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
+export const getValidApiPath = (path: string) => {
+    if (path.includes('scanCodeMenu/')) console.log(path)
+    if (path.includes('?')) path = path.split('?')[0]
+    if (path.endsWith('/')) path = path.slice(0, path.length - 1)
+    return path
+}
 
 /** 处理传Id的API请求参数 */
 export const getAppendRequestParams = (path: string) => {
@@ -24,8 +33,10 @@ export const getAppendPath = (path: string, project: ProjectConfig) => {
 }
 /** 接口名决策方案：如果有参数先去除参数，然后把接口path剩余数据转成驼峰命名，缺点：接口path如果太长，命名也会比较长 */
 export const getApiName = (path: string) => {
-    const dealNamePath = path.startsWith('/') ? path.substring(1) : path // TODO 首字母不处理驼峰，后面有如果正则方案可以更加优雅的处理 
-    return dealNamePath.replace(pathHasParamsRegex, '').replace(ApiNameRegex, (_, item) => item.toUpperCase())
+    // TODO 首字母不处理驼峰，后面有如果正则方案可以更加优雅的处理
+    const dealNamePath = path.startsWith('/') ? path.substring(1) : path 
+    const apiName =  dealNamePath.replace(pathHasParamsRegex, '').replace(ApiNameRegex, (_, item) => item.toUpperCase())
+    return apiName.replace(illegalRegex, '')
 }
 
 /**

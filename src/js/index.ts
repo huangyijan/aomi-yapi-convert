@@ -1,7 +1,7 @@
 import { request } from '../utils/request'
 import { saveFile } from '../utils/file'
 import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
-import { getOneApiConfigJsdoc } from '../utils/str-operate'
+import { getOneApiConfigJsdoc, getValidApiPath } from '../utils/str-operate'
 import { configFileHeadFoot } from '../common'
 import { getReturnNoteStringItem, getReturnType } from './response/response'
 import { getRequestNoteStringItem } from './request/request'
@@ -49,7 +49,7 @@ const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig) => {
 
         /** 没有完成的接口不处理 */
         if (item.status === 'undone') return
-        if (item.path.includes('?')) item.path = item.path.split('?')[0] // 处理一些后台在地址栏上加参数的问题,难搞
+        item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题,难搞
 
         
         const { methodNote, reqType, resType } = getNoteStringItem(item, project)
