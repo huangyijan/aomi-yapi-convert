@@ -2,7 +2,6 @@ const LongPathNameRegex = /^\/\{{0,1}([a-zA-Z0-9-_]+)\}{0,1}\/.+/ // 长接口�
 const ShortPathNameRegex = /^\/([a-zA-Z0-9-_]+)/ // 短接口捕获路径名
 const NameRegex = /[-|_]([a-zA-Z])/g // 重命名捕获替换字符串
 
-
 const quotaRegex = /(,)\s*\n*.*\}/g // 匹配json字符串最后一个逗号
 const illegalRegex = /(\/\/\s.*)\n/g // 非法json注释匹配
 
@@ -87,6 +86,7 @@ export const transformType = (serviceType: string) => {
 
 /** 判断api数据里面的数据类型 */
 export const getTypeByValue = (value: { constructor: ArrayConstructor }) => {
+    if(value === null) return 'string'
     const jsType = typeof value
     switch (jsType) {
     case 'object': // 引用类型都是object，需要处理不同引用类型
@@ -94,6 +94,7 @@ export const getTypeByValue = (value: { constructor: ArrayConstructor }) => {
     default:
         return jsType
     }
+  
 }
 
 /** 处理后台静态类型数据和错误状态的Api */
@@ -112,7 +113,7 @@ export const getCorrectType = (value: any) => {
 
 /** 获取请求体（body）传输参数 */
 export const getLegalJson = (reqBody: string) => {
-    if (!reqBody) return ''
+    if (!reqBody|| reqBody.length<20) return ''
     const isIllegalJsonStr = illegalRegex.test(reqBody) //判断后台返回的字符串是不是合法json字符串
     try {
         if (!isIllegalJsonStr) {
@@ -124,6 +125,7 @@ export const getLegalJson = (reqBody: string) => {
         }
     } catch (error) {
         console.log('json序列化错误', error) // 正则如果没有考虑所有情况将会影响无法输出注释
+        return '' // 总有一些意外的情况没有考虑到，当字符创处理
     }
 
 }

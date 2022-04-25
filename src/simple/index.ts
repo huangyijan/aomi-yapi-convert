@@ -4,6 +4,7 @@ import { configFileHeadFoot } from '../common'
 import { handleJsFileString } from './js'
 import { handleTsFileString } from './ts'
 import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
+import { getValidApiPath } from '../utils/str-operate'
 
 /**
  * 获取Js文件的单个API文件的保存文件名和写入的文件流字符串
@@ -21,6 +22,8 @@ export const getApiFileConfig = (item: MenuItem, project: ProjectConfig, config:
 
         /** 没有完成的接口不处理 */
         if (item.status === 'undone') return
+
+        item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题,难搞
 
         configFunctionName(fileBufferStringChunk, item, project, config)
 
