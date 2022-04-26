@@ -1,6 +1,37 @@
 import { transformType, hasProperty, getTypeByValue } from '../utils'
 import { getCommandNote } from '../utils/str-operate'
 
+const getSuitableType = (value: any) => {
+    const valueType = typeof value
+    switch (valueType) {
+    case 'object':
+        if (hasProperty(value, 'type')) return transformType(value.type)
+        if (hasProperty(value, 'default')) return getTypeByValue(value.default)
+        return 'any'
+    case 'undefined':
+        return 'any'
+    case 'number':
+    case 'string':
+    default:
+        return String(valueType)
+    }
+}
+
+const getSuitableDefault = (value: any) => {
+    const valueType = typeof value
+    switch (valueType) {
+    case 'object':
+        if (hasProperty(value, 'default')) return value.default
+        return ''
+    case 'boolean':
+    case 'string':
+    case 'number':
+        return String(valueType)
+    default:
+        return ''
+    }
+}
+
 /** 获取不正常序列化的数组对象注释 */
 export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) => {
 
@@ -8,7 +39,7 @@ export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) 
     const keyNote = Object.keys(arrayItem)
 
     const commonArr = keyNote.map(key => {
-        const type = getTypeByValue(arrayItem[key]) || 'any'
+        const type = getSuitableType(arrayItem[key])
         const description = String(arrayItem[key]) // 暂时只是序列了两层，超过了三层的没有处理,
         return {
             key, type, description, default: ''
@@ -26,7 +57,7 @@ export const getNormalObjectNote = (data: { [key: string]: any }, typeName: stri
         const value = data[key]
         if (!value || typeof value !== 'object') return pre
         const description = value.description || ''
-        const type = transformType(value.type) || 'any'
+        const type = getSuitableType(value)
         const defaultStr = value.default || ''
         pre.push({ key, description, type, default: defaultStr })
         return pre
@@ -37,6 +68,8 @@ export const getNormalObjectNote = (data: { [key: string]: any }, typeName: stri
 
 }
 
+
+
 export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeName: string) => {
     if (addTypeName === 'TakeoutMenusAppDataTags') {
         console.log(1)
@@ -45,14 +78,13 @@ export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeNa
     if (hasProperty(objectValue, 'type') && objectValue.type === 'boolean') return 'boolean'
     const keys = Object.keys(objectValue)
     const commonArr = keys.map(key => { // TODO： 在不是正常的object对象处理
-        const type = getTypeByValue(objectValue[key].default) || 'any'
-
-        const description = objectValue[key].description
-        const defaultStr = objectValue[key].default || ''
+        const type = getSuitableType(objectValue[key])
+        const defaultStr = getSuitableDefault(objectValue[key])
+        const description = objectValue[key].description || ''
         return { key, type, description, default: defaultStr }
     })
 
-    if(!commonArr.length) return ''
+    if(!commonArr. length) return ''
   
     return getCommandNote(commonArr, addTypeName)
 }

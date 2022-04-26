@@ -73,12 +73,12 @@ export const showExampleStrByType = (value: unknown) => {
 
 /** 后台类型转前端类型 */
 export const transformType = (serviceType: string) => {
+    if (String(serviceType).length > 10) return 'any'
     switch (serviceType) {
     case 'integer':
         return 'number'
     case 'bool':
         return 'boolean'
-    
     default:
         return serviceType
     }
@@ -92,8 +92,7 @@ export const getTypeByValue = (value: { constructor: ArrayConstructor, type?: st
     case 'object': // 引用类型都是object，需要处理不同引用类型
         return value.constructor === Array ? 'array' : 'object'
     case 'undefined': 
-        if (hasProperty(value, 'type')) return String(value.type)
-        else return 'any'
+        return 'any'
     default:
         return jsType
     }
