@@ -114,18 +114,25 @@ export const getUpperCaseName = (name: string) => {
 }
 
 export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) => {
+    if(!keyNote.length) return ''
 
     const version = global.apiConfig.version
 
-    if (version === 'ts') return keyNote.reduce((pre, cur, index) => {
-        const { key, type, description = '' } = cur
-        const defaultStr = cur.default ? ` default: ${cur.default}` : ''
+    if (typeName === 'merchantOperationLogManagerPageListResponseNavigatepageNums') {
+        console.log(1)
+    }
 
-        pre += `    /** ${description} ${defaultStr} \n */`
-        pre += `    ${type}: ${key}`
-        if (index === keyNote.length - 1) pre += '}\n'
-        return pre
-    }, `interface ${typeName} {\n`)
+    if (version === 'ts') {
+        return keyNote.reduce((pre, cur, index) => {
+            const { key, type, description = '' } = cur
+            const defaultStr = cur.default ? ` default: ${cur.default}` : ''
+
+            pre += `    /** ${description} ${defaultStr} */ \n`
+            pre += `    ${key}: ${type} \n`
+            if (index === keyNote.length - 1) pre += '}\n'
+            return pre
+        }, `interface ${typeName} {\n`)
+    }
     
     if (version === 'js') return keyNote.reduce((pre, cur, index) => {
         const { key, type, description= '' } = cur

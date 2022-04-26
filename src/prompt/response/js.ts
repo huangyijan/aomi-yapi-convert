@@ -50,7 +50,7 @@ export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
         const description = getDescription(value)
         let type = configJsdocType(value)
         const addTypeName = getType(type, key, returnName)
-
+  
         const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
    
         appendNoteJsdocType = note
