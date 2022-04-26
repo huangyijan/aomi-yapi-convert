@@ -7,7 +7,7 @@ api功能：
 ✔ 鉴权功能 @done(22-04-16 12:50)
 ✔ 分模块更新 @done(22-04-16 16:15)
 ✔ js doc版本 @started(22-03-18 18:16) @done(22-03-19 00:24) @lasted(6h8m16s)
-☐ ts 版本 @started(22-04-21 21:14)
+✔ ts 版本 @started(22-04-21 21:14) @done(22-04-26 16:11) @lasted(4d18h57m16s)
 ✔ JsDoc版本多层请求参数持续序列化成type(暂时序列两层) @done(22-04-02 16:13)
 ✔ jsdoc混入（@mixin）axios请求通用参数 @done(22-04-21 21:14)
 ✔ 处理服務名後台不添加的情況 @started(22-04-17 18:55) @done(22-04-17 19:33) @lasted(38m33s)
@@ -15,6 +15,8 @@ api功能：
 ✔ response列表对象和数组对象序列化jsdoc对象类型 @started(22-04-01 19:29) @done(22-04-02 16:28) @lasted(20h59m54s)
 ✔ id序列进params注释 @started(22-04-01 17:03) @done(22-04-01 19:25) @lasted(2h22m38s)
 ☐ ts版本用户自定义returnType
+☐ token过期做提示
+☐ 处理同一个返回有多个二层对象的问题
 
 配置优化
 ✔ 根据配置文件指定路径输出api文件 @started(22-04-16 12:51) @done(22-04-16 16:15) @lasted(3h24m3s)

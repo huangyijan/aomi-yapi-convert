@@ -20,7 +20,6 @@ export const getArrayTypeName = (typeName: string, body: any) => {
 
 /** 获取放在Promise<xxx>的名字 */
 export const getReturnType = (returnName: string, resType: string) => {
-
     if (returnName === 'array') return '[]'
     return resType ? returnName : 'any'
 }
@@ -47,12 +46,6 @@ export const dealResponseData = (res: any) => {
     return { res, isArray }
 }
 
-
-/** 获取请求注释上的param注释字符串 */
-export const getNoteParams = (reqType: string, typeName: string, isGetMethod: boolean) => {
-    if (!typeName.includes('[]') && !reqType) return ''
-    return `\n   * @param {${typeName}} ${isGetMethod ? 'params' : 'data'}`
-}
 
 /** 获取文档地址 */
 export const getApiLinkAddress = (baseUrl: string, project_id: number, _id: number) => {

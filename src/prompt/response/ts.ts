@@ -1,6 +1,6 @@
 import { getOneApiConfig, getType } from '../../utils/str-operate'
 import { removeProperties, configJsdocType, getLegalJson, getDescription } from '../../utils'
-import { getSecondNoteAndName } from '..//second'
+import { getSecondNoteAndName } from '../second'
 import { dealResponseData, getReturnName } from '../note'
 
 interface ReturnNoteStringItem {
@@ -25,7 +25,7 @@ export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConf
 
     const returnName = getReturnName(requestName, res)
 
-    const resType = dealJsonToJsDocReturn(res, returnName)
+    const resType = dealJsonToTsTypeReturn(res, returnName)
 
 
     const returnNameWithType = isArray ? `${returnName}[]` : returnName
@@ -33,10 +33,10 @@ export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConf
     return { returnNameWithType, resType }
 }
 
-
+/** chu */
 
 /** 处理返回的数据类型处理 */
-export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
+export const dealJsonToTsTypeReturn = (data: object, returnName: string) => {
 
     let bodyStr = ''
     let appendNoteJsdocType = '' // 额外的JsDocType
@@ -46,22 +46,26 @@ export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
 
     if (returnName === 'string' || returnName === 'array') return ''
 
+
     Object.entries(data).forEach(([key, value]) => {
         const description = getDescription(value)
         let type = configJsdocType(value)
         const addTypeName = getType(type, key, returnName)
-  
-        const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
-   
-        appendNoteJsdocType = note
-        if(name !== type) type = name
 
-        bodyStr += `* @property {${type}} [${key}] ${description} \n   `
+        const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
+        
+        if (returnName === 'merchantOperationLogManagerPageListResponse') {
+            console.log(1, note)
+
+        }
+        if(note) appendNoteJsdocType = note
+        if (name !== type) type = name
+        
+        bodyStr += description ? `  /** ${description} */\n`: ''
+        bodyStr += `    ${key}: ${type} \n`
     })
-    
-    const resType = `/** 
-   * @typedef ${returnName}
-   ${bodyStr}*/\n${appendNoteJsdocType}`
+
+    const resType = `interface ${returnName} {\n${bodyStr}}\n${appendNoteJsdocType}`
 
     return resType
 }

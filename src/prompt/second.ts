@@ -1,8 +1,9 @@
-import { transformType, hasProperty, getTypeByValue } from '.'
-import { getCommandNote } from './str-operate'
+import { transformType, hasProperty, getTypeByValue } from '../utils'
+import { getCommandNote } from '../utils/str-operate'
 
 /** 获取不正常序列化的数组对象注释 */
 export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) => {
+
     const arrayItem = arrayValue[0]
     const keyNote = Object.keys(arrayItem)
 
@@ -20,21 +21,25 @@ export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) 
 export const getNormalObjectNote = (data: { [key: string]: any }, typeName: string) => {
     const keyNote = Object.keys(data)
     const commonArr: Array<keyNoteItem> = []
+
     keyNote.reduce((pre, key) => {
         const value = data[key]
         if (!value || typeof value !== 'object') return pre
-        const description = value.description
+        const description = value.description || ''
         const type = transformType(value.type)
-        const defaultStr = value.default
+        const defaultStr = value.default || ''
         pre.push({ key, description, type, default: defaultStr })
         return pre
     }, commonArr)
-    return getCommandNote(commonArr, typeName)
+    const note = getCommandNote(commonArr, typeName)
+    return note
 
 }
 
 export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeName: string) => {
+
     if (hasProperty(objectValue, 'mock')) return ''
+    if (hasProperty(objectValue, 'type') && objectValue.type === 'boolean') return 'boolean'
     const keys = Object.keys(objectValue)
     const commonArr = keys.map(key => { // TODO： 在不是正常的object对象处理
         const type = getTypeByValue(objectValue[key].default)
@@ -43,6 +48,7 @@ export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeNa
         const defaultStr = objectValue[key].default || ''
         return { key, type, description, default: defaultStr }
     })
+
     if(!commonArr.length) return ''
     return getCommandNote(commonArr, addTypeName)
 }
@@ -61,6 +67,7 @@ export const getArrayTypeNote = (arrayValue: any, addTypeName: string) => {
         const data = arrayValue.items
         if (hasProperty(data, 'type') && data.type === 'string') return 'string'
         if (hasProperty(data, 'type') && data.type === 'integer') return 'number'
+        if (hasProperty(data, 'type') && data.type === 'number') return 'number'
 
         if (hasProperty(data, 'ordinal') && typeof data.ordinal === 'boolean') return 'string' // 后台状态字符创标志符
         const note = getNormalObjectNote(data, addTypeName)
@@ -79,6 +86,7 @@ export const getArrayTypeNote = (arrayValue: any, addTypeName: string) => {
 export const getSecondNoteAndName = (value: any, addTypeName: string, type: string, appendNoteJsdocType: string) => {
 
 
+
     if (type.includes('array')) {
         const typeName = addTypeName.substring(0, addTypeName.length - 2)
         const addNote = getArrayTypeNote(value, typeName)
@@ -90,15 +98,24 @@ export const getSecondNoteAndName = (value: any, addTypeName: string, type: stri
             if ('string, boolean, number'.includes(addNote)) type = `${addNote}[]`
             appendNoteJsdocType += addNote
         }
+        if (addNote.includes('interface')) { // 有正常序列的TsType
+            type = addTypeName
+            if ('string, boolean, number'.includes(addNote)) type = `${addNote}[]`
+            appendNoteJsdocType += addNote
+        }
 
     }
 
 
     if (type.includes('object')) {
         const addNote = getObjectTypeNote(value, addTypeName)
-        if (addNote) {
+        if (addNote.startsWith('/**')) {
             appendNoteJsdocType = addNote
             type = addTypeName
+        }
+        if (addNote === 'boolean' || addNote === 'number') {
+            appendNoteJsdocType = ''
+            type = addNote
         }
    
     }

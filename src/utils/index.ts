@@ -106,7 +106,13 @@ export const getCorrectType = (value: any) => {
             type = transformType(value.type)
         } else if (hasProperty(value, 'name') && hasProperty(value, 'ordinal')) {
             type = 'string' // 状态字段处理
-        } 
+        } else if (hasProperty(value, 'type') && value.type === 'array') {
+            return 'array'
+        } else if (hasProperty(value, 'type') && value.type === 'integer') {
+            return 'number'
+        } else if (hasProperty(value, 'type') && value.type === 'number') {
+            return 'number'
+        }
     }
     return type
 }
