@@ -92,7 +92,7 @@ export const getTypeByValue = (value: { constructor: ArrayConstructor, type?: st
     case 'object': // 引用类型都是object，需要处理不同引用类型
         return value.constructor === Array ? 'array' : 'object'
     case 'undefined': 
-        if (hasProperty(value, 'type')) return value.type
+        if (hasProperty(value, 'type')) return String(value.type)
         else return 'any'
     default:
         return jsType
