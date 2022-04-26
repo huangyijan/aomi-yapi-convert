@@ -1,6 +1,6 @@
 import inquirer from 'inquirer'
 import { hasProperty } from '../utils'
-import { saveFile } from '../utils/file'
+import { saveApiToken, saveFile } from '../utils/file'
 import { request } from '../utils/request'
 
 const projectRegex = /^(https?:)\/\/(.*)\/project\/(\d+)\/.*/
@@ -28,7 +28,8 @@ const ask = function () {
                 type: 'input',
                 validate(input) {
                     if (!input) return '请复制粘贴你的token到这, example:eyJhbGciOiJIUzI ...... pz7uXMwOO9CVwSR8c'
-                    if (input.length < 100) return 'token长度不够，请问是否粘贴了其他字段'
+                    if (input.length < 100) return 'token长度不够，请勿粘贴了其他字段'
+                    saveApiToken(input)
                     return true
                 },
             },
@@ -104,8 +105,6 @@ const ask = function () {
             const { yapiURL, group, outputDir, isLoadFullApi, runNow } = answers
             const [, protocol, host, projectId] = yapiURL.match(projectRegex) as RegExpMatchArray
 
-
-
             const projects: any = {
                 projectId: projectId,
                 outputDir,
@@ -130,6 +129,7 @@ const ask = function () {
                 delete config.isLoadFullApi
                 delete config.outputDir
                 delete config.runNow
+                delete config.token
                 saveFile(
                     'api.config.json',
                     JSON.stringify(config, null, 2) + '\n',

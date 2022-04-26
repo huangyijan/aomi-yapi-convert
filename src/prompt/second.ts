@@ -71,9 +71,6 @@ export const getNormalObjectNote = (data: { [key: string]: any }, typeName: stri
 
 
 export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeName: string) => {
-    if (addTypeName === 'TakeoutMenusAppDataTags') {
-        console.log(1)
-    }
     if (hasProperty(objectValue, 'mock')) return ''
     if (hasProperty(objectValue, 'type') && objectValue.type === 'boolean') return 'boolean'
     const keys = Object.keys(objectValue)

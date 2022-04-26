@@ -6,7 +6,7 @@ enum Version {
 
 interface Answers {
   yapiURL: string
-  token: string
+  token?: string
   isLoadFullApi?: boolean
   group?: Array<number>
   version: Version,
@@ -32,7 +32,7 @@ interface ProjectConfig {
 }
 interface ApiConfig {
   yapiURL: string
-  token: string
+  token?: string
   version: Version
   isNeedType: boolean
   axiosFrom: string

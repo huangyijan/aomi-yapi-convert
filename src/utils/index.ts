@@ -132,7 +132,7 @@ export const getLegalJson = (reqBody: string) => {
             return JSON.parse(removeLestQuotaStr)
         }
     } catch (error) {
-        console.log('json序列化错误', error) // 正则如果没有考虑所有情况将会影响无法输出注释
+        // console.log('json序列化错误', error) // 正则如果没有考虑所有情况将会影响无法输出注释, TODO
         return '' // 总有一些意外的情况没有考虑到，当字符创处理
     }
 

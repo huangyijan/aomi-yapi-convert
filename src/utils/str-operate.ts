@@ -5,7 +5,6 @@ export const pathHasParamsRegex = /\/\{([a-zA-Z0-9]*)\}/g // 獲取接口参数�
 
 /** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
 export const getValidApiPath = (path: string) => {
-    if (path.includes('scanCodeMenu/')) console.log(path)
     if (path.includes('?')) path = path.split('?')[0]
     if (path.endsWith('/')) path = path.slice(0, path.length - 1)
     return path
@@ -117,10 +116,6 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
     if(!keyNote.length) return ''
 
     const version = global.apiConfig.version
-
-    if (typeName === 'merchantOperationLogManagerPageListResponseNavigatepageNums') {
-        console.log(1)
-    }
 
     if (version === 'ts') {
         return keyNote.reduce((pre, cur, index) => {

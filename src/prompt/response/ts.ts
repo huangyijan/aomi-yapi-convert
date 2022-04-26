@@ -54,10 +54,6 @@ export const dealJsonToTsTypeReturn = (data: object, returnName: string) => {
 
         const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
         
-        if (returnName === 'merchantOperationLogManagerPageListResponse') {
-            console.log(1, note)
-
-        }
         if(note) appendNoteJsdocType = note
         if (name !== type) type = name
         

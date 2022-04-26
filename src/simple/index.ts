@@ -1,4 +1,4 @@
-import { saveFile } from '../utils/file'
+import { getApiToken, saveFile } from '../utils/file'
 import { handleApiRequestError, request } from '../utils/request'
 import { configFileHeadFoot, getApiFileConfig, getSavePath } from '../common'
 
@@ -25,8 +25,9 @@ const generatorFileList = ({ data }: { data: Array<MenuItem> }, project: Project
 
 /** 生成没有注释的API文件，注释有文档链接，可以直接跳转 */
 export const getApiDocWithNoNote = async (url: string, project: ProjectConfig) => {
+    const token = getApiToken()
     try {
-        const fileString = await request(url, global.apiConfig.token)
+        const fileString = await request(url, token)
         const MenuList = JSON.parse(fileString)
         generatorFileList(MenuList, project)
     } catch (error) {
