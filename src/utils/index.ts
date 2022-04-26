@@ -85,12 +85,15 @@ export const transformType = (serviceType: string) => {
 }
 
 /** 判断api数据里面的数据类型 */
-export const getTypeByValue = (value: { constructor: ArrayConstructor }) => {
+export const getTypeByValue = (value: { constructor: ArrayConstructor, type?: string }) => {
     if(value === null) return 'string'
     const jsType = typeof value
     switch (jsType) {
     case 'object': // 引用类型都是object，需要处理不同引用类型
         return value.constructor === Array ? 'array' : 'object'
+    case 'undefined': 
+        if (hasProperty(value, 'type')) return value.type
+        else return 'any'
     default:
         return jsType
     }

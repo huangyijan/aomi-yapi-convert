@@ -8,7 +8,7 @@ export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) 
     const keyNote = Object.keys(arrayItem)
 
     const commonArr = keyNote.map(key => {
-        const type = getTypeByValue(arrayItem[key])
+        const type = getTypeByValue(arrayItem[key]) || 'any'
         const description = String(arrayItem[key]) // 暂时只是序列了两层，超过了三层的没有处理,
         return {
             key, type, description, default: ''
@@ -26,23 +26,27 @@ export const getNormalObjectNote = (data: { [key: string]: any }, typeName: stri
         const value = data[key]
         if (!value || typeof value !== 'object') return pre
         const description = value.description || ''
-        const type = transformType(value.type)
+        const type = transformType(value.type) || 'any'
         const defaultStr = value.default || ''
         pre.push({ key, description, type, default: defaultStr })
         return pre
     }, commonArr)
+
     const note = getCommandNote(commonArr, typeName)
     return note
 
 }
 
 export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeName: string) => {
+    if (addTypeName === 'TakeoutMenusAppDataTags') {
+        console.log(1)
 
+    }
     if (hasProperty(objectValue, 'mock')) return ''
     if (hasProperty(objectValue, 'type') && objectValue.type === 'boolean') return 'boolean'
     const keys = Object.keys(objectValue)
     const commonArr = keys.map(key => { // TODO： 在不是正常的object对象处理
-        const type = getTypeByValue(objectValue[key].default)
+        const type = getTypeByValue(objectValue[key].default) || 'any'
 
         const description = objectValue[key].description
         const defaultStr = objectValue[key].default || ''
@@ -50,6 +54,7 @@ export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeNa
     })
 
     if(!commonArr.length) return ''
+  
     return getCommandNote(commonArr, addTypeName)
 }
 
