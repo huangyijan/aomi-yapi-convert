@@ -20,7 +20,6 @@ export const getArrayTypeName = (typeName: string, body: any) => {
 
 /** 获取放在Promise<xxx>的名字 */
 export const getReturnType = (returnName: string, resType: string) => {
-
     if (returnName === 'array') return '[]'
     return resType ? returnName : 'any'
 }

@@ -12,17 +12,16 @@ interface RequestNoteStringItem {
 }
 
 
-/** 获取请求参数（params）传输参数，考虑到params一律是传地址栏，所以type默认设置为string */
+/** 获取请求参数（query）传输参数，考虑到query一律是传地址栏，所以type默认设置为string */
 export const getConfigNoteParams = (reqQuery: Array<reqQuery>, requestName: string) => {
     let paramsStr = ''
     reqQuery.forEach(item => {
-        paramsStr += `* @property {string} [${item.name}]   ${item.desc || ''} example: ${item.example || '无'} \n   `
+        paramsStr += `  /** ${item.desc || ''} example: ${item.example || '无'}  */ \n`
+        paramsStr += `  ${item.name}: string \n`
     })
 
     if (!paramsStr) return ''
-    return `/** 
-   * @typedef ${requestName}
-   ${paramsStr}*/`
+    return `interface ${requestName} {\n${paramsStr} }`
 }
 
 /** 处理请求体(data)的逻辑规则 */
@@ -46,12 +45,11 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
         appendNoteJsdocType = note
         if (name !== type) type = name
 
-        bodyStr += `* @property {${type}} [${key}]  ${description}   example: ${showExampleStrByType(value.default) || '无'} \n   `
+        bodyStr += `    /**  ${description} example: ${showExampleStrByType(value.default) || '无'}  */ \n`
+        bodyStr += `    ${key}: ${type} \n`
     })
 
-    return (`/** 
-   * @typedef ${requestName}
-   ${bodyStr}*/\n${appendNoteJsdocType}`)
+    return (`interface ${requestName} {\n${bodyStr}}\n${appendNoteJsdocType}`)
 }
 
 

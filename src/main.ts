@@ -1,7 +1,6 @@
 import { getApiDocWithNoNote } from './simple/index'
 import { getApiDocWithJsDoc } from './prompt/index'
 import {config} from './mock'
-
 export enum Type {
     Simple,
     Normal,

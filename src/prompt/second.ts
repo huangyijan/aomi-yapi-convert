@@ -1,5 +1,5 @@
-import { transformType, hasProperty, getTypeByValue } from '.'
-import { getCommandNote } from './str-operate'
+import { transformType, hasProperty, getTypeByValue } from '../utils'
+import { getCommandNote } from '../utils/str-operate'
 
 /** 获取不正常序列化的数组对象注释 */
 export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) => {

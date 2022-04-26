@@ -1,6 +1,6 @@
 import { getOneApiConfig, getType } from '../../utils/str-operate'
 import { removeProperties, configJsdocType, getLegalJson, getDescription } from '../../utils'
-import { getSecondNoteAndName } from '..//second'
+import { getSecondNoteAndName } from '../second'
 import { dealResponseData, getReturnName } from '../note'
 
 interface ReturnNoteStringItem {
@@ -33,7 +33,7 @@ export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConf
     return { returnNameWithType, resType }
 }
 
-
+/** chu */
 
 /** 处理返回的数据类型处理 */
 export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
@@ -54,14 +54,13 @@ export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
         const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
    
         appendNoteJsdocType = note
-        if(name !== type) type = name
-
-        bodyStr += `* @property {${type}} [${key}] ${description} \n   `
+        if (name !== type) type = name
+        
+        bodyStr += description ? `  /** ${description} */\n`: ''
+        bodyStr += `    ${key}: ${type} \n`
     })
     
-    const resType = `/** 
-   * @typedef ${returnName}
-   ${bodyStr}*/\n${appendNoteJsdocType}`
+    const resType = `interface ${returnName}{\n${bodyStr}}\n${appendNoteJsdocType}`
 
     return resType
 }

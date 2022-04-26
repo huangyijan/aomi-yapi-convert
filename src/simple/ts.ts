@@ -18,7 +18,7 @@ const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean, project: P
     const paramsName = isGetMethod ? 'params' : 'data'
     const { requestName, requestPath, requestParams } = getOneApiConfigTs(item.path, `${paramsName
     }: any`, hasNoteData, project)
-    return `${requestName}: ${requestParams} => {
+    return `${requestName}: ${requestParams}: Promise<any> => {
     const method = '${item.method}'
     return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
   },`
