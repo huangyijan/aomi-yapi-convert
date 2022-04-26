@@ -1,4 +1,4 @@
-import { request } from '../utils/request'
+import { handleApiRequestError, request } from '../utils/request'
 import { saveFile } from '../utils/file'
 import { configFileHeadFoot, getApiFileConfig, getSavePath } from '../common'
 
@@ -27,12 +27,12 @@ const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectConfig) =
 
 /** 生成带有注释的api-js文件，注释有文档链接，可以直接跳转文档页面 */
 export const getApiDocWithJsDoc = async (url: string,  project: ProjectConfig) => {
-    const fileString = await request(url, global.apiConfig.token)
     try {
+        const fileString = await request(url, global.apiConfig.token)
         const MenuList: Array<JsDocMenuItem> = JSON.parse(fileString)
         generatorFileList(MenuList,project)
     } catch (error) {
-        console.log(error)
+        handleApiRequestError(String(error))
     }
 }
 

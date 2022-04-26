@@ -1,5 +1,5 @@
 import { saveFile } from '../utils/file'
-import { request } from '../utils/request'
+import { handleApiRequestError, request } from '../utils/request'
 import { configFileHeadFoot, getApiFileConfig, getSavePath } from '../common'
 
 
@@ -30,6 +30,6 @@ export const getApiDocWithNoNote = async (url: string, project: ProjectConfig) =
         const MenuList = JSON.parse(fileString)
         generatorFileList(MenuList, project)
     } catch (error) {
-        console.log(error)
+        handleApiRequestError(String(error))
     }
 }
