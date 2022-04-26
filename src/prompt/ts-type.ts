@@ -1,20 +1,19 @@
 
 import { getReturnNoteStringItem } from './response/js'
 import { getRequestNoteStringItem } from './request/js'
-import { getNoteParams, getUpdateTime, getApiLinkAddress } from './note'
+import { getUpdateTime, getApiLinkAddress } from './note'
 import { getOneApiConfigTsType } from '../utils/str-operate'
 
 
 /** 配置请求注释 */
 const getNoteStringItem = (item: JsDocApiItem, project: ProjectConfig) => {
-    const isGetMethod = item.method.toUpperCase() == 'GET'
 
     const { reqType, typeName } = getRequestNoteStringItem(item, project)
     const { resType } = getReturnNoteStringItem(item, project)
 
     const methodNote = `
   /**
-   * @description ${item.title}${getNoteParams(reqType, typeName, isGetMethod)} 
+   * @description ${item.title}
    * @apiUpdateTime ${getUpdateTime(item.up_time)}
    * @link ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
    */`

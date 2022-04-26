@@ -1,7 +1,7 @@
 
 import { getReturnNoteStringItem } from './response/js'
 import { getRequestNoteStringItem } from './request/js'
-import { getNoteParams, getUpdateTime, getApiLinkAddress, getReturnType } from './note'
+import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
 import { getOneApiConfigJsdoc } from '../utils/str-operate'
 
 /** 配置地址栏上面的id jsdoc 注释 */
@@ -11,6 +11,12 @@ const getAppendIdNote = (params: Array<ReqParams>) => {
         if (_id) pre += `\n   * @param { number | string } ${name} ${desc}  example: ${example} `
         return pre
     }, '')
+}
+
+/** 获取请求注释上的param注释字符串 */
+const getNoteParams = (reqType: string, typeName: string, isGetMethod: boolean) => {
+    if (!typeName.includes('[]') && !reqType) return ''
+    return `\n   * @param {${typeName}} ${isGetMethod ? 'params' : 'data'}`
 }
 
 /** 配置请求注释 */

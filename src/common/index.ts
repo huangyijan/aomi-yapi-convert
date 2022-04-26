@@ -35,7 +35,8 @@ export const configFileHeadFoot = (fileBufferStringChunk: Array<string>, noteStr
 }
 
 /** 获取文件存储的路径 */
-export const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: CatConfig | undefined, nameChunk: Map<string, number>, config: ApiConfig) => {
+export const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: CatConfig | undefined, nameChunk: Map<string, number>) => {
+
     let fileName = recommendName
     let dir = project.outputDir
     // 判断用户是否有自定义配置，如果有取配置文件的。（TODO:用户配置不当可能会导致出错）
@@ -45,7 +46,7 @@ export const getSavePath = (recommendName: string, project: ProjectConfig, fileC
     let FileNameTimes = nameChunk.get(recommendName)
     if (FileNameTimes) FileNameTimes++ // 如果map已经有值那我们就+1，防止用户命名冲突，虽然不太优雅
 
-    const { version } = config
+    const { version } = global.apiConfig
     const path = `${dir}/${fileName}${FileNameTimes || ''}.${version}`
     nameChunk.set(fileName, FileNameTimes || 1)
     return path
@@ -68,9 +69,9 @@ const generateTypeBufferStringByVersion = (version: Version) => {
  * @param project 项目组文件的配置
  * @returns {Object} {文件名：string, 单个API文件流主容器: string}
  */
-export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: ProjectConfig, config: ApiConfig) => {
+export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: ProjectConfig) => {
     const { list } = item
-    const {isNeedType} = config
+    const {isNeedType} = global.apiConfig
     const pathSet: TimesObject = {} // 处理文件夹命名的容器
     const fileBufferStringChunk: Array<string> = [] // 单个API文件流
     const noteStringChunk: Array<string> = ['\n'] // 存储Jsdoc注释的容器
@@ -82,9 +83,9 @@ export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: Projec
         item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题,难搞
 
         if (isNeedType) { 
-            generateTypeBufferStringByVersion(config.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)
+            generateTypeBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)
         } else {
-            generateSimpleBufferStringByVersion(config.version)(fileBufferStringChunk, item as apiSimpleItem, project, config)
+            generateSimpleBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as apiSimpleItem, project)
         }
 
         // 统计名字出现次数，用作文件夹重名时命名依据

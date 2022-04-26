@@ -41,3 +41,7 @@ interface ApiConfig {
   runNow?: boolean
   projects: Array<ProjectConfig>
 }
+
+declare global: {
+ var apiConfig: ApiConfig
+}

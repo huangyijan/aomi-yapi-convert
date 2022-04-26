@@ -61,6 +61,8 @@ declare interface TimesObject {
   [key: string]: number
 }
 
+
+
 interface requestConfig {
   requestName: string //api name str
   requestPath: string // api path str
