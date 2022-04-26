@@ -62,7 +62,7 @@ export const dealJsonToTsTypeReturn = (data: object, returnName: string) => {
         if (name !== type) type = name
         
         bodyStr += description ? `  /** ${description} */\n`: ''
-        bodyStr += `    ${key}: ${type} \n`
+        bodyStr += `    ${key}?: ${type} \n`
     })
 
     const resType = `interface ${returnName} {\n${bodyStr}}\n${appendNoteJsdocType}`

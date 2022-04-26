@@ -73,24 +73,26 @@ export const showExampleStrByType = (value: unknown) => {
 
 /** 后台类型转前端类型 */
 export const transformType = (serviceType: string) => {
+    if (String(serviceType).length > 10) return 'any'
     switch (serviceType) {
     case 'integer':
         return 'number'
     case 'bool':
         return 'boolean'
-    
     default:
         return serviceType
     }
 }
 
 /** 判断api数据里面的数据类型 */
-export const getTypeByValue = (value: { constructor: ArrayConstructor }) => {
+export const getTypeByValue = (value: { constructor: ArrayConstructor, type?: string }) => {
     if(value === null) return 'string'
     const jsType = typeof value
     switch (jsType) {
     case 'object': // 引用类型都是object，需要处理不同引用类型
         return value.constructor === Array ? 'array' : 'object'
+    case 'undefined': 
+        return 'any'
     default:
         return jsType
     }

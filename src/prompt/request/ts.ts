@@ -44,9 +44,10 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
         const { note, name } = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
         appendNoteJsdocType = note
         if (name !== type) type = name
-
-        bodyStr += `    /**  ${description} example: ${showExampleStrByType(value.default) || '无'}  */ \n`
-        bodyStr += `    ${key}: ${type} \n`
+        
+        const example = showExampleStrByType(value.default) 
+        if (example || description) bodyStr += `    /**  ${description}  ${example ? `example: ${example}`: ''}  */ \n`
+        bodyStr += `    ${key}?: ${type} \n`
     })
 
     return (`interface ${requestName} {\n${bodyStr}}\n${appendNoteJsdocType}`)

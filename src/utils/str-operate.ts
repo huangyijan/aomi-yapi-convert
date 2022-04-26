@@ -127,8 +127,8 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
             const { key, type, description = '' } = cur
             const defaultStr = cur.default ? ` default: ${cur.default}` : ''
 
-            pre += `    /** ${description} ${defaultStr} */ \n`
-            pre += `    ${key}: ${type} \n`
+            if(description || defaultStr) pre += `    /** ${description} ${defaultStr} */ \n`
+            pre += `    ${key}?: ${type} \n`
             if (index === keyNote.length - 1) pre += '}\n'
             return pre
         }, `interface ${typeName} {\n`)

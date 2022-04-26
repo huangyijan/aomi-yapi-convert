@@ -20,6 +20,7 @@ export const request = (url: string, token: string) => {
             })
 
             res.on('end', () => {
+                if(chunk.length<200) return reject(chunk)
                 resolve(chunk)
             })
         })
@@ -28,4 +29,12 @@ export const request = (url: string, token: string) => {
         })
         req.end()
     })
+}
+
+export const handleApiRequestError = (error: string) => {
+    if (error.includes('40011')) {
+        console.log('\n\x1b[33m', 'token 已经过期， 请从yapi文档network获取最新token')
+    } else {
+        console.log(error)
+    }
 }
