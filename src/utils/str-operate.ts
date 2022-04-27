@@ -1,3 +1,5 @@
+import { getSuitableTsType, getSuitableTsTypeNote } from './decision'
+
 /* eslint-disable no-useless-escape */
 const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
 const illegalRegex = /[^a-zA-Z0-9]/g // 用来剔除不合法的符号
@@ -5,7 +7,6 @@ export const pathHasParamsRegex = /\/\{([a-zA-Z0-9]*)\}/g // 獲取接口参数�
 
 /** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
 export const getValidApiPath = (path: string) => {
-    if (path.includes('scanCodeMenu/')) console.log(path)
     if (path.includes('?')) path = path.split('?')[0]
     if (path.endsWith('/')) path = path.slice(0, path.length - 1)
     return path
@@ -118,20 +119,16 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
 
     const version = global.apiConfig.version
 
-    if (typeName === 'merchantOperationLogManagerPageListResponseNavigatepageNums') {
-        console.log(1)
-    }
-
     if (version === 'ts') {
         return keyNote.reduce((pre, cur, index) => {
             const { key, type, description = '' } = cur
             const defaultStr = cur.default ? ` default: ${cur.default}` : ''
 
-            if(description || defaultStr) pre += `    /** ${description} ${defaultStr} */ \n`
-            pre += `    ${key}?: ${type} \n`
+            pre += getSuitableTsTypeNote(description, defaultStr)
+            pre += getSuitableTsType(key, type)
             if (index === keyNote.length - 1) pre += '}\n'
             return pre
-        }, `interface ${typeName} {\n`)
+        }, `\ninterface ${typeName} {\n`)
     }
     
     if (version === 'js') return keyNote.reduce((pre, cur, index) => {

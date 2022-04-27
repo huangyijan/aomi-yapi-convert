@@ -1,5 +1,5 @@
 import { configJsdocType, getDescription, getLegalJson, removeProperties, showExampleStrByType } from '../../utils'
-import { getNoteNameByParamsType, getArrayTypeName } from '../note'
+import { getNoteNameByParamsType } from '../note'
 
 import { getType } from '../../utils/str-operate'
 import { getSecondNoteAndName } from '../second'
@@ -56,13 +56,13 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
 
 
 /** 获取注释的jsDoc类型 */
-export const getReqType = (item: JsDocApiItem, typeName: string, body: any) => {
+export const getReqType = (item: JsDocApiItem, typeName: string) => {
     const isGetMethod = item.method.toUpperCase() == 'GET'
 
-    if (typeName.includes('[]')) return  ''
     if (isGetMethod) {
         return getConfigNoteParams(item.req_query, typeName)
     } else {
+        const body = getLegalJson(item.req_body_other) // 获取合法的json数据
         return getJsonToJsDocParams(body, typeName)
     }
 }
@@ -72,14 +72,10 @@ export const getReqType = (item: JsDocApiItem, typeName: string, body: any) => {
 /** 获取请求的参数注释和参数名 */
 export const getRequestNoteStringItem = (item: JsDocApiItem, project: ProjectConfig): RequestNoteStringItem => {
   
-    const body = getLegalJson(item.req_body_other) // 获取合法的json数据
-    if (typeof body !== 'object') return { typeName: 'string', reqType: '' }
 
-    const normalName = getNoteNameByParamsType(item, project) // 正常object使用的名字
+    const typeName = getNoteNameByParamsType(item, project) // 正常object使用的名字
 
-    const typeName = getArrayTypeName(normalName, body) // 处理数组的情况
-  
-    const reqType = getReqType(item, typeName, body)
+    const reqType = getReqType(item, typeName)
 
     return {reqType, typeName}
 }

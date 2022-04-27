@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
-
+import { execSync } from 'child_process'
+const TOKEN_NAME = 'API_TOKEN'
 export const GetSafePath = function (relativePath: string) {
     const filePath = path.resolve(relativePath)
     const createDir = (filePath: string) => {
@@ -27,7 +28,7 @@ export const saveFile = (url: string, file: string | NodeJS.ArrayBufferView, cal
     fs.writeFile(GetSafePath(url), file, { encoding: 'utf-8' },
         (res) => {
             if(call) call(res)
-            // console.log('\n\x1b[33m', `Api文件${url}:存储${res ? '失败' : '成功'}`)
+            console.log('📗', `Api文件${url}:更新${res ? '失败' : '成功'}`)
         }
     )
 }
@@ -43,5 +44,19 @@ export const readFile = (url: string) => {
             if(err) reject(err)
             resolve(data)
         })
+    })
+}
+
+
+/** 获取本地存储的token */
+export const getApiToken = () => {
+    const API_TOKEN = execSync(`npm config get ${TOKEN_NAME}`, { stdio: ['ignore', 'pipe', 'pipe'] }).toString().replace(/\n$/, '')
+    return API_TOKEN
+}
+/** 存储token到本地防止频发的git的变更 */
+export const saveApiToken = (token: string) => {
+    return new Promise((resolve) => {
+        const API_TOKEN = execSync(`npm set ${TOKEN_NAME} ${token}`)
+        resolve(API_TOKEN)
     })
 }

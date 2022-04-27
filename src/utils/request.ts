@@ -1,5 +1,7 @@
 import http from 'http'
 import https from 'https'
+import { run } from '../enter'
+import { refreshToken } from '../enter/refresh-token'
 
 
 const getHeader = (token: string) => {
@@ -34,6 +36,7 @@ export const request = (url: string, token: string) => {
 export const handleApiRequestError = (error: string) => {
     if (error.includes('40011')) {
         console.log('\n\x1b[33m', 'token 已经过期， 请从yapi文档network获取最新token')
+        refreshToken().then(_ => run())
     } else {
         console.log(error)
     }

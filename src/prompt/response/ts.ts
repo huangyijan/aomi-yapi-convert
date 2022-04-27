@@ -1,7 +1,8 @@
 import { getOneApiConfig, getType } from '../../utils/str-operate'
-import { removeProperties, configJsdocType, getLegalJson, getDescription } from '../../utils'
+import { removeProperties, getLegalJson, getDescription } from '../../utils'
 import { getSecondNoteAndName } from '../second'
 import { dealResponseData, getReturnName } from '../note'
+import { getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getSuitableType } from '../../utils/decision'
 
 interface ReturnNoteStringItem {
     returnNameWithType: string
@@ -49,23 +50,19 @@ export const dealJsonToTsTypeReturn = (data: object, returnName: string) => {
 
     Object.entries(data).forEach(([key, value]) => {
         const description = getDescription(value)
-        let type = configJsdocType(value)
+        let type = getSuitableType(value)
         const addTypeName = getType(type, key, returnName)
 
         const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
         
-        if (returnName === 'merchantOperationLogManagerPageListResponse') {
-            console.log(1, note)
-
-        }
         if(note) appendNoteJsdocType = note
         if (name !== type) type = name
         
-        bodyStr += description ? `  /** ${description} */\n`: ''
-        bodyStr += `    ${key}?: ${type} \n`
+        bodyStr += getSuitableTsTypeNote(description)
+        bodyStr += getSuitableTsType(key, type)
     })
 
-    const resType = `interface ${returnName} {\n${bodyStr}}\n${appendNoteJsdocType}`
+    const resType = getSuitableTsInterface(returnName, bodyStr, appendNoteJsdocType)
 
     return resType
 }

@@ -1,6 +1,7 @@
 import { getApiDocWithNoNote } from './simple/index'
 import { getApiDocWithJsDoc } from './prompt/index'
 import {config} from './mock'
+import { saveApiToken } from './utils/file'
 export enum Type {
     Simple,
     Normal,
@@ -18,10 +19,9 @@ export const getDocByType = (type: Type,  url: string, project: ProjectConfig) =
     }
 }
 
-export const main = (config: ApiConfig) => {
+export const main = async (config: ApiConfig) => {
 
     global.apiConfig = config // 注册全局配置
-
     const { protocol, host, isNeedType, projects } = config
     projects.forEach(item => {
         const { projectId } = item

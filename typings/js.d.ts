@@ -10,7 +10,7 @@ interface JsDocMenuItem {
 }
 
 interface reqQuery {
-  require: string
+  required: string
   name: string
   value: string
   example: string
