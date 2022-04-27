@@ -1,36 +1,8 @@
-import { transformType, hasProperty, getTypeByValue } from '../utils'
+import { getSuitableType, getSuitableDefault } from '../utils/decision'
+import { hasProperty } from '../utils'
 import { getCommandNote } from '../utils/str-operate'
 
-const getSuitableType = (value: any) => {
-    const valueType = typeof value
-    switch (valueType) {
-    case 'object':
-        if (hasProperty(value, 'type')) return transformType(value.type)
-        if (hasProperty(value, 'default')) return getTypeByValue(value.default)
-        return 'any'
-    case 'undefined':
-        return 'any'
-    case 'number':
-    case 'string':
-    default:
-        return String(valueType)
-    }
-}
 
-const getSuitableDefault = (value: any) => {
-    const valueType = typeof value
-    switch (valueType) {
-    case 'object':
-        if (hasProperty(value, 'default')) return value.default
-        return ''
-    case 'boolean':
-    case 'string':
-    case 'number':
-        return String(valueType)
-    default:
-        return ''
-    }
-}
 
 /** 获取不正常序列化的数组对象注释 */
 export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) => {
@@ -117,8 +89,6 @@ export const getArrayTypeNote = (arrayValue: any, addTypeName: string) => {
 
 /** 处理第二层级的array和object */
 export const getSecondNoteAndName = (value: any, addTypeName: string, type: string, appendNoteJsdocType: string) => {
-
-
 
     if (type.includes('array')) {
         const typeName = addTypeName.substring(0, addTypeName.length - 2)

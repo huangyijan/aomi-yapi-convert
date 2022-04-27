@@ -1,7 +1,6 @@
 /** test config */
 export const config = {
     'yapiURL': 'http://yapi.miguatech.com/project/445/interface/api',
-    'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjQ2NiwiaWF0IjoxNjUwNTAzMTY4LCJleHAiOjE2NTExMDc5Njh9.yV0EPpBsgD44xQSfnk9PMauy9kmkPTkzjYLc66vQBH01',
     'version': 'ts',
     'isNeedType': true,
     'axiosFrom': 'import { fetch } from \'@/service/fetch/index\'',

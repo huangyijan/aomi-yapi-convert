@@ -1,3 +1,5 @@
+import { getSuitableTsType, getSuitableTsTypeNote } from './decision'
+
 /* eslint-disable no-useless-escape */
 const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
 const illegalRegex = /[^a-zA-Z0-9]/g // 用来剔除不合法的符号
@@ -122,11 +124,11 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
             const { key, type, description = '' } = cur
             const defaultStr = cur.default ? ` default: ${cur.default}` : ''
 
-            if(description || defaultStr) pre += `    /** ${description} ${defaultStr} */ \n`
-            pre += `    ${key}?: ${type} \n`
+            pre += getSuitableTsTypeNote(description, defaultStr)
+            pre += getSuitableTsType(key, type)
             if (index === keyNote.length - 1) pre += '}\n'
             return pre
-        }, `interface ${typeName} {\n`)
+        }, `\ninterface ${typeName} {\n`)
     }
     
     if (version === 'js') return keyNote.reduce((pre, cur, index) => {

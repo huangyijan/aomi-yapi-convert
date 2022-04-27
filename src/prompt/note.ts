@@ -10,13 +10,6 @@ export const getNoteNameByParamsType = (item: JsDocApiItem, project: ProjectConf
     return ParamsName + (isGetMethod ? 'Params' : 'Data')
 }
 
-export const getArrayTypeName = (typeName: string, body: any) => {
-    const type = getTypeByValue(body)
-    if (type === 'array') { // 处理数组的typeName
-        return body.length ? `${typeof body[0]}[]` : 'any[]'
-    }
-    return typeName
-}
 
 /** 获取放在Promise<xxx>的名字 */
 export const getReturnType = (returnName: string, resType: string) => {

@@ -1,8 +1,9 @@
-import { configJsdocType, getDescription, getLegalJson, removeProperties, showExampleStrByType } from '../../utils'
-import { getNoteNameByParamsType, getArrayTypeName } from '../note'
+import { getDescription, getLegalJson, removeProperties } from '../../utils'
+import { getNoteNameByParamsType } from '../note'
 
 import { getType } from '../../utils/str-operate'
 import { getSecondNoteAndName } from '../second'
+import { getSuitableDefault, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getSuitableType } from '../../utils/decision'
 
 
 
@@ -16,12 +17,11 @@ interface RequestNoteStringItem {
 export const getConfigNoteParams = (reqQuery: Array<reqQuery>, requestName: string) => {
     let paramsStr = ''
     reqQuery.forEach(item => {
-        paramsStr += `  /** ${item.desc || ''} example: ${item.example || '无'}  */ \n`
-        paramsStr += `  ${item.name}: string \n`
+        paramsStr += getSuitableTsTypeNote(item.desc , item.example)
+        paramsStr += getSuitableTsType(item.name, 'string')
     })
-
     if (!paramsStr) return ''
-    return `interface ${requestName} {\n${paramsStr} }`
+    return getSuitableTsInterface(requestName, paramsStr)
 }
 
 /** 处理请求体(data)的逻辑规则 */
@@ -37,7 +37,7 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
     Object.entries(properties).forEach(([key, value]: any) => {
 
         const description = getDescription(value)
-        let type = configJsdocType(value)
+        let type = getSuitableType(value)
 
 
         const addTypeName = getType(type, key, requestName) // 这里处理额外的类型
@@ -45,23 +45,22 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
         appendNoteJsdocType = note
         if (name !== type) type = name
         
-        const example = showExampleStrByType(value.default) 
-        if (example || description) bodyStr += `    /**  ${description}  ${example ? `example: ${example}`: ''}  */ \n`
-        bodyStr += `    ${key}?: ${type} \n`
+        const example = getSuitableDefault(value) 
+        bodyStr += getSuitableTsTypeNote(description, example)
+        bodyStr += getSuitableTsType(key, type)
     })
 
-    return (`interface ${requestName} {\n${bodyStr}}\n${appendNoteJsdocType}`)
+    return getSuitableTsInterface(requestName, bodyStr, appendNoteJsdocType)
 }
 
 
 /** 获取注释的jsDoc类型 */
-export const getReqType = (item: JsDocApiItem, typeName: string, body: any) => {
+export const getReqType = (item: JsDocApiItem, typeName: string) => {
     const isGetMethod = item.method.toUpperCase() == 'GET'
-
-    if (typeName.includes('[]')) return  ''
     if (isGetMethod) {
         return getConfigNoteParams(item.req_query, typeName)
     } else {
+        const body = getLegalJson(item.req_body_other) // 获取合法的json数据
         return getJsonToJsDocParams(body, typeName)
     }
 }
@@ -70,15 +69,8 @@ export const getReqType = (item: JsDocApiItem, typeName: string, body: any) => {
 
 /** 获取请求的参数注释和参数名 */
 export const getRequestNoteStringItem = (item: JsDocApiItem, project: ProjectConfig): RequestNoteStringItem => {
-  
-    const body = getLegalJson(item.req_body_other) // 获取合法的json数据
-    if (typeof body !== 'object') return { typeName: 'string', reqType: '' }
-
-    const normalName = getNoteNameByParamsType(item, project) // 正常object使用的名字
-
-    const typeName = getArrayTypeName(normalName, body) // 处理数组的情况
-  
-    const reqType = getReqType(item, typeName, body)
+    const typeName = getNoteNameByParamsType(item, project) // 正常object使用的名字
+    const reqType = getReqType(item, typeName)
 
     return {reqType, typeName}
 }
