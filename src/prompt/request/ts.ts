@@ -56,8 +56,11 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
 
 /** 获取注释的jsDoc类型 */
 export const getReqType = (item: JsDocApiItem, typeName: string) => {
-    const isGetMethod = item.method.toUpperCase() == 'GET'
-    if (isGetMethod) {
+    const hasParamsQuery = Array.isArray(item.req_query) && item.req_query.length
+    if (item.path === '/api/holiday') {
+        // debugger
+    }
+    if (hasParamsQuery) {
         return getConfigNoteParams(item.req_query, typeName)
     } else {
         const body = getLegalJson(item.req_body_other) // 获取合法的json数据

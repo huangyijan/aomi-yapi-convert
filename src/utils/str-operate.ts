@@ -1,4 +1,5 @@
 import { getSuitableTsType, getSuitableTsTypeNote } from './decision'
+import { request } from './request'
 
 /* eslint-disable no-useless-escape */
 const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
@@ -20,13 +21,21 @@ export const getAppendRequestParams = (path: string) => {
     return requestParams
 }
 
+/** 获取处理地址的baseUrl */
+const getApiBaseUrl = (project: ProjectConfig) => {
+    let baseUrl  =''
+    const { prefix, projectBaseConfig } = project
+    
+    if(projectBaseConfig?.basepath) baseUrl = projectBaseConfig.basepath
+    if (prefix) baseUrl = prefix.endsWith('/') ? prefix.slice(0, prefix.length - 1) : prefix // 兼容两种写法
+    return baseUrl
+}
 
 
 /** 处理传Id的API请求URL */
 export const getAppendPath = (path: string, project: ProjectConfig) => {
-    let { prefix = '' } = project
-    if (prefix) prefix = prefix.endsWith('/') ? prefix.slice(0, prefix.length-1) : prefix // 兼容两种写法
 
+    const prefix = getApiBaseUrl(project)
     const isHaveParams = pathHasParamsRegex.test(path) // 地址栏上是否有参数
     if (!isHaveParams) return `'${prefix}${path}'`
 

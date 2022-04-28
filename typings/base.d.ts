@@ -1,3 +1,30 @@
+declare interface ProjectBaseConfig {
+  add_time: number | string,
+  basepath: string | string,
+  desc: string,
+  defaultRespBody: {
+    [key: string]: any
+  },
+  env: Array<{
+    header: any[],
+    name: string,
+    domain: string,
+    name: string,
+    _id: number|string
+  }>,
+  group_id: number,
+  icon: string,
+  is_json5: boolean,
+  is_mock_open: false,
+  name: string,
+  role: string,
+  project_type: string,
+  tag: Array<any>,
+  uid: number | string,
+  up_time: number | string,
+  _id: number
+}
+
 /** 普通网页的菜单接口 */
 declare interface MenuItem {
   index: number,

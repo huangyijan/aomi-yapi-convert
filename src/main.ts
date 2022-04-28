@@ -1,43 +1,41 @@
 import { getApiDocWithNoNote } from './simple/index'
 import { getApiDocWithJsDoc } from './prompt/index'
-import {config} from './mock'
-import { saveApiToken } from './utils/file'
-export enum Type {
-    Simple,
-    Normal,
-    Ts
-}
+import { config } from './mock'
+import { request } from './utils/request'
+import { getApiToken } from './utils/file'
 
-export const getDocByType = (type: Type,  url: string, project: ProjectConfig) => {
-    switch (type) {
-    case Type.Simple:
-        getApiDocWithNoNote(url, project)
-        break
-    case Type.Normal:
-        getApiDocWithJsDoc(url, project)
-        break
-    }
-}
 
 export const main = async (config: ApiConfig) => {
 
     global.apiConfig = config // 注册全局配置
     const { protocol, host, isNeedType, projects } = config
-    projects.forEach(item => {
-        const { projectId } = item
-        const baseUrl = `${protocol}//${host}`
-        const jsonUrl = `${baseUrl}/api/plugin/export?type=json&pid=${projectId}&status=all&isWiki=false`
-        const menuUrl = `${baseUrl}/api/interface/list_menu?project_id=${projectId}`
-        if (isNeedType) {
-            getDocByType(Type.Normal,  jsonUrl, item)
-        } else {
-            getDocByType(Type.Simple,  menuUrl, item)
-        }
+    const baseUrl = `${protocol}//${host}`
+    const token = getApiToken()
+
+
+    projects.forEach(project => {
+        const { projectId } = project
+        const projectConfigUrl = `${baseUrl}/api/project/get?id=${projectId}`
+        
+        request(projectConfigUrl, token)
+            .then(projectConfigStr => {
+                const projectConfig = JSON.parse(projectConfigStr)
+                project.projectBaseConfig = projectConfig.data
+                if (isNeedType) {
+                    project.requestUrl = `${baseUrl}/api/plugin/export?type=json&pid=${projectId}&status=all&isWiki=false` // jsonUrl
+                    getApiDocWithJsDoc(project.requestUrl, project)
+                } else {
+                    project.requestUrl = `${baseUrl}/api/interface/list_menu?project_id=${projectId}` // menuUrl
+                    getApiDocWithNoNote(project.requestUrl, project)
+
+                }
+            })
+
     })
 }
 
 
 
 
-const { NODE_ENV} = process.env
-if(NODE_ENV === 'development') main(config as ApiConfig)
+const { NODE_ENV } = process.env
+if (NODE_ENV === 'development') main(config as ApiConfig)
