@@ -13,7 +13,7 @@ const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectConfig) =
         const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item, project)
         if (!item.list.length || !fileBufferStringChunk.length) return
         
-        const fileConfig = group?.find(menu => menu.catId === item.list[0].catid)
+        const fileConfig = group?.find(menu => menu.catId == item.list[0].catid)
         if (!isLoadFullApi && !fileConfig) return
 
         const savePath = getSavePath(FileName, project, fileConfig, nameChunk)

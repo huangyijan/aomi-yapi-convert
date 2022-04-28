@@ -53,6 +53,7 @@ export const getApiToken = () => {
     const API_TOKEN = execSync(`npm config get ${TOKEN_NAME}`, { stdio: ['ignore', 'pipe', 'pipe'] }).toString().replace(/\n$/, '')
     return API_TOKEN
 }
+
 /** 存储token到本地防止频发的git的变更 */
 export const saveApiToken = (token: string) => {
     return new Promise((resolve) => {

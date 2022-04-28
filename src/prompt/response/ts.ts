@@ -1,4 +1,4 @@
-import { getOneApiConfig, getType } from '../../utils/str-operate'
+import { getApiName, getType } from '../../utils/str-operate'
 import { removeProperties, getLegalJson, getDescription } from '../../utils'
 import { getSecondNoteAndName } from '../second'
 import { dealResponseData, getReturnName } from '../note'
@@ -17,7 +17,7 @@ export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConf
 
     if (typeof body !== 'object') return { returnNameWithType: 'string', resType: '' }
 
-    const { requestName } = getOneApiConfig(item.path, project)
+    const requestName = getApiName(item.path, item.method)
 
     const data = removeProperties(body) // 删除后台传回来的多余嵌套的属性数据
 

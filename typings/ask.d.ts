@@ -28,7 +28,10 @@ interface ProjectConfig {
   outputDir: string,
   isLoadFullApi: boolean
   prefix?: string
-  group?: Array<CatConfig>
+  group?: Array<CatConfig>,
+  /** 请求路径，非配置，我自动生成 */
+  requestUrl?: string,
+  projectBaseConfig?: ProjectBaseConfig
 }
 interface ApiConfig {
   yapiURL: string

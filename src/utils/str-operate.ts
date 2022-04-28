@@ -1,8 +1,8 @@
 import { getSuitableTsType, getSuitableTsTypeNote } from './decision'
-
 /* eslint-disable no-useless-escape */
 const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
 const illegalRegex = /[^a-zA-Z0-9]/g // 用来剔除不合法的符号
+const longBiasRegex = /\/[^\/]*/ // 处理多个“/”地址的情况
 export const pathHasParamsRegex = /\/\{([a-zA-Z0-9]*)\}/g // 獲取接口参数名稱
 
 /** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
@@ -20,65 +20,33 @@ export const getAppendRequestParams = (path: string) => {
     return requestParams
 }
 
+/** 获取处理地址的baseUrl */
+const getApiBaseUrl = (project: ProjectConfig) => {
+    let baseUrl  =''
+    const { prefix, projectBaseConfig } = project
+    if(projectBaseConfig?.basepath) baseUrl = projectBaseConfig.basepath
+    if (prefix) baseUrl = prefix.endsWith('/') ? prefix.slice(0, prefix.length - 1) : prefix // 兼容两种写法
+    return baseUrl
+}
 
 
 /** 处理传Id的API请求URL */
 export const getAppendPath = (path: string, project: ProjectConfig) => {
-    let { prefix = '' } = project
-    if (prefix) prefix = prefix.endsWith('/') ? prefix.slice(0, prefix.length-1) : prefix // 兼容两种写法
-
+    const prefix = getApiBaseUrl(project)
     const isHaveParams = pathHasParamsRegex.test(path) // 地址栏上是否有参数
     if (!isHaveParams) return `'${prefix}${path}'`
-
     return `\`${prefix}${path.replace(pathHasParamsRegex, (_, p1) => `/$\{${p1}\}`)}\``
 }
+
 /** 接口名决策方案：如果有参数先去除参数，然后把接口path剩余数据转成驼峰命名，缺点：接口path如果太长，命名也会比较长 */
-export const getApiName = (path: string) => {
-    // TODO 首字母不处理驼峰，后面有如果正则方案可以更加优雅的处理
-    const dealNamePath = path.startsWith('/') ? path.substring(1) : path 
-    const apiName =  dealNamePath.replace(pathHasParamsRegex, '').replace(ApiNameRegex, (_, item) => item.toUpperCase())
-    return apiName.replace(illegalRegex, '')
-}
-
-/**
- * 获取单个请求的请求名， 请求路径， 请求参数的字符串配置
- * @param path 需要处理的接口地址
- * @returns {Object} {请求名， 请求路径， 请求参数} string
- */
-export const getOneApiConfig = (path: string, project: ProjectConfig): requestConfig => {
-    const isHaveParams = pathHasParamsRegex.test(path) // 地址栏上是否有参数
-    const requestPath = isHaveParams ? getAppendPath(path, project) : `'${path}'`
-    const requestParams = isHaveParams ? getAppendRequestParams(path) : '(options)'
-    const requestName = getApiName(path)
-    return { requestName, requestPath, requestParams }
-}
-
-
-/**
- * 获取单个请求的请求名， 请求路径， 请求参数的字符串配置Jsdoc使用版本
- * @param path 需要处理的接口地址
- * @param paramsName 函数传参名称
- * @returns {Object} {请求名， 请求路径， 请求参数} string
- */
-export const getOneApiConfigJsdoc = (path: string, paramsName: string, hasNoteData: boolean, project: ProjectConfig): requestConfig => {
-    const requestPath = getAppendPath(path, project)
-    const requestParams = getAppendRequestParamsJsdoc(path, paramsName, hasNoteData)
-    const requestName = getApiName(path)
-    return { requestName, requestPath, requestParams }
-}
-
-
-/**
- * 获取单个请求的请求名， 请求路径， 请求参数的字符串配置Ts使用版本
- * @param path 需要处理的接口地址
- * @param paramsName 函数传参名称
- * @returns {Object} {请求名， 请求路径， 请求参数} string
- */
-export const getOneApiConfigTs = (path: string, paramsName: string, hasNoteData: boolean, project: ProjectConfig): requestConfig => {
-    const requestPath = getAppendPath(path, project)
-    const requestParams = getAppendRequestParamsTs(path, paramsName, hasNoteData)
-    const requestName = getApiName(path)
-    return { requestName, requestPath, requestParams }
+export const getApiName = (path: string, method: string) => {
+    path = path.replace(pathHasParamsRegex, '')
+    // 处理名字太长
+    const biasCount = -- path.split('/').length 
+    if (biasCount >= 3) path = path.replace(longBiasRegex, '')
+    path = path.replace(ApiNameRegex, (_, item) => item.toUpperCase())
+    // 防止restful API 导致命名相同
+    return method.toLowerCase() + path.replace(illegalRegex, '')
 }
 
 /**
