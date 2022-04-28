@@ -1,13 +1,12 @@
 import { getTypeByValue, hasProperty } from '../utils'
-import { getOneApiConfig, getUpperCaseName } from '../utils/str-operate'
+import { getApiName, getUpperCaseName } from '../utils/str-operate'
 
 
 /** 获取传参名称 */
-export const getNoteNameByParamsType = (item: JsDocApiItem, project: ProjectConfig) => {
-    const isGetMethod = item.method.toUpperCase() == 'GET'
-    const { requestName } = getOneApiConfig(item.path, project)
+export const getNoteNameByParamsType = (item: JsDocApiItem, project: ProjectConfig, hasParamsQuery: boolean) => {
+    const requestName = getApiName(item.path, item.method)
     const ParamsName = getUpperCaseName(requestName)
-    return ParamsName + (isGetMethod ? 'Params' : 'Data')
+    return ParamsName + (hasParamsQuery ? 'Params' : 'Data')
 }
 
 

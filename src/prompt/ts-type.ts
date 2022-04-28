@@ -37,11 +37,11 @@ const getAppendRequestParamsTsType = (path: string, paramsName: string, hasNoteD
 
 /** 配置请求主方法 */
 const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: ProjectConfig, requestParamsType: string, returnParamsType: string) => {
-    const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
-    const paramsName = isGetMethod ? 'params' : 'data'
+    const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
+    const paramsName = hasParamsQuery ? 'params' : 'data'
     const requestPath = getAppendPath(item.path, project)
     const requestParams = getAppendRequestParamsTsType(item.path, paramsName, hasNoteData, requestParamsType)
-    const requestName = getApiName(item.path)
+    const requestName = getApiName(item.path, item.method)
     return `${requestName}: ${requestParams}: Promise<${returnParamsType}> => {
     const method = '${item.method}'
     return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })

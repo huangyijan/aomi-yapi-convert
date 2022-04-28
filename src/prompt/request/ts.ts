@@ -5,7 +5,8 @@ import { getType } from '../../utils/str-operate'
 import { getSecondNoteAndName } from '../second'
 import { getSuitableDefault, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getSuitableType } from '../../utils/decision'
 
-
+// import api from '../../api/api2'
+// api.apiHoliday({})
 
 interface RequestNoteStringItem {
   reqType: string
@@ -55,11 +56,7 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
 
 
 /** 获取注释的jsDoc类型 */
-export const getReqType = (item: JsDocApiItem, typeName: string) => {
-    const hasParamsQuery = Array.isArray(item.req_query) && item.req_query.length
-    if (item.path === '/api/holiday') {
-        // debugger
-    }
+export const getReqType = (item: JsDocApiItem, typeName: string, hasParamsQuery: boolean) => {
     if (hasParamsQuery) {
         return getConfigNoteParams(item.req_query, typeName)
     } else {
@@ -72,8 +69,10 @@ export const getReqType = (item: JsDocApiItem, typeName: string) => {
 
 /** 获取请求的参数注释和参数名 */
 export const getRequestNoteStringItem = (item: JsDocApiItem, project: ProjectConfig): RequestNoteStringItem => {
-    const typeName = getNoteNameByParamsType(item, project) // 正常object使用的名字
-    const reqType = getReqType(item, typeName)
+    const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
+
+    const typeName = getNoteNameByParamsType(item, project, hasParamsQuery) // 正常object使用的名字
+    const reqType = getReqType(item, typeName, hasParamsQuery)
 
     return {reqType, typeName}
 }

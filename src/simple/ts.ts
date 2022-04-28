@@ -1,4 +1,4 @@
-import { getOneApiConfigTs } from '../utils/str-operate'
+import { getApiName, getAppendPath, getAppendRequestParamsJsdoc } from '../utils/str-operate'
 /** 配置注释 */
 const getNoteStringItem = (item: apiSimpleItem) => {
     const { protocol, host } = global.apiConfig
@@ -16,8 +16,9 @@ const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean, project: P
 
     const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
     const paramsName = isGetMethod ? 'params' : 'data'
-    const { requestName, requestPath, requestParams } = getOneApiConfigTs(item.path, `${paramsName
-    }: any`, hasNoteData, project)
+    const requestPath = getAppendPath(item.path, project)
+    const requestParams = getAppendRequestParamsJsdoc(item.path, paramsName, hasNoteData)
+    const requestName = getApiName(item.path, item.method)
     return `${requestName}: ${requestParams}: Promise<any> => {
     const method = '${item.method}'
     return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
