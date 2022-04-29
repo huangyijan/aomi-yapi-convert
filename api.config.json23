@@ -1,0 +1,21 @@
+{
+  "yapiURL": "http://yapi.miguatech.com/project/445/interface/api/59827",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjQ2NiwiaWF0IjoxNjUwNjA4MzA2LCJleHAiOjE2NTEyMTMxMDZ9.D4X0vF3yRyAwZl9vS_2k67XmodQPLZQoFGn4EKP8Gcs",
+  "version": "js",
+  "isNeedType": false,
+  "axiosFrom": "",
+  "protocol": "http:",
+  "host": "yapi.miguatech.com",
+  "projects": [
+    {
+      "projectId": "64",
+      "outputDir": "src/api/merchant/",
+      "isLoadFullApi": true
+    },
+    {
+      "projectId": "445",
+      "isLoadFullApi": true,
+      "outputDir": "src/api/group/"
+    }
+  ]
+}
