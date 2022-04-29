@@ -1,8 +1,9 @@
-import { configJsdocType, getDescription, getLegalJson, removeProperties, showExampleStrByType } from '../../utils'
+import { getDescription, getLegalJson, removeProperties, showExampleStrByType } from '../../utils'
 import { getNoteNameByParamsType } from '../note'
 
 import { getType } from '../../utils/str-operate'
 import { getSecondNoteAndName } from '../second'
+import { getSuitableType } from '../../utils/decision'
 
 
 
@@ -38,7 +39,7 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
     Object.entries(properties).forEach(([key, value]: any) => {
 
         const description = getDescription(value)
-        let type = configJsdocType(value)
+        let type = getSuitableType(value)
 
 
         const addTypeName = getType(type, key, requestName) // 这里处理额外的类型

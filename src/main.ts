@@ -1,7 +1,7 @@
 import { getApiDocWithNoNote } from './simple/index'
 import { getApiDocWithJsDoc } from './prompt/index'
 import { config } from './mock'
-import { request } from './utils/request'
+import { handleApiRequestError, request } from './utils/request'
 import { getApiToken } from './utils/file'
 
 
@@ -30,12 +30,12 @@ export const main = async (config: ApiConfig) => {
 
                 }
             })
+            .catch(error => {
+                handleApiRequestError(String(error))
+            })
 
     })
 }
-
-
-
 
 const { NODE_ENV } = process.env
 if (NODE_ENV === 'development') main(config as ApiConfig)

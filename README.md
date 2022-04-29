@@ -1,4 +1,21 @@
-aomi-yapi-convert(针对公司内部使用的yapi文档转js或者ts文件的自动化npm插件)
+aomi-yapi-convert(针对yapi文档转js或者ts文件的自动化npm插件)
+
+## 功能
+1. 支持转ts、js API文件
+2. js文件支持jsDoc版本和simple注释版本
+3. ts文件支持Ts版本和simple注释版本
+4. 支持自定义配置生成api文件位置
+5. 支持自定义配置axios路径
+6. 支持自定义配置baseUrl,不配置默认取项目的baseUrl
+7. 支持自定义配置生成api文件名
+
+这个工具能帮你做些什么？
+
+1. 帮你完成交互搬运工作
+2. 减少你经常搬运错误的情况
+3. 获得来自后台同事为你写的字段以及参数提示，不用频繁来回切文档页面去看文档
+4. 获得来自axios的配置提示，避免老是忘记配置项参数要去看文档的问题
+5. api文件即是注释，api文件即是文档，获得良好的开发体验
 
 ## 安装
 
@@ -12,8 +29,11 @@ $ npm install aomi-yapi-convert
 Using yarn: 
 
 ```bash
-$yarn add aomi-yapi-convert
+$ yarn add aomi-yapi-convert
+
 ```
+
+虽然是是开发工具，属于开发环境依赖，但是因为常用api配置项用了我依赖内的axios配置提示，如果项目构建环境没有将注释handshake的话，不清楚会不会有依赖丢失的错误。所以推荐将其作为生产发布环境依赖，这个后面再求证
 
 ### 怎么使用
 
@@ -23,7 +43,7 @@ $yarn add aomi-yapi-convert
 $ npx aomi-yapi-convert
 ```
 
-不过还是推荐在项目package.json添加script:
+虽然上面的命令也能满足使用，但是毕竟不方便也不太好记，每次更新都要打一遍，还是推荐在项目package.json添加script:
 
 ```
  "scripts": {
@@ -43,9 +63,8 @@ $ npx aomi-yapi-convert
 const targetJson = {
   protocol: '', // 协议头https: 或http: 由文档地址决定
   host: '', // example: baidu.com
-  token: '', // 如果token失效了，请通过yapi文档里面的cookie获取最新的token，这里token失效比较麻烦，后面再考虑有没有更好的方法
-  version: '', // 目前只支持jsdoc版本，设置默认就可以了
-  "isNeedType": boolean, 这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
+  version: '', // ts/js 两种版本，type类型分别是TsType类型和jsdoc类型
+  isNeedType : boolean, 这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
   axiosFrom: '', // 这里配置自定义的请求目录，考虑到大部分时候我们都用axios的包，所以使用axios作为默认请求，你也可以使用自定义的请求。
   projects: [ // 可以通过传入多个project项来完成添加不同项目的api文件
     {
@@ -70,9 +89,10 @@ const targetJson = {
 }
 ```
 
-好了，走到一步了，如果没有出现意外的话，你会在src/api（如果输出文件没有修改的话）目录下看到由插件自动化生成api文件。示例：
+好了，走到一步了，如果没有出现意外的话，你会在src/api（如果输出文件没有修改的话）目录下看到由插件自动化生成api文件。示例(ts/js)：
 
 ![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code.png)
+![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-js.png)
 
 然后就可以愉快使用了。使用的时候将会获得非常良好的提示体验。
 

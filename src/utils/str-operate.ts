@@ -52,26 +52,13 @@ export const getApiName = (path: string, method: string) => {
 /**
  * 处理传Id的API请求参数
  * @param path 请求路径
- * @param paramsName 传输使用的参数名，配合JsDoc文档数据，Get请求使用params, Post, Put, Delete 请求使用data
+ * @param paramsName 传输使用的参数名，配合JsDoc文档数据
  * @returns {string} 函数请求使用的参数表达式
  */
 export const getAppendRequestParamsJsdoc = (path: string, paramsName: string, hasNoteData: boolean) => {
     let requestParams = ''
     path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}, `)
     requestParams = `(${requestParams}${hasNoteData ? `${paramsName}, ` : ''}options)`
-    return requestParams
-}
-
-/**
- * 处理传Id的API请求参数
- * @param path 请求路径
- * @param paramsName 传输使用的参数名，配合JsDoc文档数据，Get请求使用params, Post, Put, Delete 请求使用data
- * @returns {string} 函数请求使用的参数表达式
- */
-export const getAppendRequestParamsTs = (path: string, paramsName: string, hasNoteData: boolean) => {
-    let requestParams = ''
-    path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}: string | number, `)
-    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}, ` : ''}options: axiosConfig)`
     return requestParams
 }
 

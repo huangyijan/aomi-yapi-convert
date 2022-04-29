@@ -10,23 +10,7 @@ const illegalRegex = /(\/\/\s.*)\n/g // 非法json注释匹配
 export const toHumpName = (str: string) => {
     return str.replace(NameRegex, function (_keb, item) { return item.toUpperCase() })
 }
-/** 捕获路径名作为API文件夹名称 */
-export const getPathName = (path: string) => {
-    let patchChunk: RegExpMatchArray | null = null
-    if (LongPathNameRegex.test(path)) {
-        patchChunk = path.match(LongPathNameRegex)
-    } else {
-        patchChunk = path.match(ShortPathNameRegex)
-    }
-    if (!patchChunk) return 'common' // 捕获不到就用common作为路径文件夹
-    return toHumpName(patchChunk[1])
-}
-/** 获取对象里面times里面最大的键值 */
-export const getMaxTimesObjectKeyName = (obj: TimesObject): string => {
-    const times = Object.values(obj)
-    const max = Math.max(...times)
-    return Object.keys(obj).find(key => obj[key] === max) || 'common'
-}
+
 
 /** hasOwnProperty太长了，写一个代理当简写 */
 export const hasProperty = function (obj: object, key: string) {
@@ -137,14 +121,6 @@ export const getLegalJson = (reqBody: string) => {
     }
 
 }
-
-/** 处理子序列jsdoc类型 */
-export const configJsdocType = (value: any) => {
-    const type = getCorrectType(value)
-
-    return type
-}
-
 
 export const getDescription = (value: any) => {
     let description = ''

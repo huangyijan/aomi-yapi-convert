@@ -1,17 +1,2 @@
-import path from 'path'
-import ask from './ask'
-import {main} from '../main'
-
-export async function run() {
-    const configPath = path.resolve('api.config.json')
-    let config = {} as ApiConfig
-    try {
-        config = require(configPath)
-    } catch (_) {
-        config = await ask()
-        if(!config.runNow) return 
-    }
-    main(config)
-}
-
+import {run} from './auth'
 run()
