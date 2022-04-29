@@ -37,8 +37,5 @@ export const main = async (config: ApiConfig) => {
     })
 }
 
-
-
-
 const { NODE_ENV } = process.env
 if (NODE_ENV === 'development') main(config as ApiConfig)
