@@ -91,7 +91,7 @@ const targetJson = {
 
 好了，走到一步了，如果没有出现意外的话，你会在src/api（如果输出文件没有修改的话）目录下看到由插件自动化生成api文件。示例(ts/js)：
 
-![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code.png)
+![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-ts.png)
 ![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-js.png)
 
 然后就可以愉快使用了。使用的时候将会获得非常良好的提示体验。
