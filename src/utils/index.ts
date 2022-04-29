@@ -21,12 +21,7 @@ export const getPathName = (path: string) => {
     if (!patchChunk) return 'common' // 捕获不到就用common作为路径文件夹
     return toHumpName(patchChunk[1])
 }
-/** 获取对象里面times里面最大的键值 */
-export const getMaxTimesObjectKeyName = (obj: TimesObject): string => {
-    const times = Object.values(obj)
-    const max = Math.max(...times)
-    return Object.keys(obj).find(key => obj[key] === max) || 'common'
-}
+
 
 /** hasOwnProperty太长了，写一个代理当简写 */
 export const hasProperty = function (obj: object, key: string) {

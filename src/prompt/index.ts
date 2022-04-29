@@ -9,8 +9,10 @@ const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectConfig) =
     const config = global.apiConfig
     const nameChunk = new Map() // 用来处理文件命名的容器
     const { group, isLoadFullApi } = project
+    const hasSaveNames: string[] = [] // 处理已经命名的容器
+
     data.forEach((item: JsDocMenuItem) => {
-        const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item, project)
+        const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item, project, hasSaveNames)
         if (!item.list.length || !fileBufferStringChunk.length) return
         
         const fileConfig = group?.find(menu => menu.catId == item.list[0].catid)

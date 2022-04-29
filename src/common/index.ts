@@ -1,11 +1,11 @@
 import format from '../utils/format'
-import { getMaxTimesObjectKeyName, getPathName, hasProperty } from '../utils'
+import { getPathName, hasProperty, toHumpName } from '../utils'
 import { getValidApiPath } from '../utils/str-operate'
 
 import { handleJsFileString } from '../simple/js'
 import { handleTsFileString } from '../simple/ts'
 
-import {handleJsdocFileString} from '../prompt/jsdoc'
+import { handleJsdocFileString } from '../prompt/jsdoc'
 import { handleTsTypeFileString } from '../prompt/ts-type'
 
 
@@ -63,40 +63,54 @@ const generateTypeBufferStringByVersion = (version: Version) => {
     return configFunctionName
 }
 
+const getFileName = (path: string, fileNameSet: { [key: string]: number }) => {
+    path = path.substring(1, path.length)
+    path = toHumpName(path).replace(/\/{.+}/g, '')
+    const words = path.split('/')
+    words.forEach(word => fileNameSet[word] ? fileNameSet[word]++ : fileNameSet[word] = 1)
+    // console.log(words, JSON.stringify(fileNameSet))
+}
+
 /**
  * 获取Js文件的单个API文件的保存文件名和写入的文件流字符串
  * @param item 接口菜单单项
  * @param project 项目组文件的配置
  * @returns {Object} {文件名：string, 单个API文件流主容器: string}
  */
-export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: ProjectConfig) => {
+export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: ProjectConfig, hasSaveNames: Array<string>) => {
     const { list } = item
-    const {isNeedType} = global.apiConfig
-    const pathSet: TimesObject = {} // 处理文件夹命名的容器
+    const { isNeedType } = global.apiConfig
+    const fileNameSet: TimesObject = {}
     const fileBufferStringChunk: Array<string> = [] // 单个API文件流
     const noteStringChunk: Array<string> = ['\n'] // 存储Jsdoc注释的容器
     list.forEach((item) => {
+        getFileName(item.path, fileNameSet)
 
         /** 没有完成的接口不处理 */
         if (item.status === 'undone') return
 
         item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题,难搞
 
-        if (isNeedType) { 
+        if (isNeedType) {
             generateTypeBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)
         } else {
             generateSimpleBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as apiSimpleItem, project)
         }
-
-        // 统计名字出现次数，用作文件夹重名时命名依据
-        const pathName = getPathName(item.path)
-        pathSet[pathName] ? pathSet[pathName]++ : pathSet[pathName] = 1
     })
 
     // 文件名取名策略：获取路径上名字出现最多词的路径名称，需要将一些短横线下划线转为驼峰命名法, TODO: 可能会出现重名问题
-    const FileName = getMaxTimesObjectKeyName(pathSet)
+    const FileName = getMaxTimesObjectKeyName(fileNameSet, hasSaveNames)
+    
+
+    hasSaveNames.push(FileName)
+    console.log(FileName)
 
 
     return { FileName, fileBufferStringChunk, noteStringChunk }
 }
 
+/** 获取还没有命名过并且出现次数最多的词作为文件夹名 */
+export const getMaxTimesObjectKeyName = (obj: TimesObject, hasSaveNames: Array<string>): string => {
+    const sortKeyByTimes = Object.keys(obj).sort((key1, key2) => obj[key2]-obj[key1])
+    return sortKeyByTimes.find(key => !hasSaveNames.includes(key)) || 'common'
+}

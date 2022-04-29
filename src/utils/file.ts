@@ -28,7 +28,7 @@ export const saveFile = (url: string, file: string | NodeJS.ArrayBufferView, cal
     fs.writeFile(GetSafePath(url), file, { encoding: 'utf-8' },
         (res) => {
             if(call) call(res)
-            console.log('📗', `Api文件${url}:更新${res ? '失败' : '成功'}`)
+            // console.log('📗', `Api文件${url}:更新${res ? '失败' : '成功'}`)
         }
     )
 }
