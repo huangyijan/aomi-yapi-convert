@@ -1,6 +1,6 @@
 import { getApiToken, saveFile } from '../utils/file'
 import { handleApiRequestError, request } from '../utils/request'
-import { configFileHeadFoot, getApiFileConfig, getSavePath } from '../common'
+import { configFileHeadFoot, getApiFileConfig, getSavePath } from '../utils/common'
 
 
 /** 处理API文件列表的生成 */

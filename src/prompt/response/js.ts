@@ -1,7 +1,8 @@
 import { getApiName, getType } from '../../utils/str-operate'
-import { removeProperties, configJsdocType, getLegalJson, getDescription } from '../../utils'
-import { getSecondNoteAndName } from '..//second'
+import { removeProperties, getLegalJson, getDescription } from '../../utils'
+import { getSecondNoteAndName } from '../second'
 import { dealResponseData, getReturnName } from '../note'
+import { getSuitableType } from '../../utils/decision'
 
 interface ReturnNoteStringItem {
     returnNameWithType: string
@@ -11,7 +12,6 @@ interface ReturnNoteStringItem {
 
 /** 配置返回注释 */
 export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConfig): ReturnNoteStringItem => {
-
     const body = getLegalJson(item.res_body) // 获取合法的json数据
 
     if (typeof body !== 'object') return { returnNameWithType: 'string', resType: '' }
@@ -48,7 +48,7 @@ export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
 
     Object.entries(data).forEach(([key, value]) => {
         const description = getDescription(value)
-        let type = configJsdocType(value)
+        let type = getSuitableType(value)
         const addTypeName = getType(type, key, returnName)
   
         const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)

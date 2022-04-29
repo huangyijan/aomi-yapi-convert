@@ -1,13 +1,11 @@
 import { handleApiRequestError, request } from '../utils/request'
 import { getApiToken, saveFile } from '../utils/file'
-import { configFileHeadFoot, getApiFileConfig, getSavePath } from '../common'
-
-
+import { configFileHeadFoot, getApiFileConfig, getSavePath } from '../utils/common'
 
 /** 处理API文件列表的生成 */
 const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectConfig) => {
     const config = global.apiConfig
-    const nameChunk = new Map() // 用来处理文件命名的容器
+    const nameChunk = new Map() // 用来处理文件命名的容器, 虽然文件名做了不重名处理，但是还是留下这个做保险
     const { group, isLoadFullApi } = project
     const hasSaveNames: string[] = [] // 处理已经命名的容器
 
@@ -21,8 +19,6 @@ const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectConfig) =
         const savePath = getSavePath(FileName, project, fileConfig, nameChunk)
         const saveFileBuffer = configFileHeadFoot(fileBufferStringChunk, noteStringChunk, config) 
         saveFile(savePath, saveFileBuffer)
-
-        
     })
 }
 

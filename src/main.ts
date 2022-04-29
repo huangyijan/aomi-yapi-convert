@@ -1,7 +1,7 @@
 import { getApiDocWithNoNote } from './simple/index'
 import { getApiDocWithJsDoc } from './prompt/index'
 import { config } from './mock'
-import { request } from './utils/request'
+import { handleApiRequestError, request } from './utils/request'
 import { getApiToken } from './utils/file'
 
 
@@ -29,6 +29,9 @@ export const main = async (config: ApiConfig) => {
                     getApiDocWithNoNote(project.requestUrl, project)
 
                 }
+            })
+            .catch(error => {
+                handleApiRequestError(String(error))
             })
 
     })

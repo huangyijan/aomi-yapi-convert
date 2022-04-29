@@ -1,6 +1,6 @@
-import format from '../utils/format'
-import { getPathName, hasProperty, toHumpName } from '../utils'
-import { getValidApiPath } from '../utils/str-operate'
+import format from './format'
+import {  hasProperty, toHumpName } from '.'
+import { getValidApiPath } from './str-operate'
 
 import { handleJsFileString } from '../simple/js'
 import { handleTsFileString } from '../simple/ts'
@@ -64,11 +64,13 @@ const generateTypeBufferStringByVersion = (version: Version) => {
 }
 
 const getFileName = (path: string, fileNameSet: { [key: string]: number }) => {
-    path = path.substring(1, path.length)
     path = toHumpName(path).replace(/\/{.+}/g, '')
+    path = path.substring(1, path.length)
     const words = path.split('/')
-    words.forEach(word => fileNameSet[word] ? fileNameSet[word]++ : fileNameSet[word] = 1)
-    // console.log(words, JSON.stringify(fileNameSet))
+    words.forEach(word => {
+        word = word.replace(/^([A-Z])/, (_, item: string) => item.toLowerCase()) // 转下首字母小写
+        fileNameSet[word] ? fileNameSet[word]++ : fileNameSet[word] = 1
+    })
 }
 
 /**
@@ -84,26 +86,20 @@ export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: Projec
     const fileBufferStringChunk: Array<string> = [] // 单个API文件流
     const noteStringChunk: Array<string> = ['\n'] // 存储Jsdoc注释的容器
     list.forEach((item) => {
-        getFileName(item.path, fileNameSet)
-
         /** 没有完成的接口不处理 */
         if (item.status === 'undone') return
-
         item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题,难搞
-
         if (isNeedType) {
             generateTypeBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)
         } else {
             generateSimpleBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as apiSimpleItem, project)
         }
+        getFileName(item.path, fileNameSet)
     })
 
     // 文件名取名策略：获取路径上名字出现最多词的路径名称，需要将一些短横线下划线转为驼峰命名法, TODO: 可能会出现重名问题
     const FileName = getMaxTimesObjectKeyName(fileNameSet, hasSaveNames)
-    
-
     hasSaveNames.push(FileName)
-    console.log(FileName)
 
 
     return { FileName, fileBufferStringChunk, noteStringChunk }
@@ -112,5 +108,6 @@ export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: Projec
 /** 获取还没有命名过并且出现次数最多的词作为文件夹名 */
 export const getMaxTimesObjectKeyName = (obj: TimesObject, hasSaveNames: Array<string>): string => {
     const sortKeyByTimes = Object.keys(obj).sort((key1, key2) => obj[key2]-obj[key1])
-    return sortKeyByTimes.find(key => !hasSaveNames.includes(key)) || 'common'
+    const uinFileName = sortKeyByTimes.find(key => !hasSaveNames.includes(key)) || 'common'
+    return uinFileName
 }
