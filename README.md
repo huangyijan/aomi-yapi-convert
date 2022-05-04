@@ -89,7 +89,7 @@ const targetJson = {
 }
 ```
 
-好了，走到一步了，如果没有出现意外的话，你会在src/api（如果输出文件没有修改的话）目录下看到由插件自动化生成api文件。示例(ts/js)：
+好了，走到一步了，如果没有出现意外的话，你会在src/api（如果输出文件路径没有修改的话）目录下看到由插件自动化生成api文件。示例(ts/js)：
 
 ![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-ts.png)
 ![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-js.png)

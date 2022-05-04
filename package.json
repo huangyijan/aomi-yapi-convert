@@ -14,6 +14,9 @@
     "dist",
     "typings/index.d.ts"
   ],
+  "publishConfig": {
+    "registry": "http://39.108.117.26:4873"
+  },
   "types": "./typings/index.d.ts",
   "scripts": {
     "dev": "rollup",
