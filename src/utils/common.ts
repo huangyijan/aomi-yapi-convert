@@ -16,7 +16,7 @@ const getHeaderInfo = (config: ApiConfig) => {
     const axiosType = config.version === 'ts' ? 'import { AxiosRequestConfig } from \'aomi-yapi-convert\'\n': ''
     
     return `
-/** eslint-disable */${tsHeader}
+/* eslint-disable */${tsHeader}
 /**
  * @file 该文件由aomi-yapi-convert自动生成，请不要改动这个文件。
  * @docUpdateTime ${new Date().toLocaleDateString()}
