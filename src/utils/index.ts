@@ -1,5 +1,3 @@
-const LongPathNameRegex = /^\/\{{0,1}([a-zA-Z0-9-_]+)\}{0,1}\/.+/ // 长接口捕获路径名
-const ShortPathNameRegex = /^\/([a-zA-Z0-9-_]+)/ // 短接口捕获路径名
 const NameRegex = /[-|_]([a-zA-Z])/g // 重命名捕获替换字符串
 
 const quotaRegex = /(,)\s*\n*.*\}/g // 匹配json字符串最后一个逗号

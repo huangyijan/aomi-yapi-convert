@@ -13,6 +13,8 @@ import { handleTsTypeFileString } from '../prompt/ts-type'
 const getHeaderInfo = (config: ApiConfig) => {
     const axiosFrom = config.axiosFrom || 'import fetch from \'axios\''
     const tsHeader = config.version === 'ts' ? '\n// @ts-nocheck' : ''
+    const axiosType = config.version === 'ts' ? 'import { AxiosRequestConfig } from \'aomi-yapi-convert\'\n': ''
+    
     return `
 /** eslint-disable */${tsHeader}
 /**
@@ -20,17 +22,28 @@ const getHeaderInfo = (config: ApiConfig) => {
  * @docUpdateTime ${new Date().toLocaleDateString()}
  */
 
-import { AxiosRequestConfig } from 'aomi-yapi-convert'
-${axiosFrom}
+${axiosType}${axiosFrom}
     `
+}
+
+const getJsdocAxiosType = () => {
+    const {version}  = global.apiConfig
+    if (version === 'js') {
+        return `/**
+   * @typedef { import("aomi-yapi-convert").AxiosRequestConfig } AxiosRequestConfig
+   */`
+    } 
+    return ''
 }
 
 /** 配置文件头尾 */
 export const configFileHeadFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>, config: ApiConfig) => {
+
     fileBufferStringChunk.unshift('export default {')
     fileBufferStringChunk.unshift(getHeaderInfo(config))
     fileBufferStringChunk.push('}')
     fileBufferStringChunk.push(...noteStringChunk)
+    if(getJsdocAxiosType()) fileBufferStringChunk.push(getJsdocAxiosType())
     return format(fileBufferStringChunk)
 }
 
