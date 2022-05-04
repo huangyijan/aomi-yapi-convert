@@ -20,7 +20,7 @@ const getHeaderInfo = (config: ApiConfig) => {
  * @docUpdateTime ${new Date().toLocaleDateString()}
  */
 
-import { axiosConfig } from 'aomi-yapi-convert'
+import { AxiosRequestConfig } from 'aomi-yapi-convert'
 ${axiosFrom}
     `
 }

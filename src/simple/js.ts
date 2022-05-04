@@ -6,7 +6,7 @@ const getNoteStringItem = (item: apiSimpleItem) => {
     const {project_id} = item
     return `/**
    * @description ${item.title} 
-   * @param {axiosConfig} options
+   * @param {AxiosRequestConfig} options
    * @apiUpdateTime ${new Date(item.up_time * 1000).toLocaleDateString()}
    * @link ${protocol}//${host}/project/${project_id}/interface/api/${item._id}
    */`

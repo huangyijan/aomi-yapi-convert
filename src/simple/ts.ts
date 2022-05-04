@@ -19,7 +19,7 @@ const getNoteStringItem = (item: apiSimpleItem) => {
 export const getAppendRequestParamsTs = (path: string, paramsName: string, hasNoteData: boolean) => {
     let requestParams = ''
     path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}: string | number, `)
-    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}: any, ` : ''}options: axiosConfig)`
+    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}: any, ` : ''}options: AxiosRequestConfig)`
     return requestParams
 }
 

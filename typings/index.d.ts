@@ -113,23 +113,6 @@ export interface AxiosRequestConfig<D = any> {
   };
 }
 
-export interface HeadersDefaults {
-  common: AxiosRequestHeaders;
-  delete: AxiosRequestHeaders;
-  get: AxiosRequestHeaders;
-  head: AxiosRequestHeaders;
-  post: AxiosRequestHeaders;
-  put: AxiosRequestHeaders;
-  patch: AxiosRequestHeaders;
-  options?: AxiosRequestHeaders;
-  purge?: AxiosRequestHeaders;
-  link?: AxiosRequestHeaders;
-  unlink?: AxiosRequestHeaders;
-}
-
-export interface AxiosDefaults<D = any> extends Omit<AxiosRequestConfig<D>, 'headers'> {
-  headers: HeadersDefaults;
-}
 
 export interface AxiosResponse<T = any, D = any> {
   data: T;
@@ -168,120 +151,19 @@ export class AxiosError<T = unknown, D = any> extends Error {
   static readonly ETIMEDOUT = "ETIMEDOUT";
 }
 
-export class CanceledError<T> extends AxiosError<T> {
-}
 
 export interface AxiosPromise<T = any> extends Promise<AxiosResponse<T>> {
 }
 
-export interface CancelStatic {
-  new(message?: string): Cancel;
-}
 
 export interface Cancel {
   message: string | undefined;
 }
 
-export interface Canceler {
-  (message?: string): void;
-}
 
-export interface CancelTokenStatic {
-  new(executor: (cancel: Canceler) => void): CancelToken;
-  source(): CancelTokenSource;
-}
 
 export interface CancelToken {
   promise: Promise<Cancel>;
   reason?: Cancel;
   throwIfRequested(): void;
 }
-
-export interface CancelTokenSource {
-  token: CancelToken;
-  cancel: Canceler;
-}
-
-export interface AxiosInterceptorOptions {
-  synchronous?: boolean;
-  runWhen?: (config: AxiosRequestConfig) => boolean;
-}
-
-export interface AxiosInterceptorManager<V> {
-  use<T = V>(onFulfilled?: (value: V) => T | Promise<T>, onRejected?: (error: any) => any, options?: AxiosInterceptorOptions): number;
-  eject(id: number): void;
-}
-
-export class Axios {
-  constructor(config?: AxiosRequestConfig);
-  defaults: AxiosDefaults;
-  interceptors: {
-    request: AxiosInterceptorManager<AxiosRequestConfig>;
-    response: AxiosInterceptorManager<AxiosResponse>;
-  };
-  getUri(config?: AxiosRequestConfig): string;
-  request<T = any, R = AxiosResponse<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R>;
-  get<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;
-  delete<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;
-  head<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;
-  options<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;
-  post<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
-  put<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
-  patch<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
-  postForm<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
-  putForm<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
-  patchForm<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R>;
-}
-
-
-export interface AxiosStatic extends AxiosInstance {
-  create(config?: AxiosRequestConfig): AxiosInstance;
-  Cancel: CancelStatic;
-  CancelToken: CancelTokenStatic;
-  Axios: typeof Axios;
-  readonly VERSION: string;
-  isCancel(value: any): boolean;
-  all<T>(values: Array<T | Promise<T>>): Promise<T[]>;
-  spread<T, R>(callback: (...args: T[]) => R): (array: T[]) => R;
-  isAxiosError(payload: any): payload is AxiosError;
-}
-/** 外部的api文件使用axios参数, 除了axiosConfig, 其他都是axios文档拷贝过来的, TODO: 删掉无用的类型提示 */
-export interface axiosConfig {
-  baseURL?: string;
-  transformRequest?: AxiosRequestTransformer | AxiosRequestTransformer[];
-  transformResponse?: AxiosResponseTransformer | AxiosResponseTransformer[];
-  headers?: AxiosRequestHeaders;
-  params?: any;
-  paramsSerializer?: (params: any) => string;
-  data?: D;
-  timeout?: number;
-  timeoutErrorMessage?: string;
-  withCredentials?: boolean;
-  adapter?: AxiosAdapter;
-  auth?: AxiosBasicCredentials;
-  responseType?: ResponseType;
-  responseEncoding?: responseEncoding | string;
-  xsrfCookieName?: string;
-  xsrfHeaderName?: string;
-  onUploadProgress?: (progressEvent: any) => void;
-  onDownloadProgress?: (progressEvent: any) => void;
-  maxContentLength?: number;
-  validateStatus?: ((status: number) => boolean) | null;
-  maxBodyLength?: number;
-  maxRedirects?: number;
-  beforeRedirect?: (options: Record<string, any>, responseDetails: { headers: Record<string, string> }) => void;
-  socketPath?: string | null;
-  httpAgent?: any;
-  httpsAgent?: any;
-  proxy?: AxiosProxyConfig | false;
-  cancelToken?: CancelToken;
-  decompress?: boolean;
-  transitional?: TransitionalOptions;
-  signal?: AbortSignal;
-  insecureHTTPParser?: boolean;
-  env?: {
-    FormData?: new (...args: any[]) => object;
-  };
-}
-
-export type IdType = string | number

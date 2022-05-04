@@ -32,7 +32,7 @@ const getNoteStringItem = (item: JsDocApiItem, project: ProjectConfig) => {
     const methodNote = `
   /**
    * @description ${item.title}${idNote}${getNoteParams(reqType, typeName, hasParamsQuery)} 
-   * @param {axiosConfig} options
+   * @param {AxiosRequestConfig} options
    * @apiUpdateTime ${getUpdateTime(item.up_time)}
    * @link ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
    * @return {Promise<${getReturnType(returnNameWithType, resType)}>}
