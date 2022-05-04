@@ -15,7 +15,8 @@
     "typings/index.d.ts"
   ],
   "publishConfig": {
-    "registry": "http://39.108.117.26:4873"
+    "npm": "https://registry.npmjs.org/",
+    "aomi": "http://39.108.117.26:4873"
   },
   "types": "./typings/index.d.ts",
   "scripts": {
