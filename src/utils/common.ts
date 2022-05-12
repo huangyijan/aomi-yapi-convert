@@ -11,7 +11,7 @@ import { handleTsTypeFileString } from '../prompt/ts-type'
 
 /** 设置api文件头部文件 */
 const getHeaderInfo = (config: ApiConfig) => {
-    const axiosFrom = config.axiosFrom || 'import fetch from \'axios\''
+    const axiosFrom = Object.prototype.hasOwnProperty.call(config, 'axiosFrom')? config.axiosFrom : 'import fetch from \'axios\''
     const tsHeader = config.version === 'ts' ? '\n// @ts-nocheck' : ''
     const axiosType = config.version === 'ts' ? 'import { AxiosRequestConfig } from \'aomi-yapi-convert\'\n': ''
     

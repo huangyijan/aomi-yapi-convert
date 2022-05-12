@@ -2,7 +2,7 @@
 import { getReturnNoteStringItem } from './response/ts'
 import { getRequestNoteStringItem } from './request/ts'
 import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
-import { getApiName, getAppendPath, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
+import { getApiName, getAppendPath, getAxiosName, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
 
 /** 获取请求上参数ts 类型名称 */
 const getParamsTypeName = (reqType: string, typeName: string) => {
@@ -45,7 +45,7 @@ const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: Pr
     const requestName = getApiName(item.path, item.method)
     return `${requestName}: ${requestParams}: Promise<${returnParamsType}> => {
     const method = '${item.method}'
-    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options }${getCustomerParamsStr(project, false) })
+    return ${getAxiosName()}(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options }${getCustomerParamsStr(project, false) })
   },`
 }
 

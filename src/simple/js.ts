@@ -1,4 +1,4 @@
-import { getApiName, getAppendPath, getAppendRequestParamsJsdoc } from '../utils/str-operate'
+import { getApiName, getAppendPath, getAppendRequestParamsJsdoc, getAxiosName } from '../utils/str-operate'
 
 /** 配置注释 */
 const getNoteStringItem = (item: apiSimpleItem) => {
@@ -22,7 +22,7 @@ const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean, project: P
     const requestName = getApiName(item.path, item.method)
     return `${requestName}: ${requestParams} => {
     const method = '${item.method}'
-    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
+    return ${getAxiosName()}(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
   },`
 }
 

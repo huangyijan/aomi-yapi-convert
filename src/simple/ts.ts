@@ -1,4 +1,4 @@
-import { getApiName, getAppendPath, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
+import { getApiName, getAppendPath, getAxiosName, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
 /** 配置注释 */
 const getNoteStringItem = (item: apiSimpleItem) => {
     const { protocol, host } = global.apiConfig
@@ -33,7 +33,7 @@ const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean, project: P
     const requestName = getApiName(item.path, item.method)
     return `${requestName}: ${requestParams}: Promise<any> => {
     const method = '${item.method}'
-    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options }${getCustomerParamsStr(project, false)})
+    return ${getAxiosName()}(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options }${getCustomerParamsStr(project, false)})
   },`
 }
 

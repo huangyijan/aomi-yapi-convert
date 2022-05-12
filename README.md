@@ -67,6 +67,7 @@ const targetJson = {
   version: '', // ts/js 两种版本，type类型分别是TsType类型和jsdoc类型
   isNeedType : boolean, 这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
   axiosFrom: '', // 这里配置自定义的请求目录，考虑到大部分时候我们都用axios的包，所以使用axios作为默认请求，你也可以使用自定义的请求。
+  axiosName: '', // 这里配置自定义的请求Name,这里改成ssr的this指针挂载方式
   customer: [ // 这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，建议使用project里面的来定义，可能存在同一个项目调用不同的业务线api的情况
    {
      name: 'name', // 形参名

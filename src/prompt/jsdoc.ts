@@ -2,7 +2,7 @@
 import { getReturnNoteStringItem } from './response/js'
 import { getRequestNoteStringItem } from './request/js'
 import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
-import { getApiName, getAppendPath, getAppendRequestParamsJsdoc, getCustomerParamsStr } from '../utils/str-operate'
+import { getApiName, getAppendPath, getAppendRequestParamsJsdoc, getAxiosName, getCustomerParamsStr } from '../utils/str-operate'
 
 /** 配置地址栏上面的id jsdoc 注释 */
 const getAppendIdNote = (params: Array<ReqParams>) => {
@@ -51,7 +51,7 @@ const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: Pr
     const requestName = getApiName(item.path, item.method)
     return `${requestName}: ${requestParams} => {
     const method = '${item.method}'
-    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options }${getCustomerParamsStr(project, false)})
+    return ${getAxiosName()}(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options }${getCustomerParamsStr(project, false)})
   },`
 }
 

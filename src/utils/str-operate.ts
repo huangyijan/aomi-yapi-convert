@@ -122,3 +122,9 @@ export const getCustomerParamsStr = (project: ProjectConfig, showDefault = true)
         return pre
     }, '')
 }
+
+/** 获取用户axiosName, 可能会有ssr,或者将axios 挂载在this指针的情况  */
+export const getAxiosName = () => {
+    const {axiosName} = global.apiConfig
+    return axiosName || 'fetch'
+}

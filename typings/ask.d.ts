@@ -45,6 +45,7 @@ interface ApiConfig {
   version: Version
   isNeedType: boolean
   axiosFrom: string
+  axiosName?: string
   protocol: string
   host: string
   runNow?: boolean
