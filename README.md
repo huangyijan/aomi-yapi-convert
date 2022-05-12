@@ -8,6 +8,7 @@ aomi-yapi-convert(针对yapi文档转js或者ts文件的自动化npm插件)
 5. 支持自定义配置axios路径
 6. 支持自定义配置baseUrl,不配置默认取项目的baseUrl
 7. 支持自定义配置生成api文件名
+8. 支持自定义形参及默认值
 
 这个工具能帮你做些什么？
 
@@ -66,12 +67,24 @@ const targetJson = {
   version: '', // ts/js 两种版本，type类型分别是TsType类型和jsdoc类型
   isNeedType : boolean, 这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
   axiosFrom: '', // 这里配置自定义的请求目录，考虑到大部分时候我们都用axios的包，所以使用axios作为默认请求，你也可以使用自定义的请求。
+  customer: [ // 这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，建议使用project里面的来定义，可能存在同一个项目调用不同的业务线api的情况
+   {
+     name: 'name', // 形参名
+     default: 'base' // 默认值
+   }
+  ],
   projects: [ // 可以通过传入多个project项来完成添加不同项目的api文件
     {
       projectId: 445, // 项目id
       outputDir: '', // 统一的文件生成路径，请注意默认文件夹是src/api目录，如果该目录下已经有文件了，建议在该目录起一个子目录名称：ep: src/api/auto/.
       isLoadFullApi: false, // 这里配置是否全量加载api文件，原有项目已经有api的文件，请设置为false局部更新，全量更新会生成重复代码，徒增冗余
       prefix: '', // 一般该项设置为空，但我注意到部分接口服务端不配置服务名（比如超市的接口），需要前端手动添加，所以加了该配置项。这个配置项加了之后会在该项目组下所有接口添加这个字符串
+      customer: [ // 这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，不设置会默认继承全局的。
+        {
+          name: 'name', // 形参名
+          default: 'base' // 默认值
+        }
+      ],
       group: [
         {
           catId: 8366, // 后台项目下的菜单id

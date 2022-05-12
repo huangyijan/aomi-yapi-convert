@@ -22,9 +22,9 @@ export const getAppendRequestParams = (path: string) => {
 
 /** 获取处理地址的baseUrl */
 const getApiBaseUrl = (project: ProjectConfig) => {
-    let baseUrl  =''
+    let baseUrl = ''
     const { prefix, projectBaseConfig } = project
-    if(projectBaseConfig?.basepath) baseUrl = projectBaseConfig.basepath
+    if (projectBaseConfig?.basepath) baseUrl = projectBaseConfig.basepath
     if (prefix) baseUrl = prefix.endsWith('/') ? prefix.slice(0, prefix.length - 1) : prefix // 兼容两种写法
     return baseUrl
 }
@@ -42,7 +42,7 @@ export const getAppendPath = (path: string, project: ProjectConfig) => {
 export const getApiName = (path: string, method: string) => {
     path = path.replace(pathHasParamsRegex, '')
     // 处理名字太长
-    const biasCount = -- path.split('/').length 
+    const biasCount = --path.split('/').length
     if (biasCount >= 3) path = path.replace(longBiasRegex, '')
     path = path.replace(ApiNameRegex, (_, item) => item.toUpperCase())
     // 防止restful API 导致命名相同
@@ -55,10 +55,10 @@ export const getApiName = (path: string, method: string) => {
  * @param paramsName 传输使用的参数名，配合JsDoc文档数据
  * @returns {string} 函数请求使用的参数表达式
  */
-export const getAppendRequestParamsJsdoc = (path: string, paramsName: string, hasNoteData: boolean) => {
+export const getAppendRequestParamsJsdoc = (path: string, paramsName: string, hasNoteData: boolean, project: ProjectConfig) => {
     let requestParams = ''
     path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}, `)
-    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}, ` : ''}options)`
+    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}, ` : ''}options${getCustomerParamsStr(project)})`
     return requestParams
 }
 
@@ -70,7 +70,7 @@ export const getUpperCaseName = (name: string) => {
 }
 
 export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) => {
-    if(!keyNote.length) return ''
+    if (!keyNote.length) return ''
 
     const version = global.apiConfig.version
 
@@ -85,11 +85,11 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
             return pre
         }, `\ninterface ${typeName} {\n`)
     }
-    
+
     if (version === 'js') return keyNote.reduce((pre, cur, index) => {
-        const { key, type, description= '' } = cur
+        const { key, type, description = '' } = cur
         const defaultStr = cur.default ? ` default: ${cur.default}` : ''
-        
+
         pre += `  * @property {${type}} [${key}] ${description} ${defaultStr} \n`
         if (index === keyNote.length - 1) pre += '*/\n'
         return pre
@@ -108,4 +108,17 @@ export const getType = (type: string, key: string, typeName: string) => {
         return typeName + getUpperCaseName(key)
     }
     return type
+}
+
+/** 根据用户配置自定义参数去获取请求的额外参数, requestParams */
+export const getCustomerParamsStr = (project: ProjectConfig, showDefault = true) => {
+    const customParams = project.customParams  || global.apiConfig.customParams
+    if (!customParams || !customParams.length) return
+    return customParams.reduce((pre, cur, index) => {
+        if (!index) pre += ', '
+        if (cur.name) pre += `${cur.name}`
+        if (showDefault && cur.default) pre += ` = ${/\d+/.test(cur.default + '') ? cur.default : `'${cur.default}'`}`
+        if (index !== customParams.length - 1) pre += ', '
+        return pre
+    }, '')
 }

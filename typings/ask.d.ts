@@ -29,9 +29,15 @@ interface ProjectConfig {
   isLoadFullApi: boolean
   prefix?: string
   group?: Array<CatConfig>,
+  customParams?: Array<CustomParam>
   /** 请求路径，非配置，我自动生成 */
   requestUrl?: string,
   projectBaseConfig?: ProjectBaseConfig
+}
+
+interface CustomParam {
+  name: string,
+  default: string | number
 }
 interface ApiConfig {
   yapiURL: string
@@ -42,6 +48,7 @@ interface ApiConfig {
   protocol: string
   host: string
   runNow?: boolean
+  customParams?: Array<CustomParam>
   projects: Array<ProjectConfig>
 }
 

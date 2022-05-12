@@ -2,7 +2,7 @@
 import { getReturnNoteStringItem } from './response/ts'
 import { getRequestNoteStringItem } from './request/ts'
 import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
-import { getApiName, getAppendPath, pathHasParamsRegex } from '../utils/str-operate'
+import { getApiName, getAppendPath, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
 
 /** 获取请求上参数ts 类型名称 */
 const getParamsTypeName = (reqType: string, typeName: string) => {
@@ -28,10 +28,11 @@ const getNoteStringItem = (item: JsDocApiItem) => {
  * @param paramsName 传输使用的参数名，配合JsDoc文档数据，Get请求使用params, Post, Put, Delete 请求使用data
  * @returns {string} 函数请求使用的参数表达式
  */
-const getAppendRequestParamsTsType = (path: string, paramsName: string, hasNoteData: boolean, requestParamsType: string) => {
+const getAppendRequestParamsTsType = (path: string, paramsName: string, hasNoteData: boolean, requestParamsType: string, project: ProjectConfig) => {
     let requestParams = ''
     path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}: string | number, `)
-    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}?: ${requestParamsType}, ` : ''}options?: AxiosRequestConfig)`
+    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}?: ${requestParamsType}, ` : ''}options?: AxiosRequestConfig${getCustomerParamsStr(project)
+    })`
     return requestParams
 }
 
@@ -40,11 +41,11 @@ const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: Pr
     const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
     const paramsName = hasParamsQuery ? 'params' : 'data'
     const requestPath = getAppendPath(item.path, project)
-    const requestParams = getAppendRequestParamsTsType(item.path, paramsName, hasNoteData, requestParamsType)
+    const requestParams = getAppendRequestParamsTsType(item.path, paramsName, hasNoteData, requestParamsType, project)
     const requestName = getApiName(item.path, item.method)
     return `${requestName}: ${requestParams}: Promise<${returnParamsType}> => {
     const method = '${item.method}'
-    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
+    return fetch(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options }${getCustomerParamsStr(project, false) })
   },`
 }
 
