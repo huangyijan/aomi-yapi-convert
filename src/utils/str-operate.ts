@@ -1,3 +1,4 @@
+import { OutputStyle } from './common'
 import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote } from './decision'
 /* eslint-disable no-useless-escape */
 const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
@@ -132,9 +133,21 @@ const getAxiosName = () => {
 export const getCommonRequestItemStr = (project: ProjectConfig, item: JsDocApiItem | apiSimpleItem, requestParamsStr: string, appendParamsStr = '', returnType?: string) => {
     const requestPath = getAppendPath(item.path, project)
     const requestName = getApiName(item.path, item.method)
-    const returnTypeStr = returnType? `: Promise<${returnType}>`: ''
-    return  `${requestName}: ${requestParamsStr}${returnTypeStr} => {
+    const returnTypeStr = returnType ? `: Promise<${returnType}>` : ''
+
+    const { outputStyle = OutputStyle.Default } = global.apiConfig
+
+    const requestContent = `{
     const method = '${item.method}'
     return ${getAxiosName()}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
-  },`
+   }`
+
+    switch (outputStyle) {
+    case OutputStyle.Name:
+        return `   export function ${requestName}${requestParamsStr}${returnTypeStr} ${requestContent}`
+    case OutputStyle.Anonymous:
+        return `   export const ${requestName} = ${requestParamsStr}${returnTypeStr} => ${requestContent}`
+    default:
+        return ` ${requestName}: ${requestParamsStr}${returnTypeStr} => ${requestContent},`
+    }
 }

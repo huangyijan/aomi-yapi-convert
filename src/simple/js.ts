@@ -4,7 +4,8 @@ import { getAppendRequestParamsJsdoc, getCommonRequestItemStr } from '../utils/s
 const getNoteStringItem = (item: apiSimpleItem) => {
     const { protocol, host } = global.apiConfig
     const {project_id} = item
-    return `/**
+    return `
+ /**
    * @description ${item.title} 
    * @param { AxiosRequestConfig } options
    * @apiUpdateTime ${new Date(item.up_time * 1000).toLocaleDateString()}

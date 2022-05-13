@@ -47,4 +47,6 @@ export const getSuitableJsdocProperty = (key: string, type: string, description?
     const exampleStr = example? ` Example: ${example}`: ''
     return `  * @property { ${type} } [${key}] ${descriptionStr}${exampleStr} \n`
 }
-export const getSuitableJsdocType = (noteName: string, noteStr: string, childNote?:string) => `/** \n  * @typedef ${noteName}\n${noteStr}  */\n${childNote|| ''}`
+export const getSuitableJsdocType = (noteName: string, noteStr: string, childNote?: string) => `/** \n  * @typedef ${noteName}\n${noteStr}  */\n${childNote || ''}`
+
+

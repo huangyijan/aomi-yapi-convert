@@ -39,6 +39,7 @@ interface CustomParam {
   name: string,
   default: string | number
 }
+
 interface ApiConfig {
   yapiURL: string
   token?: string
@@ -46,6 +47,7 @@ interface ApiConfig {
   isNeedType: boolean
   axiosFrom: string
   axiosName?: string
+  outputStyle?: string
   protocol: string
   host: string
   runNow?: boolean

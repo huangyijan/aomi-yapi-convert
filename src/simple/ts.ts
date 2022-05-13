@@ -3,7 +3,8 @@ import { getCommonRequestItemStr, getCustomerParamsStr, pathHasParamsRegex } fro
 const getNoteStringItem = (item: apiSimpleItem) => {
     const { protocol, host } = global.apiConfig
     const { project_id } = item
-    return `/**
+    return `
+ /**
    * @description ${item.title} 
    * @apiUpdateTime ${new Date(item.up_time * 1000).toLocaleDateString()}
    * @link ${protocol}//${host}/project/${project_id}/interface/api/${item._id}

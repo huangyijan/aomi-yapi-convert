@@ -1,5 +1,5 @@
 import format from './format'
-import {  hasProperty, toHumpName } from '.'
+import { hasProperty, toHumpName } from '.'
 import { getValidApiPath } from './str-operate'
 
 import { handleJsFileString } from '../simple/js'
@@ -10,11 +10,12 @@ import { handleTsTypeFileString } from '../prompt/ts-type'
 
 
 /** 设置api文件头部文件 */
-const getHeaderInfo = (config: ApiConfig) => {
-    const axiosFrom = Object.prototype.hasOwnProperty.call(config, 'axiosFrom')? config.axiosFrom : 'import fetch from \'axios\''
+const getHeaderInfo = () => {
+    const config = global.apiConfig
+    const axiosFrom = Object.prototype.hasOwnProperty.call(config, 'axiosFrom') ? config.axiosFrom : 'import fetch from \'axios\''
     const tsHeader = config.version === 'ts' ? '\n// @ts-nocheck' : ''
-    const axiosType = config.version === 'ts' ? 'import { AxiosRequestConfig } from \'aomi-yapi-convert\'\n': ''
-    
+    const axiosType = config.version === 'ts' ? 'import { AxiosRequestConfig } from \'aomi-yapi-convert\'\n' : ''
+
     return `
 /* eslint-disable */${tsHeader}
 /**
@@ -27,23 +28,40 @@ ${axiosType}${axiosFrom}
 }
 
 const getJsdocAxiosType = () => {
-    const {version}  = global.apiConfig
+    const { version } = global.apiConfig
     if (version === 'js') {
         return `/**
   * @typedef { import("aomi-yapi-convert").AxiosRequestConfig } AxiosRequestConfig
   */`
-    } 
+    }
     return ''
 }
 
-/** 配置文件头尾 */
-export const configFileHeadFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>, config: ApiConfig) => {
+export enum OutputStyle {
+    Default = 'defaultExport',
+    Name = 'nameExport',
+    Anonymous = 'anonymous'
+}
 
-    fileBufferStringChunk.unshift('export default {')
-    fileBufferStringChunk.unshift(getHeaderInfo(config))
-    fileBufferStringChunk.push('}')
+/** 配置文件头部 */
+export const configFileHead = () => {
+    const fileBufferStringChunk = []
+    fileBufferStringChunk.push(getHeaderInfo())
+    
+    const { outputStyle = OutputStyle.Default } = global.apiConfig
+    if(outputStyle !== OutputStyle.Default) return fileBufferStringChunk
+    fileBufferStringChunk.push('export default {')
+    return fileBufferStringChunk
+
+}
+
+/** 配置文件尾部 */
+export const configFileFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>) => {
+
+    const { outputStyle = OutputStyle.Default } = global.apiConfig
+    if(outputStyle === OutputStyle.Default) fileBufferStringChunk.push('}')
     fileBufferStringChunk.push(...noteStringChunk)
-    if(getJsdocAxiosType()) fileBufferStringChunk.push(getJsdocAxiosType())
+    if (getJsdocAxiosType()) fileBufferStringChunk.push(getJsdocAxiosType())
     return format(fileBufferStringChunk)
 }
 
@@ -96,7 +114,7 @@ export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: Projec
     const { list } = item
     const { isNeedType } = global.apiConfig
     const fileNameSet: TimesObject = {}
-    const fileBufferStringChunk: Array<string> = [] // 单个API文件流
+    const fileBufferStringChunk: Array<string> = configFileHead() // 单个API文件流
     const noteStringChunk: Array<string> = ['\n'] // 存储Jsdoc注释的容器
     list.forEach((item) => {
         /** 没有完成的接口不处理 */
@@ -120,7 +138,7 @@ export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: Projec
 
 /** 获取还没有命名过并且出现次数最多的词作为文件夹名 */
 export const getMaxTimesObjectKeyName = (obj: TimesObject, hasSaveNames: Array<string>): string => {
-    const sortKeyByTimes = Object.keys(obj).sort((key1, key2) => obj[key2]-obj[key1])
+    const sortKeyByTimes = Object.keys(obj).sort((key1, key2) => obj[key2] - obj[key1])
     const uinFileName = sortKeyByTimes.find(key => !hasSaveNames.includes(key)) || 'common'
     return uinFileName
 }
