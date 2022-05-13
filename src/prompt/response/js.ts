@@ -2,7 +2,7 @@ import { getApiName, getType } from '../../utils/str-operate'
 import { removeProperties, getLegalJson, getDescription } from '../../utils'
 import { getSecondNoteAndName } from '../second'
 import { dealResponseData, getReturnName } from '../note'
-import { getSuitableType } from '../../utils/decision'
+import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableType } from '../../utils/decision'
 
 interface ReturnNoteStringItem {
     returnNameWithType: string
@@ -56,12 +56,8 @@ export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
         appendNoteJsdocType = note
         if(name !== type) type = name
 
-        bodyStr += `* @property { ${type} } [${key}] ${description} \n   `
+        bodyStr += getSuitableJsdocProperty(key, type, description)
     })
     
-    const resType = `/** 
-   * @typedef ${returnName}
-   ${bodyStr}*/\n${appendNoteJsdocType}`
-
-    return resType
+    return getSuitableJsdocType(returnName, bodyStr, appendNoteJsdocType)
 }

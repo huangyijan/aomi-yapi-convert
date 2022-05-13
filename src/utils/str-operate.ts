@@ -1,4 +1,4 @@
-import { getSuitableTsType, getSuitableTsTypeNote } from './decision'
+import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsType, getSuitableTsTypeNote } from './decision'
 /* eslint-disable no-useless-escape */
 const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
 const illegalRegex = /[^a-zA-Z0-9]/g // 用来剔除不合法的符号
@@ -86,15 +86,14 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
         }, `\ninterface ${typeName} {\n`)
     }
 
-    if (version === 'js') return keyNote.reduce((pre, cur, index) => {
-        const { key, type, description = '' } = cur
-        const defaultStr = cur.default ? ` default: ${cur.default}` : ''
-
-        pre += `  * @property { ${type} } [${key}] ${description} ${defaultStr} \n`
-        if (index === keyNote.length - 1) pre += '*/\n'
-        return pre
-    }, `/** 
-  * @typedef ${typeName}\n`)
+    if (version === 'js') {
+        let noteString = ''
+        keyNote.forEach(item => {
+            const { key, type, description } = item
+            noteString += getSuitableJsdocProperty(key, type, description, item.default)
+        })
+        return getSuitableJsdocType(typeName, noteString)
+    }
 
     return ''
 }

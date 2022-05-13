@@ -37,6 +37,14 @@ export const getSuitableTsTypeNote = (description: string, example?: string) => 
     return `    /**  ${desc}${ex}  */\n`
 }
 
+
 export const getSuitableTsType = (key: string, type: string) => `    ${key}?: ${type}\n`
 
 export const getSuitableTsInterface = (noteName: string, noteStr: string, childNote?: string) => `interface ${noteName} {\n${noteStr}}\n${childNote || ''}`
+
+export const getSuitableJsdocProperty = (key: string, type: string, description?: string, example?: string) => {
+    const descriptionStr = description || ''
+    const exampleStr = example? ` Example: ${example}`: ''
+    return `  * @property { ${type} } [${key}] ${descriptionStr}${exampleStr} \n`
+}
+export const getSuitableJsdocType = (noteName: string, noteStr: string, childNote?:string) => `/** \n  * @typedef ${noteName}\n${noteStr}  */\n${childNote|| ''}`

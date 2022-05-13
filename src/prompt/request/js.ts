@@ -3,7 +3,7 @@ import { getNoteNameByParamsType } from '../note'
 
 import { getType } from '../../utils/str-operate'
 import { getSecondNoteAndName } from '../second'
-import { getSuitableType } from '../../utils/decision'
+import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableType } from '../../utils/decision'
 
 
 
@@ -17,13 +17,11 @@ interface RequestNoteStringItem {
 export const getConfigNoteParams = (reqQuery: Array<reqQuery>, requestName: string) => {
     let paramsStr = ''
     reqQuery.forEach(item => {
-        paramsStr += `* @property { string } [${item.name}]   ${item.desc || ''} example: ${item.example || '无'} \n   `
+        paramsStr += getSuitableJsdocProperty(item.name, 'string', item.desc, item.example)
     })
 
     if (!paramsStr) return ''
-    return `/** 
-   * @typedef ${requestName}
-   ${paramsStr}*/`
+    return getSuitableJsdocType(requestName, paramsStr)
 }
 
 /** 处理请求体(data)的逻辑规则 */
@@ -46,13 +44,10 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
         const { note, name } = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
         appendNoteJsdocType = note
         if (name !== type) type = name
-
-        bodyStr += `* @property { ${type} } [${key}]  ${description}   example: ${showExampleStrByType(value.default) || '无'} \n   `
+        bodyStr += getSuitableJsdocProperty(key, type, description, showExampleStrByType(value.default))
     })
 
-    return (`/** 
-   * @typedef ${requestName}
-   ${bodyStr}*/\n${appendNoteJsdocType}`)
+    return getSuitableJsdocType(requestName, bodyStr, appendNoteJsdocType)
 }
 
 

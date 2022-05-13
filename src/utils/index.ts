@@ -48,8 +48,10 @@ export const showExampleStrByType = (value: unknown) => {
     switch (type) {
     case 'object':
         return JSON.stringify(value)
+    case 'undefined':
+        return ''
     default:
-        return value
+        return value + ''
     }
 }
 
