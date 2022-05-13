@@ -30,8 +30,8 @@ const getJsdocAxiosType = () => {
     const {version}  = global.apiConfig
     if (version === 'js') {
         return `/**
-   * @typedef { import("aomi-yapi-convert").AxiosRequestConfig } AxiosRequestConfig
-   */`
+  * @typedef { import("aomi-yapi-convert").AxiosRequestConfig } AxiosRequestConfig
+  */`
     } 
     return ''
 }

@@ -2,7 +2,7 @@
 import { getReturnNoteStringItem } from './response/ts'
 import { getRequestNoteStringItem } from './request/ts'
 import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
-import { getApiName, getAppendPath, getAxiosName, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
+import {  getCommonRequestItemStr, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
 
 /** 获取请求上参数ts 类型名称 */
 const getParamsTypeName = (reqType: string, typeName: string) => {
@@ -40,13 +40,9 @@ const getAppendRequestParamsTsType = (path: string, paramsName: string, hasNoteD
 const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: ProjectConfig, requestParamsType: string, returnParamsType: string) => {
     const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
     const paramsName = hasParamsQuery ? 'params' : 'data'
-    const requestPath = getAppendPath(item.path, project)
     const requestParams = getAppendRequestParamsTsType(item.path, paramsName, hasNoteData, requestParamsType, project)
-    const requestName = getApiName(item.path, item.method)
-    return `${requestName}: ${requestParams}: Promise<${returnParamsType}> => {
-    const method = '${item.method}'
-    return ${getAxiosName()}(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options }${getCustomerParamsStr(project, false) })
-  },`
+    const appendParamsStr = hasNoteData ? `${paramsName}, ` : ''
+    return getCommonRequestItemStr(project, item, requestParams, appendParamsStr, returnParamsType)
 }
 
 export const handleTsTypeFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig, noteStringChunk: Array<string>) => {

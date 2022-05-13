@@ -1,4 +1,4 @@
-import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsType, getSuitableTsTypeNote } from './decision'
+import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote } from './decision'
 /* eslint-disable no-useless-escape */
 const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
 const illegalRegex = /[^a-zA-Z0-9]/g // 用来剔除不合法的符号
@@ -30,13 +30,7 @@ const getApiBaseUrl = (project: ProjectConfig) => {
 }
 
 
-/** 处理传Id的API请求URL */
-export const getAppendPath = (path: string, project: ProjectConfig) => {
-    const prefix = getApiBaseUrl(project)
-    const isHaveParams = pathHasParamsRegex.test(path) // 地址栏上是否有参数
-    if (!isHaveParams) return `'${prefix}${path}'`
-    return `\`${prefix}${path.replace(pathHasParamsRegex, (_, p1) => `/$\{${p1}\}`)}\``
-}
+
 
 /** 接口名决策方案：如果有参数先去除参数，然后把接口path剩余数据转成驼峰命名，缺点：接口path如果太长，命名也会比较长 */
 export const getApiName = (path: string, method: string) => {
@@ -73,21 +67,19 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
     if (!keyNote.length) return ''
 
     const version = global.apiConfig.version
+    let noteString = ''
 
     if (version === 'ts') {
-        return keyNote.reduce((pre, cur, index) => {
-            const { key, type, description = '' } = cur
-            const defaultStr = cur.default ? ` default: ${cur.default}` : ''
-
-            pre += getSuitableTsTypeNote(description, defaultStr)
-            pre += getSuitableTsType(key, type)
-            if (index === keyNote.length - 1) pre += '}\n'
-            return pre
-        }, `\ninterface ${typeName} {\n`)
+        keyNote.forEach(item => {
+            const { key, type, description } = item
+            const defaultStr = item.default ? ` default: ${item.default}` : ''
+            noteString += getSuitableTsTypeNote(description, defaultStr)
+            noteString += getSuitableTsType(key, type)
+        })
+        return getSuitableTsInterface(typeName, noteString)
     }
 
     if (version === 'js') {
-        let noteString = ''
         keyNote.forEach(item => {
             const { key, type, description } = item
             noteString += getSuitableJsdocProperty(key, type, description, item.default)
@@ -111,7 +103,7 @@ export const getType = (type: string, key: string, typeName: string) => {
 
 /** 根据用户配置自定义参数去获取请求的额外参数, requestParams */
 export const getCustomerParamsStr = (project: ProjectConfig, showDefault = true) => {
-    const customParams = project.customParams  || global.apiConfig.customParams
+    const customParams = project.customParams || global.apiConfig.customParams
     if (!customParams || !customParams.length) return ''
     return customParams.reduce((pre, cur, index) => {
         if (!index) pre += ', '
@@ -122,8 +114,27 @@ export const getCustomerParamsStr = (project: ProjectConfig, showDefault = true)
     }, '')
 }
 
+
+/** 处理传Id的API请求URL */
+const getAppendPath = (path: string, project: ProjectConfig) => {
+    const prefix = getApiBaseUrl(project)
+    const isHaveParams = pathHasParamsRegex.test(path) // 地址栏上是否有参数
+    if (!isHaveParams) return `'${prefix}${path}'`
+    return `\`${prefix}${path.replace(pathHasParamsRegex, (_, p1) => `/$\{${p1}\}`)}\``
+}
+
 /** 获取用户axiosName, 可能会有ssr,或者将axios 挂载在this指针的情况  */
-export const getAxiosName = () => {
-    const {axiosName} = global.apiConfig
+const getAxiosName = () => {
+    const { axiosName } = global.apiConfig
     return axiosName || 'fetch'
+}
+
+export const getCommonRequestItemStr = (project: ProjectConfig, item: JsDocApiItem | apiSimpleItem, requestParamsStr: string, appendParamsStr = '', returnType?: string) => {
+    const requestPath = getAppendPath(item.path, project)
+    const requestName = getApiName(item.path, item.method)
+    const returnTypeStr = returnType? `: Promise<${returnType}>`: ''
+    return  `${requestName}: ${requestParamsStr}${returnTypeStr} => {
+    const method = '${item.method}'
+    return ${getAxiosName()}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
+  },`
 }

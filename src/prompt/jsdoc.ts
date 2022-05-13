@@ -2,7 +2,7 @@
 import { getReturnNoteStringItem } from './response/js'
 import { getRequestNoteStringItem } from './request/js'
 import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
-import { getApiName, getAppendPath, getAppendRequestParamsJsdoc, getAxiosName, getCustomerParamsStr } from '../utils/str-operate'
+import { getAppendRequestParamsJsdoc, getCommonRequestItemStr } from '../utils/str-operate'
 
 /** 配置地址栏上面的id jsdoc 注释 */
 const getAppendIdNote = (params: Array<ReqParams>) => {
@@ -45,14 +45,9 @@ const getNoteStringItem = (item: JsDocApiItem, project: ProjectConfig) => {
 const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: ProjectConfig) => {
     const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
     const paramsName = hasParamsQuery ? 'params' : 'data'
-
-    const requestPath = getAppendPath(item.path, project)
     const requestParams = getAppendRequestParamsJsdoc(item.path, paramsName, hasNoteData, project)
-    const requestName = getApiName(item.path, item.method)
-    return `${requestName}: ${requestParams} => {
-    const method = '${item.method}'
-    return ${getAxiosName()}(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options }${getCustomerParamsStr(project, false)})
-  },`
+    const appendParamsStr = hasNoteData ? `${paramsName}, ` : ''
+    return getCommonRequestItemStr(project, item, requestParams,appendParamsStr)
 }
 
 export const handleJsdocFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig, noteStringChunk: Array<string>) => {
