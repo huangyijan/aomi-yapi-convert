@@ -56,7 +56,7 @@ $ npx aomi-yapi-convert
 
 以添加script为示例，我们看下实际生成的效果
 
-![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-terminal.png)
+![you need proxy to see the image](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-terminal.png)
 
 然后你就会发现在根目录会生成一个api.config.json的配置文件。目前暂时的配置约定是这样的
 
@@ -105,10 +105,10 @@ const targetJson = {
 
 好了，走到一步了，如果没有出现意外的话，你会在src/api（如果输出文件路径没有修改的话）目录下看到由插件自动化生成api文件。示例(ts/js)：
 
-![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-ts.png)
-![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-js.png)
+![you need proxy to see the image](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-ts.png)
+![you need proxy to see the image](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-js.png)
 
 然后就可以愉快使用了。使用的时候将会获得非常良好的提示体验。
 
 使用示例：
-![exampleTerminal](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-use-demo.png)
+![you need proxy to see the image](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-use-demo.png)

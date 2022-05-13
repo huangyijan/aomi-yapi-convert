@@ -17,7 +17,7 @@ interface RequestNoteStringItem {
 export const getConfigNoteParams = (reqQuery: Array<reqQuery>, requestName: string) => {
     let paramsStr = ''
     reqQuery.forEach(item => {
-        paramsStr += `* @property {string} [${item.name}]   ${item.desc || ''} example: ${item.example || '无'} \n   `
+        paramsStr += `* @property { string } [${item.name}]   ${item.desc || ''} example: ${item.example || '无'} \n   `
     })
 
     if (!paramsStr) return ''
@@ -47,7 +47,7 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
         appendNoteJsdocType = note
         if (name !== type) type = name
 
-        bodyStr += `* @property {${type}} [${key}]  ${description}   example: ${showExampleStrByType(value.default) || '无'} \n   `
+        bodyStr += `* @property { ${type} } [${key}]  ${description}   example: ${showExampleStrByType(value.default) || '无'} \n   `
     })
 
     return (`/** 

@@ -1,4 +1,4 @@
-import { getApiName, getAppendPath, getAppendRequestParamsJsdoc, getAxiosName } from '../utils/str-operate'
+import { getApiName, getAppendPath, getAppendRequestParamsJsdoc, getAxiosName, getCustomerParamsStr } from '../utils/str-operate'
 
 /** 配置注释 */
 const getNoteStringItem = (item: apiSimpleItem) => {
@@ -6,7 +6,7 @@ const getNoteStringItem = (item: apiSimpleItem) => {
     const {project_id} = item
     return `/**
    * @description ${item.title} 
-   * @param {AxiosRequestConfig} options
+   * @param { AxiosRequestConfig } options
    * @apiUpdateTime ${new Date(item.up_time * 1000).toLocaleDateString()}
    * @link ${protocol}//${host}/project/${project_id}/interface/api/${item._id}
    */`
@@ -22,7 +22,7 @@ const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean, project: P
     const requestName = getApiName(item.path, item.method)
     return `${requestName}: ${requestParams} => {
     const method = '${item.method}'
-    return ${getAxiosName()}(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options })
+    return ${getAxiosName()}(${requestPath}, { ${hasNoteData ? `${paramsName}, ` : ''}method, ...options }${getCustomerParamsStr(project, false)})
   },`
 }
 

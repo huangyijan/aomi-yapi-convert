@@ -90,7 +90,7 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
         const { key, type, description = '' } = cur
         const defaultStr = cur.default ? ` default: ${cur.default}` : ''
 
-        pre += `  * @property {${type}} [${key}] ${description} ${defaultStr} \n`
+        pre += `  * @property { ${type} } [${key}] ${description} ${defaultStr} \n`
         if (index === keyNote.length - 1) pre += '*/\n'
         return pre
     }, `/** 
@@ -113,7 +113,7 @@ export const getType = (type: string, key: string, typeName: string) => {
 /** 根据用户配置自定义参数去获取请求的额外参数, requestParams */
 export const getCustomerParamsStr = (project: ProjectConfig, showDefault = true) => {
     const customParams = project.customParams  || global.apiConfig.customParams
-    if (!customParams || !customParams.length) return
+    if (!customParams || !customParams.length) return ''
     return customParams.reduce((pre, cur, index) => {
         if (!index) pre += ', '
         if (cur.name) pre += `${cur.name}`

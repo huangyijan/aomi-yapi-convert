@@ -18,7 +18,7 @@ const getAppendIdNote = (params: Array<ReqParams>) => {
 /** 获取请求注释上的param注释字符串 */
 const getNoteParams = (reqType: string, typeName: string, hasParamsQuery: boolean) => {
     if (!typeName.includes('[]') && !reqType) return ''
-    return `\n   * @param {${typeName}} ${hasParamsQuery ? 'params' : 'data'}`
+    return `\n   * @param { ${typeName} } ${hasParamsQuery ? 'params' : 'data'}`
 }
 
 /** 配置请求注释 */
@@ -32,10 +32,10 @@ const getNoteStringItem = (item: JsDocApiItem, project: ProjectConfig) => {
     const methodNote = `
   /**
    * @description ${item.title}${idNote}${getNoteParams(reqType, typeName, hasParamsQuery)} 
-   * @param {AxiosRequestConfig} options
+   * @param { AxiosRequestConfig } options
    * @apiUpdateTime ${getUpdateTime(item.up_time)}
    * @link ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
-   * @return {Promise<${getReturnType(returnNameWithType, resType)}>}
+   * @return { Promise<${getReturnType(returnNameWithType, resType)}> }
    */`
     return { methodNote, typeName, reqType, resType }
 }

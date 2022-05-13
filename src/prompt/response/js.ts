@@ -56,7 +56,7 @@ export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
         appendNoteJsdocType = note
         if(name !== type) type = name
 
-        bodyStr += `* @property {${type}} [${key}] ${description} \n   `
+        bodyStr += `* @property { ${type} } [${key}] ${description} \n   `
     })
     
     const resType = `/** 
