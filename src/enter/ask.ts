@@ -86,7 +86,7 @@ const ask = function () {
                 message: '请选择在哪个文件夹下输出生成的api文件?',
                 name: 'outputDir',
                 type: 'input',
-                default: 'src/api/'
+                default: 'src/api'
             },
             {
                 message: '是否需要生成一份配置文件?(recommend!)',
@@ -119,7 +119,7 @@ const ask = function () {
             }
 
             const config = Object.assign({}, answers, {
-                axiosFrom: '',
+                axiosFrom: 'import fetch from \'axios\'',
                 protocol, host, projects: [projects]
             })
 
