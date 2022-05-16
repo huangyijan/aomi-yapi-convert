@@ -6,13 +6,11 @@ import { getApiToken } from './utils/file'
 
 
 export const main = async (config: ApiConfig) => {
-
     global.apiConfig = config // 注册全局配置
     const { protocol, host, isNeedType, projects } = config
     const baseUrl = `${protocol}//${host}`
     const token = getApiToken()
-
-
+    
     projects.forEach(project => {
         const { projectId } = project
         const projectConfigUrl = `${baseUrl}/api/project/get?id=${projectId}`

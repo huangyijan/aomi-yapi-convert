@@ -1,11 +1,10 @@
-import { getDescription, getLegalJson, removeProperties, showExampleStrByType } from '../../utils'
+import {  getLegalJson, removeProperties } from '../../utils'
 import { getNoteNameByParamsType } from '../note'
 
 import { getType } from '../../utils/str-operate'
 import { getSecondNoteAndName } from '../second'
-import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableType } from '../../utils/decision'
-
-
+import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableType, getSuitDescription } from '../../utils/decision'
+ 
 
 interface RequestNoteStringItem {
   reqType: string
@@ -36,7 +35,7 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
 
     Object.entries(properties).forEach(([key, value]: any) => {
 
-        const description = getDescription(value)
+        const description = getSuitDescription(value)
         let type = getSuitableType(value)
 
 
@@ -44,7 +43,7 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
         const { note, name } = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
         appendNoteJsdocType = note
         if (name !== type) type = name
-        bodyStr += getSuitableJsdocProperty(key, type, description, showExampleStrByType(value.default))
+        bodyStr += getSuitableJsdocProperty(key, type, description, value.default)
     })
 
     return getSuitableJsdocType(requestName, bodyStr, appendNoteJsdocType)
@@ -60,7 +59,6 @@ export const getReqType = (item: JsDocApiItem, typeName: string, hasParamsQuery:
         return getJsonToJsDocParams(body, typeName)
     }
 }
-
 
 
 /** 获取请求的参数注释和参数名 */

@@ -1,5 +1,4 @@
 const NameRegex = /[-|_]([a-zA-Z])/g // 重命名捕获替换字符串
-
 const quotaRegex = /(,)\s*\n*.*\}/g // 匹配json字符串最后一个逗号
 const illegalRegex = /(\/\/\s.*)\n/g // 非法json注释匹配
 
@@ -29,9 +28,8 @@ const dealApiObj = (data: any) => {
     return data
 }
 
-/** 数据结构处理后台嵌套的properties层 */
+/** 数据结构处理后台嵌套的properties层，只是考虑到大部分的情况咋们会封装，后面考虑将这个能力交给用户自定义TODO */
 export const removeProperties = (data: any) => {
-    
     data = dealApiObj(data)
   
     for (const item in data) {
@@ -41,67 +39,20 @@ export const removeProperties = (data: any) => {
     return data
 }
 
-
-// 根据数据类型展示数据
-export const showExampleStrByType = (value: unknown) => {
-    const type = typeof value
-    switch (type) {
-    case 'object':
-        return JSON.stringify(value)
-    case 'undefined':
-        return ''
-    default:
-        return value + ''
-    }
-}
-
-/** 后台类型转前端类型 */
-export const transformType = (serviceType: string) => {
-    if (String(serviceType).length > 10) return 'any'
-    switch (serviceType) {
-    case 'integer':
-        return 'number'
-    case 'bool':
-        return 'boolean'
-    default:
-        return serviceType
-    }
-}
-
 /** 判断api数据里面的数据类型 */
 export const getTypeByValue = (value: { constructor: ArrayConstructor, type?: string }) => {
     if(value === null) return 'string'
     const jsType = typeof value
     switch (jsType) {
-    case 'object': // 引用类型都是object，需要处理不同引用类型
-        return value.constructor === Array ? 'array' : 'object'
-    case 'undefined': 
-        return 'any'
-    default:
-        return jsType
+        case 'object': // 引用类型都是object，需要处理不同引用类型
+            return value.constructor === Array ? 'array' : 'object'
+        case 'undefined': 
+            return 'any'
+        default:
+            return jsType
     }
-  
 }
 
-/** 处理后台静态类型数据和错误状态的Api */
-export const getCorrectType = (value: any) => {
-    let type = getTypeByValue(value)
-
-    if (type === 'object') {
-        if (hasProperty(value, 'type') && hasProperty(value, 'description')) {
-            type = transformType(value.type)
-        } else if (hasProperty(value, 'name') && hasProperty(value, 'ordinal')) {
-            type = 'string' // 状态字段处理
-        } else if (hasProperty(value, 'type') && value.type === 'array') {
-            return 'array'
-        } else if (hasProperty(value, 'type') && value.type === 'integer') {
-            return 'number'
-        } else if (hasProperty(value, 'type') && value.type === 'number') {
-            return 'number'
-        }
-    }
-    return type
-}
 
 /** 获取请求体（body）传输参数 */
 export const getLegalJson = (reqBody: string) => {
@@ -122,11 +73,3 @@ export const getLegalJson = (reqBody: string) => {
 
 }
 
-export const getDescription = (value: any) => {
-    let description = ''
-
-    if (hasProperty(value, 'description')) {
-        description = value.description || ''
-    }
-    return description
-}

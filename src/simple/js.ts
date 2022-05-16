@@ -1,4 +1,4 @@
-import { getAppendRequestParamsJsdoc, getCommonRequestItemStr } from '../utils/str-operate'
+import { getAppendRequestParamsJsdoc, getMainRequestMethodStr } from '../utils/str-operate'
 
 /** 配置注释 */
 const getNoteStringItem = (item: apiSimpleItem) => {
@@ -14,18 +14,17 @@ const getNoteStringItem = (item: apiSimpleItem) => {
 }
 
 /** 配置请求主方法 */
-const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean, project: ProjectConfig) => {
+const getMainMethodItem = (item: apiSimpleItem, project: ProjectConfig) => {
 
-    const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
-    const paramsName = isGetMethod ? 'params' : 'data'
-    const requestParams = getAppendRequestParamsJsdoc(item.path, paramsName, hasNoteData, project)
-    const appendParamsStr = hasNoteData ? `${paramsName}, ` : ''
-    return getCommonRequestItemStr(project, item, requestParams, appendParamsStr)
+    const paramsName = ['GET', 'DELETE'].includes(item.method.toUpperCase()) ? 'params' : 'data' // 按照一般情况处理
+    const requestParams = getAppendRequestParamsJsdoc(item.path, paramsName, true, project)
+    const appendParamsStr = `${paramsName}, `
+    return getMainRequestMethodStr(project, item, requestParams, appendParamsStr)
 }
 
 export const handleJsFileString = (fileBufferStringChunk: Array<string>, item: apiSimpleItem, project: ProjectConfig) => {
     /** 先配置注释再配置请求主方法 */
     fileBufferStringChunk.push(getNoteStringItem(item))
-    fileBufferStringChunk.push(getMainMethodItem(item, true, project))
+    fileBufferStringChunk.push(getMainMethodItem(item, project))
 }
 

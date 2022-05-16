@@ -2,7 +2,7 @@
 import { getReturnNoteStringItem } from './response/js'
 import { getRequestNoteStringItem } from './request/js'
 import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
-import { getAppendRequestParamsJsdoc, getCommonRequestItemStr } from '../utils/str-operate'
+import { getAppendRequestParamsJsdoc, getMainRequestMethodStr } from '../utils/str-operate'
 
 /** 配置地址栏上面的id jsdoc 注释 */
 const getAppendIdNote = (params: Array<ReqParams>) => {
@@ -12,7 +12,6 @@ const getAppendIdNote = (params: Array<ReqParams>) => {
         return pre
     }, '')
 }
-
 
 
 /** 获取请求注释上的param注释字符串 */
@@ -26,7 +25,7 @@ const getNoteStringItem = (item: JsDocApiItem, project: ProjectConfig) => {
     const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
 
     const { reqType, typeName } = getRequestNoteStringItem(item, project)
-    const { resType, returnNameWithType } = getReturnNoteStringItem(item, project)
+    const { resType, returnNameWithType } = getReturnNoteStringItem(item)
     const idNote = getAppendIdNote(item.req_params)
 
     const methodNote = `
@@ -47,7 +46,7 @@ const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: Pr
     const paramsName = hasParamsQuery ? 'params' : 'data'
     const requestParams = getAppendRequestParamsJsdoc(item.path, paramsName, hasNoteData, project)
     const appendParamsStr = hasNoteData ? `${paramsName}, ` : ''
-    return getCommonRequestItemStr(project, item, requestParams,appendParamsStr)
+    return getMainRequestMethodStr(project, item, requestParams,appendParamsStr)
 }
 
 export const handleJsdocFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig, noteStringChunk: Array<string>) => {

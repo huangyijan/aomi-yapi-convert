@@ -1,4 +1,4 @@
-import { getCommonRequestItemStr, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
+import { getMainRequestMethodStr, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
 /** 配置注释 */
 const getNoteStringItem = (item: apiSimpleItem) => {
     const { protocol, host } = global.apiConfig
@@ -17,26 +17,25 @@ const getNoteStringItem = (item: apiSimpleItem) => {
  * @param paramsName 传输使用的参数名，配合JsDoc文档数据
  * @returns {string} 函数请求使用的参数表达式
  */
-export const getAppendRequestParamsTs = (path: string, paramsName: string, hasNoteData: boolean, project: ProjectConfig) => {
+export const getAppendRequestParamsTs = (path: string, paramsName: string,project: ProjectConfig) => {
     let requestParams = ''
     path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}: string | number, `)
-    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}: any, ` : ''}options: AxiosRequestConfig${getCustomerParamsStr(project)})`
+    requestParams = `(${requestParams}${`${paramsName}: any, `}options: AxiosRequestConfig${getCustomerParamsStr(project)})`
     return requestParams
 }
 
 /** 配置请求主方法 */
-const getMainMethodItem = (item: apiSimpleItem, hasNoteData: boolean, project: ProjectConfig) => {
+const getMainMethodItem = (item: apiSimpleItem, project: ProjectConfig) => {
 
-    const isGetMethod = item.method.toUpperCase() == 'GET' // TODO: get请求传params，post以及其他请求传data.希望后台不要搞骚操作。这里后面可以做的灵活一点
-    const paramsName = isGetMethod ? 'params' : 'data'
-    const requestParams = getAppendRequestParamsTs(item.path, paramsName, hasNoteData, project)
-    const appendParamsStr = hasNoteData ? `${paramsName}, ` : ''
-    return getCommonRequestItemStr(project, item, requestParams, appendParamsStr, 'any')
+    const paramsName = ['GET', 'DELETE'].includes(item.method.toUpperCase()) ? 'params' : 'data' // 按照一般情况处理
+    const requestParams = getAppendRequestParamsTs(item.path, paramsName, project)
+    const appendParamsStr = `${paramsName}, `
+    return getMainRequestMethodStr(project, item, requestParams, appendParamsStr, 'any')
 }
 
 export const handleTsFileString = (fileBufferStringChunk: Array<string>, item: apiSimpleItem, project: ProjectConfig) => {
     /** 先配置注释再配置请求主方法 */
     fileBufferStringChunk.push(getNoteStringItem(item))
-    fileBufferStringChunk.push(getMainMethodItem(item, true, project))
+    fileBufferStringChunk.push(getMainMethodItem(item, project))
 }
 

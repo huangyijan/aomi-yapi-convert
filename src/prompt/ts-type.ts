@@ -2,7 +2,7 @@
 import { getReturnNoteStringItem } from './response/ts'
 import { getRequestNoteStringItem } from './request/ts'
 import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
-import {  getCommonRequestItemStr, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
+import {  getMainRequestMethodStr, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
 
 /** 获取请求上参数ts 类型名称 */
 const getParamsTypeName = (reqType: string, typeName: string) => {
@@ -19,7 +19,6 @@ const getNoteStringItem = (item: JsDocApiItem) => {
    * @link ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
    */`
 }
-
 
 
 /**
@@ -42,12 +41,12 @@ const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: Pr
     const paramsName = hasParamsQuery ? 'params' : 'data'
     const requestParams = getAppendRequestParamsTsType(item.path, paramsName, hasNoteData, requestParamsType, project)
     const appendParamsStr = hasNoteData ? `${paramsName}, ` : ''
-    return getCommonRequestItemStr(project, item, requestParams, appendParamsStr, returnParamsType)
+    return getMainRequestMethodStr(project, item, requestParams, appendParamsStr, returnParamsType)
 }
-
+ 
 export const handleTsTypeFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig, noteStringChunk: Array<string>) => {
     const { reqType, typeName } = getRequestNoteStringItem(item, project)
-    const { resType , returnNameWithType} = getReturnNoteStringItem(item, project)
+    const { resType , returnNameWithType} = getReturnNoteStringItem(item)
     const methodNote = getNoteStringItem(item)
     
     const requestParamsType = getParamsTypeName(reqType, typeName)

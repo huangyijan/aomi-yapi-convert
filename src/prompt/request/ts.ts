@@ -1,12 +1,10 @@
-import { getDescription, getLegalJson, removeProperties } from '../../utils'
+import {  getLegalJson, removeProperties } from '../../utils'
 import { getNoteNameByParamsType } from '../note'
 
 import { getType } from '../../utils/str-operate'
 import { getSecondNoteAndName } from '../second'
-import { getSuitableDefault, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getSuitableType } from '../../utils/decision'
-
-// import api from '../../api/api2'
-// api.apiHoliday({})
+import { getSuitableDefault, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getSuitableType, getSuitDescription } from '../../utils/decision'
+ 
 
 interface RequestNoteStringItem {
   reqType: string
@@ -37,7 +35,7 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
 
     Object.entries(properties).forEach(([key, value]: any) => {
 
-        const description = getDescription(value)
+        const description = getSuitDescription(value)
         let type = getSuitableType(value)
 
 
@@ -64,7 +62,6 @@ export const getReqType = (item: JsDocApiItem, typeName: string, hasParamsQuery:
         return getJsonToJsDocParams(body, typeName)
     }
 }
-
 
 
 /** 获取请求的参数注释和参数名 */

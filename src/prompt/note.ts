@@ -44,5 +44,6 @@ export const getApiLinkAddress = (baseUrl: string, project_id: number, _id: numb
     return `${baseUrl}/project/${project_id}/interface/api/${_id}`
 }
 
+/** 获取api最后更新时间 */
 export const getUpdateTime = (time: number) => new Date(time * 1000).toLocaleDateString()
 

@@ -1,8 +1,8 @@
 import { getApiName, getType } from '../../utils/str-operate'
-import { removeProperties, getLegalJson, getDescription } from '../../utils'
+import { removeProperties, getLegalJson } from '../../utils'
 import { getSecondNoteAndName } from '../second'
 import { dealResponseData, getReturnName } from '../note'
-import { getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getSuitableType } from '../../utils/decision'
+import { getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getSuitableType, getSuitDescription } from '../../utils/decision'
 
 interface ReturnNoteStringItem {
     returnNameWithType: string
@@ -11,7 +11,7 @@ interface ReturnNoteStringItem {
 
 
 /** 配置返回注释 */
-export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConfig): ReturnNoteStringItem => {
+export const getReturnNoteStringItem = (item: JsDocApiItem): ReturnNoteStringItem => {
 
     const body = getLegalJson(item.res_body) // 获取合法的json数据
 
@@ -49,7 +49,7 @@ export const dealJsonToTsTypeReturn = (data: object, returnName: string) => {
 
 
     Object.entries(data).forEach(([key, value]) => {
-        const description = getDescription(value)
+        const description = getSuitDescription(value)
         let type = getSuitableType(value)
         const addTypeName = getType(type, key, returnName)
 

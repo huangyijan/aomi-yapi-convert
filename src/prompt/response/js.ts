@@ -1,17 +1,17 @@
 import { getApiName, getType } from '../../utils/str-operate'
-import { removeProperties, getLegalJson, getDescription } from '../../utils'
+import { removeProperties, getLegalJson } from '../../utils'
 import { getSecondNoteAndName } from '../second'
 import { dealResponseData, getReturnName } from '../note'
-import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableType } from '../../utils/decision'
+import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableType, getSuitDescription } from '../../utils/decision'
 
 interface ReturnNoteStringItem {
     returnNameWithType: string
     resType: string
 }
-
+ 
 
 /** 配置返回注释 */
-export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConfig): ReturnNoteStringItem => {
+export const getReturnNoteStringItem = (item: JsDocApiItem): ReturnNoteStringItem => {
     const body = getLegalJson(item.res_body) // 获取合法的json数据
 
     if (typeof body !== 'object') return { returnNameWithType: 'string', resType: '' }
@@ -34,7 +34,6 @@ export const getReturnNoteStringItem = (item: JsDocApiItem, project: ProjectConf
 }
 
 
-
 /** 处理返回的数据类型处理 */
 export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
 
@@ -47,13 +46,14 @@ export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
     if (returnName === 'string' || returnName === 'array') return ''
 
     Object.entries(data).forEach(([key, value]) => {
-        const description = getDescription(value)
+        const description = getSuitDescription(value)
         let type = getSuitableType(value)
+
+        // 处理二层的Type类型
         const addTypeName = getType(type, key, returnName)
-  
         const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
-   
         appendNoteJsdocType = note
+        
         if(name !== type) type = name
 
         bodyStr += getSuitableJsdocProperty(key, type, description)

@@ -1,7 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
+
 const TOKEN_NAME = 'API_TOKEN'
+
 export const GetSafePath = function (relativePath: string) {
     const filePath = path.resolve(relativePath)
     const createDir = (filePath: string) => {

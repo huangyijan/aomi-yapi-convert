@@ -19,7 +19,7 @@ export default [
         ]
     },
     {
-        input: 'typings/index.ts',
+        input: 'typings/index.ts', // 加一个空的配置，方便让index.d.ts发挥作用并且不报错
         output: [
             {
                 file: 'dist/index.js',

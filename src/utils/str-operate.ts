@@ -6,13 +6,7 @@ const illegalRegex = /[^a-zA-Z0-9]/g // 用来剔除不合法的符号
 const longBiasRegex = /\/[^\/]*/ // 处理多个“/”地址的情况
 export const pathHasParamsRegex = /\/\{([a-zA-Z0-9]*)\}/g // 獲取接口参数名稱
 
-/** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
-export const getValidApiPath = (path: string) => {
-    if (path.includes('?')) path = path.split('?')[0]
-    if (path.endsWith('/')) path = path.slice(0, path.length - 1)
-    return path
-}
-
+ 
 /** 处理传Id的API请求参数 */
 export const getAppendRequestParams = (path: string) => {
     let requestParams = ''
@@ -29,8 +23,6 @@ const getApiBaseUrl = (project: ProjectConfig) => {
     if (prefix) baseUrl = prefix.endsWith('/') ? prefix.slice(0, prefix.length - 1) : prefix // 兼容两种写法
     return baseUrl
 }
-
-
 
 
 /** 接口名决策方案：如果有参数先去除参数，然后把接口path剩余数据转成驼峰命名，缺点：接口path如果太长，命名也会比较长 */
@@ -56,7 +48,6 @@ export const getAppendRequestParamsJsdoc = (path: string, paramsName: string, ha
     requestParams = `(${requestParams}${hasNoteData ? `${paramsName}, ` : ''}options${getCustomerParamsStr(project)})`
     return requestParams
 }
-
 
 
 /** 首字母大写 */
@@ -130,7 +121,7 @@ const getAxiosName = () => {
     return axiosName || 'fetch'
 }
 
-export const getCommonRequestItemStr = (project: ProjectConfig, item: JsDocApiItem | apiSimpleItem, requestParamsStr: string, appendParamsStr = '', returnType?: string) => {
+export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiItem | apiSimpleItem, requestParamsStr: string, appendParamsStr = '', returnType?: string) => {
     const requestPath = getAppendPath(item.path, project)
     const requestName = getApiName(item.path, item.method)
     const returnTypeStr = returnType ? `: Promise<${returnType}>` : ''
@@ -138,16 +129,16 @@ export const getCommonRequestItemStr = (project: ProjectConfig, item: JsDocApiIt
     const { outputStyle = OutputStyle.Default } = global.apiConfig
 
     const requestContent = `{
-    const method = '${item.method}'
-    return ${getAxiosName()}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
+      const method = '${item.method}'
+      return ${getAxiosName()}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
    }`
 
-    switch (outputStyle) {
-    case OutputStyle.Name:
-        return `   export function ${requestName}${requestParamsStr}${returnTypeStr} ${requestContent}`
-    case OutputStyle.Anonymous:
-        return `   export const ${requestName} = ${requestParamsStr}${returnTypeStr} => ${requestContent}`
-    default:
-        return ` ${requestName}: ${requestParamsStr}${returnTypeStr} => ${requestContent},`
+    switch (outputStyle) { 
+        case OutputStyle.Name:
+            return `   export function ${requestName}${requestParamsStr}${returnTypeStr} ${requestContent}`
+        case OutputStyle.Anonymous:
+            return `   export const ${requestName} = ${requestParamsStr}${returnTypeStr} => ${requestContent}`
+        default:
+            return ` ${requestName}: ${requestParamsStr}${returnTypeStr} => ${requestContent},`
     }
 }

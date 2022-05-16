@@ -3,7 +3,6 @@ import { hasProperty } from '../utils'
 import { getCommandNote } from '../utils/str-operate'
 
 
-
 /** 获取不正常序列化的数组对象注释 */
 export const getUnNormalObjectNote = (arrayValue: Array<any>, typeName: string) => {
 
@@ -39,7 +38,6 @@ export const getNormalObjectNote = (data: { [key: string]: any }, typeName: stri
     return note
 
 }
-
 
 
 export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeName: string) => {
@@ -94,8 +92,7 @@ export const getSecondNoteAndName = (value: any, addTypeName: string, type: stri
         const typeName = addTypeName.substring(0, addTypeName.length - 2)
         const addNote = getArrayTypeNote(value, typeName)
     
-        if (addNote === 'string') type = 'string[]' // 处理字符串数组和特殊的api自动生成错误
-        if (addNote === 'number') type = 'number[]' // 处理字符串数组和特殊的api自动生成错误
+        if (addNote === 'string' || addNote === 'number') type = `${addNote}[]` // 处理字符串数组和特殊的api自动生成错误
         if (addNote.includes('@typedef')) { // 有正常序列的Jsdoc
             type = addTypeName
             if ('string, boolean, number'.includes(addNote)) type = `${addNote}[]`
@@ -108,7 +105,7 @@ export const getSecondNoteAndName = (value: any, addTypeName: string, type: stri
         }
 
     }
-
+ 
 
     if (type.includes('object')) {
         const addNote = getObjectTypeNote(value, addTypeName)

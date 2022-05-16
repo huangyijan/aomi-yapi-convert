@@ -1,6 +1,5 @@
 import format from './format'
 import { hasProperty, toHumpName } from '.'
-import { getValidApiPath } from './str-operate'
 
 import { handleJsFileString } from '../simple/js'
 import { handleTsFileString } from '../simple/ts'
@@ -27,6 +26,7 @@ ${axiosType}${axiosFrom}
     `
 }
 
+/** 配置通用的axios config jsdoc Type */
 const getJsdocAxiosType = () => {
     const { version } = global.apiConfig
     if (version === 'js') {
@@ -37,9 +37,13 @@ const getJsdocAxiosType = () => {
     return ''
 }
 
+/** api文件导出类型 */
 export enum OutputStyle {
+    /** 默认导出 */
     Default = 'defaultExport',
+    /** 具名导出 */
     Name = 'nameExport',
+    /** 匿名导出 */
     Anonymous = 'anonymous'
 }
 
@@ -104,6 +108,13 @@ const getFileName = (path: string, fileNameSet: { [key: string]: number }) => {
     })
 }
 
+/** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
+const getValidApiPath = (path: string) => {
+    if (path.includes('?')) path = path.split('?')[0]
+    if (path.endsWith('/')) path = path.slice(0, path.length - 1)
+    return path
+}
+
 /**
  * 获取Js文件的单个API文件的保存文件名和写入的文件流字符串
  * @param item 接口菜单单项
@@ -119,7 +130,7 @@ export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: Projec
     list.forEach((item) => {
         /** 没有完成的接口不处理 */
         if (item.status === 'undone') return
-        item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题,难搞
+        item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题
         if (isNeedType) {
             generateTypeBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)
         } else {
@@ -128,10 +139,9 @@ export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: Projec
         getFileName(item.path, fileNameSet)
     })
 
-    // 文件名取名策略：获取路径上名字出现最多词的路径名称，需要将一些短横线下划线转为驼峰命名法, TODO: 可能会出现重名问题
+    // 文件名取名策略：获取路径上名字出现最多词的路径名称，需要将一些短横线下划线转为驼峰命名法
     const FileName = getMaxTimesObjectKeyName(fileNameSet, hasSaveNames)
     hasSaveNames.push(FileName)
-
 
     return { FileName, fileBufferStringChunk, noteStringChunk }
 }
