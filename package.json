@@ -20,7 +20,7 @@
   "types": "./typings/index.d.ts",
   "scripts": {
     "dev": "rollup",
-    "test": "jest --watchAll",
+    "test": "jest --watch",
     "build:api": "node out/enter/index.js",
     "build": "rollup -c",
     "lint": "eslint --ext .ts src/ --fix"

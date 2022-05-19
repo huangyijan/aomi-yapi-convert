@@ -16,6 +16,7 @@ export const getSuitableType = (value: any) => {
     const valueType = typeof value
     switch (valueType) {
         case 'object':
+            if(value === null) return 'any'
             if (hasProperty(value, 'type')) return transformType(value.type)
             if (hasProperty(value, 'default')) return getTypeByValue(value.default)
             return 'any'

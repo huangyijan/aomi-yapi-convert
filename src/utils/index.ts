@@ -40,7 +40,7 @@ export const removeProperties = (data: any) => {
 }
 
 /** 判断api数据里面的数据类型 */
-export const getTypeByValue = (value: { constructor: ArrayConstructor, type?: string }) => {
+export const getTypeByValue = (value: any) => {
     if(value === null) return 'string'
     const jsType = typeof value
     switch (jsType) {
