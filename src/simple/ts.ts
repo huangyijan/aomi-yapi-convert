@@ -1,4 +1,5 @@
-import { getMainRequestMethodStr, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
+import { pathHasParamsRegex } from '../utils/constants'
+import { getMainRequestMethodStr, getCustomerParamsStr } from '../utils/str-operate'
 /** 配置注释 */
 const getNoteStringItem = (item: apiSimpleItem) => {
     const { protocol, host } = global.apiConfig

@@ -48,12 +48,12 @@ export const request = (url: string, token: string) => {
 }
 
 export const handleApiRequestError = (error: string) => {
-    const { yapiURL } = global.apiConfig
+    // const { yapiURL } = global.apiConfig
     if (error.includes('40011')) {
         console.log('\n\x1b[33m', 'token 已经过期， 请从yapi文档network获取最新token, 三秒后将为你打开yapi地址')
-        setTimeout(() => {
-            openURL(yapiURL)
-        }, 3000)
+        // setTimeout(() => {
+        //     openURL(yapiURL)
+        // }, 3000)
         refreshToken().then(() => run())
     } else {
         console.log(error)

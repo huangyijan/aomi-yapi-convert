@@ -16,7 +16,8 @@ interface RequestNoteStringItem {
 export const getConfigNoteParams = (reqQuery: Array<reqQuery>, requestName: string) => {
     let paramsStr = ''
     reqQuery.forEach(item => {
-        paramsStr += getSuitableTsTypeNote(item.desc , item.example)
+        const example = getSuitableDefault(item) 
+        paramsStr += getSuitableTsTypeNote(item.desc , example)
         paramsStr += getSuitableTsType(item.name, 'string')
     })
     if (!paramsStr) return ''

@@ -2,7 +2,8 @@
 import { getReturnNoteStringItem } from './response/ts'
 import { getRequestNoteStringItem } from './request/ts'
 import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
-import {  getMainRequestMethodStr, getCustomerParamsStr, pathHasParamsRegex } from '../utils/str-operate'
+import {  getMainRequestMethodStr, getCustomerParamsStr } from '../utils/str-operate'
+import { pathHasParamsRegex } from '../utils/constants'
 
 /** 获取请求上参数ts 类型名称 */
 const getParamsTypeName = (reqType: string, typeName: string) => {

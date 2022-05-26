@@ -11,6 +11,7 @@ export const toHumpName = (str: string) => {
 
 /** hasOwnProperty太长了，写一个代理当简写 */
 export const hasProperty = function (obj: object, key: string) {
+    if(!obj) return false
     return Object.prototype.hasOwnProperty.call(obj, key)
 }
 
@@ -21,7 +22,7 @@ const dealApiObj = (data: any) => {
 
         if (data instanceof Object && hasProperty(data, 'name') && hasProperty(data, 'ordinal')) {
             // 对状态对象处理，yapi 文档自动生成问题，状态字段一般都是呈现出object，实际为string
-            data = { type: 'string', description, default: '无', ordinal: true }
+            data = { type: 'string', description, default: '', ordinal: true }
         }
 
     }

@@ -1,10 +1,6 @@
 import { OutputStyle } from './common'
-import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote } from './decision'
-/* eslint-disable no-useless-escape */
-const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
-const illegalRegex = /[^a-zA-Z0-9]/g // 用来剔除不合法的符号
-const longBiasRegex = /\/[^\/]*/ // 处理多个“/”地址的情况
-export const pathHasParamsRegex = /\/\{([a-zA-Z0-9]*)\}/g // 獲取接口参数名稱
+import { ApiNameRegex, illegalRegex, longBiasRegex, pathHasParamsRegex } from './constants'
+import { getSuitableDefault, getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote } from './decision'
 
  
 /** 处理传Id的API请求参数 */
@@ -64,8 +60,8 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
     if (version === 'ts') {
         keyNote.forEach(item => {
             const { key, type, description } = item
-            const defaultStr = item.default ? ` default: ${item.default}` : ''
-            noteString += getSuitableTsTypeNote(description, defaultStr)
+            const example = getSuitableDefault(item) 
+            noteString += getSuitableTsTypeNote(description, example)
             noteString += getSuitableTsType(key, type)
         })
         return getSuitableTsInterface(typeName, noteString)
@@ -112,6 +108,7 @@ const getAppendPath = (path: string, project: ProjectConfig) => {
     const prefix = getApiBaseUrl(project)
     const isHaveParams = pathHasParamsRegex.test(path) // 地址栏上是否有参数
     if (!isHaveParams) return `'${prefix}${path}'`
+    // eslint-disable-next-line no-useless-escape
     return `\`${prefix}${path.replace(pathHasParamsRegex, (_, p1) => `/$\{${p1}\}`)}\``
 }
 
