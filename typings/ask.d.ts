@@ -27,10 +27,11 @@ interface ProjectConfig {
   projectId: number | string,
   outputDir: string,
   isLoadFullApi: boolean
+  hideUnDoneApi?: boolean
   prefix?: string
   group?: Array<CatConfig>,
   customParams?: Array<CustomParam>
-  /** 请求路径，非配置，我自动生成 */
+  /** 请求路径，自动生成 */
   requestUrl?: string,
   projectBaseConfig?: ProjectBaseConfig
 }
