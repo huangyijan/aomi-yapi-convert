@@ -53,6 +53,7 @@ export const getSuitableDefault = (value: any) => {
     switch (valueType) {
         case 'object':
             if (hasProperty(value, 'default')) return removeTypeDefault(value.default)
+            if (hasProperty(value, 'example')) return removeTypeDefault(value.example)
             return ''
         case 'boolean':
         case 'number':
@@ -67,7 +68,7 @@ export const getSuitableDefault = (value: any) => {
 export const getSuitableTsTypeNote = (description: string, example?: string) => {
     if (!description && !example) return ''
     const desc = description || ''
-    const ex = example ? `   example: ${example}` : ''
+    const ex = example ? `   Example: ${example}` : ''
     return `    /**  ${desc}${ex}  */\n`
 }
 

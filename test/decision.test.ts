@@ -55,7 +55,7 @@ describe('utils decision', () => {
     test(getSuitableTsTypeNote.name, () => {
         expect(getSuitableTsTypeNote('')).toBe('')
         expect(getSuitableTsTypeNote('商品描述').trim()).toBe('/**  商品描述  */')
-        expect(getSuitableTsTypeNote('商品描述', '默认是1').trim()).toBe('/**  商品描述   example: 默认是1  */')
+        expect(getSuitableTsTypeNote('商品描述', '默认是1').trim()).toBe('/**  商品描述   Example: 默认是1  */')
     })
 
     const getSuitableTsType = outputTemplate.getSuitableTsType
@@ -63,5 +63,7 @@ describe('utils decision', () => {
         expect(getSuitableTsType('name', 'string').trim()).toBe('name?: string')
         expect(getSuitableTsType('name', 'number').trim()).toBe('name?: number')
     })
+
+    /** 商品导出模板由于有换行符，所以就不加测试用例了 */
 
 })

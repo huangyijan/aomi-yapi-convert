@@ -4,7 +4,7 @@ import { run } from '../enter/auth'
 import { refreshToken } from '../enter/auth'
 import { spawn } from 'child_process'
 
-/** 不同平台使用node打开浏览器的方式不同 */
+/** 不同平台使用node打开浏览器的方式不同，required会被中断，暂时不打开URL了，后面再看下啥问题 */
 const openURL = (url: string) => {
     switch (process.platform) {
         case 'darwin':
@@ -48,12 +48,8 @@ export const request = (url: string, token: string) => {
 }
 
 export const handleApiRequestError = (error: string) => {
-    // const { yapiURL } = global.apiConfig
     if (error.includes('40011')) {
-        console.log('\n\x1b[33m', 'token 已经过期， 请从yapi文档network获取最新token, 三秒后将为你打开yapi地址')
-        // setTimeout(() => {
-        //     openURL(yapiURL)
-        // }, 3000)
+        console.log('\n\x1b[33m', 'token 已经过期， 请从yapi文档network获取最新token')
         refreshToken().then(() => run())
     } else {
         console.log(error)

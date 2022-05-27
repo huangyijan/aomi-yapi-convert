@@ -70,7 +70,8 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
     if (version === 'js') {
         keyNote.forEach(item => {
             const { key, type, description } = item
-            noteString += getSuitableJsdocProperty(key, type, description, item.default)
+            const example = getSuitableDefault(item) 
+            noteString += getSuitableJsdocProperty(key, type, description, example)
         })
         return getSuitableJsdocType(typeName, noteString)
     }

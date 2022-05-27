@@ -1,11 +1,9 @@
-const NameRegex = /[-|_]([a-zA-Z])/g // 重命名捕获替换字符串
-const quotaRegex = /(,)\s*\n*.*\}/g // 匹配json字符串最后一个逗号
-const illegalRegex = /(\/\/\s.*)\n/g // 非法json注释匹配
+import { ApiNameRegex, illegalJsonRegex, quotaRegex } from './constants'
 
 
 /** 将下划线和短横线命名的重命名为驼峰命名法 */
 export const toHumpName = (str: string) => {
-    return str.replace(NameRegex, function (_keb, item) { return item.toUpperCase() })
+    return str.replace(ApiNameRegex, function (_keb, item) { return item.toUpperCase() })
 }
 
 
@@ -58,12 +56,12 @@ export const getTypeByValue = (value: any) => {
 /** 获取请求体（body）传输参数 */
 export const getLegalJson = (reqBody: string) => {
     if (!reqBody|| reqBody.length<20) return ''
-    const isIllegalJsonStr = illegalRegex.test(reqBody) //判断后台返回的字符串是不是合法json字符串
+    const isIllegalJsonStr = illegalJsonRegex.test(reqBody) //判断后台返回的字符串是不是合法json字符串
     try {
         if (!isIllegalJsonStr) {
             return JSON.parse(reqBody)
         } else {
-            const dealStr = reqBody.replace(illegalRegex, '\n') // 删除注释
+            const dealStr = reqBody.replace(illegalJsonRegex, '\n') // 删除注释
             const removeLestQuotaStr = dealStr.replace(quotaRegex, '}') // 删除多余的逗号
             return JSON.parse(removeLestQuotaStr)
         }

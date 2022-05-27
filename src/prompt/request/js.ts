@@ -3,7 +3,7 @@ import { getNoteNameByParamsType } from '../note'
 
 import { getType } from '../../utils/str-operate'
 import { getSecondNoteAndName } from '../second'
-import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableType, getSuitDescription } from '../../utils/decision'
+import { getSuitableDefault, getSuitableJsdocProperty, getSuitableJsdocType, getSuitableType, getSuitDescription } from '../../utils/decision'
  
 
 interface RequestNoteStringItem {
@@ -16,7 +16,8 @@ interface RequestNoteStringItem {
 export const getConfigNoteParams = (reqQuery: Array<reqQuery>, requestName: string) => {
     let paramsStr = ''
     reqQuery.forEach(item => {
-        paramsStr += getSuitableJsdocProperty(item.name, 'string', item.desc, item.example)
+        const example = getSuitableDefault(item) 
+        paramsStr += getSuitableJsdocProperty(item.name, 'string', item.desc, example)
     })
 
     if (!paramsStr) return ''
@@ -43,7 +44,8 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
         const { note, name } = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
         appendNoteJsdocType = note
         if (name !== type) type = name
-        bodyStr += getSuitableJsdocProperty(key, type, description, value.default)
+        const example = getSuitableDefault(value) 
+        bodyStr += getSuitableJsdocProperty(key, type, description, example)
     })
 
     return getSuitableJsdocType(requestName, bodyStr, appendNoteJsdocType)

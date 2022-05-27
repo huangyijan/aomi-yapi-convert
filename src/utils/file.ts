@@ -1,8 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
+import { TOKEN_NAME } from './constants'
 
-const TOKEN_NAME = 'API_TOKEN'
 
 export const GetSafePath = function (relativePath: string) {
     const filePath = path.resolve(relativePath)
