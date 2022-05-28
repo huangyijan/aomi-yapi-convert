@@ -25,6 +25,7 @@
 3. 获得来自后台同事为你写的字段以及参数提示，不用频繁来回切文档页面去看文档
 4. 获得来自axios的配置提示，避免老是忘记配置项参数要去看文档的问题
 5. api文件即是注释，api文件即是文档，获得良好的开发体验
+6. 具备让你代码联调之前，只要API文档出来了，你的代码就具有获得具体字段名称的能力
 
 ## 安装
 
@@ -42,7 +43,7 @@ $ yarn add aomi-yapi-convert
 
 ```
 
-虽然是是开发工具，属于开发环境依赖，但是因为常用api配置项用了我依赖内的axios配置提示，如果项目构建环境没有将注释移除的话，不清楚会不会有依赖丢失的错误。所以推荐将其作为生产发布环境依赖，这个后面再求证
+虽然是是开发工具，属于开发环境依赖，但是因为常用api配置项用了我依赖内的axios配置提示，如果项目构建生产环境没有将注释移除的话，不清楚会不会有依赖丢失的错误。所以推荐将其作为生产发布环境依赖，这个后面再求证
 
 ### 怎么使用
 
@@ -62,9 +63,24 @@ $ npx aomi-yapi-convert
 
 这样就可以愉快的使用自己想用的命令，而不用添加npx。直接通过 ```npm run build:api ``` 或者 ```yarn build:api``` 来更新api文件了。
 
+首次构建本地配置文件，会询问你几个问题，然后作为依据来生成配置文件（配置文件推荐将其添加为gitignore文件。不会干扰其他开发人员开发，特别是项目大的时候，每个人的对应的项目加起来配置文件将会很长。）
+
+下面开始来解释一下几个有必要的问题，以及需要的输入：
+
+* 请输入yapi地址(含projectId)： 这个只需要粘贴yapi的具体项目地址过来就可以了
+* 请粘贴yapi token(打开网站network 接口header可看)： 这个token是api请求携带的token.可以通过接口请求header看或者看网站的cookie。截图如下：
+
+![you need proxy to see the image](./example/token1.png)
+
+## 或者
+
+![you need proxy to see the image](./example/token2.png)
+
+
+
 以添加script为示例，我们看下实际生成的效果
 
-![you need proxy to see the image](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-terminal.png)
+![you need proxy to see the image](./example/yapi-terminal.png)
 
 然后你就会发现在根目录会生成一个api.config.json的配置文件。目前暂时的配置约定是这样的
 
@@ -88,6 +104,7 @@ const targetJson = {
       projectId: 445, // 项目id
       outputDir: '', // 统一的文件生成路径，请注意默认文件夹是src/api目录，如果该目录下已经有文件了，建议在该目录起一个子目录名称：ep: src/api/auto/.
       isLoadFullApi: false, // 这里配置是否全量加载api文件，原有项目已经有api的文件，请设置为false局部更新，全量更新会生成重复代码，徒增冗余
+      hideUnDoneApi: true, // 这里配置是否加载服务端接口显示未完成的Api。开发期间Api接口可能还是未完成状态。方便前端调试,默认加载。
       prefix: '', // 一般该项设置为空，但我注意到部分接口服务端不配置服务名（比如超市的接口），需要前端手动添加，所以加了该配置项。这个配置项加了之后会在该项目组下所有接口添加这个字符串
       customer: [ // 这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，不设置会默认继承全局的。
         {
@@ -114,10 +131,10 @@ const targetJson = {
 
 好了，走到一步了，如果没有出现意外的话，你会在src/api（如果输出文件路径没有修改的话）目录下看到由插件自动化生成api文件。示例(ts/js)：
 
-![you need proxy to see the image](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-ts.png)
-![you need proxy to see the image](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-code-js.png)
+![you need proxy to see the image](./example/yapi-code-ts.png)
+![you need proxy to see the image](./example/yapi-code-js.png)
 
 然后就可以愉快使用了。使用的时候将会获得非常良好的提示体验。
 
 使用示例：
-![you need proxy to see the image](https://github.com/huangyijan/aomi-yapi-convert/raw/master/example/yapi-use-demo.png)
+![you need proxy to see the image](./example/yapi-use-demo.png)

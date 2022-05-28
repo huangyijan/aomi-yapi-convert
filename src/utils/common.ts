@@ -51,9 +51,9 @@ export enum OutputStyle {
 export const configFileHead = () => {
     const fileBufferStringChunk = []
     fileBufferStringChunk.push(getHeaderInfo())
-    
+
     const { outputStyle = OutputStyle.Default } = global.apiConfig
-    if(outputStyle !== OutputStyle.Default) return fileBufferStringChunk
+    if (outputStyle !== OutputStyle.Default) return fileBufferStringChunk
     fileBufferStringChunk.push('export default {')
     return fileBufferStringChunk
 
@@ -63,7 +63,7 @@ export const configFileHead = () => {
 export const configFileFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>) => {
 
     const { outputStyle = OutputStyle.Default } = global.apiConfig
-    if(outputStyle === OutputStyle.Default) fileBufferStringChunk.push('}')
+    if (outputStyle === OutputStyle.Default) fileBufferStringChunk.push('}')
     fileBufferStringChunk.push(...noteStringChunk)
     if (getJsdocAxiosType()) fileBufferStringChunk.push(getJsdocAxiosType())
     return format(fileBufferStringChunk)
@@ -129,7 +129,7 @@ export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: Projec
     const noteStringChunk: Array<string> = ['\n'] // 存储Jsdoc注释的容器
     list.forEach((item) => {
         /** 没有完成的接口不处理 */
-        if (item.status === 'undone') return
+        if (project.hideUnDoneApi && item.status === 'undone') return
         item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题
         if (isNeedType) {
             generateTypeBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)

@@ -1,4 +1,5 @@
 
+/** 这个文件是属于我搬运axios的类型，作为默认参数的导出 */
 
 export type AxiosRequestHeaders = Record<string, string | number | boolean>;
 
