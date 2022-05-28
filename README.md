@@ -1,6 +1,13 @@
-aomi-yapi-convert(针对yapi文档转js或者ts文件的自动化npm插件)
+# aomi-yapi-convert 
+
+[![npm version](https://img.shields.io/npm/v/aomi-yapi-convert?style=flat-square)](https://www.npmjs.com/package/aomi-yapi-convert)
+[![npm version](https://img.shields.io/npm/dy/aomi-yapi-convert?style=flat-square)](https://www.npmjs.com/package/aomi-yapi-convert)
+
+> 针对yapi文档转js或者ts文件的自动化npm插件
+
 
 ## 功能
+
 1. 支持转ts、js API文件
 2. js文件支持jsDoc版本和simple注释版本
 3. ts文件支持Ts版本和simple注释版本
@@ -11,7 +18,7 @@ aomi-yapi-convert(针对yapi文档转js或者ts文件的自动化npm插件)
 8. 支持增加任意自定义形参及默认值
 9. 支持根据个人风格偏好选择导出文件导出的格式
 
-这个工具能帮你做些什么？
+## 这个工具能帮你做些什么？
 
 1. 帮你完成交互搬运工作
 2. 减少你经常搬运错误的情况
