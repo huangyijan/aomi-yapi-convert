@@ -2,7 +2,7 @@ import inquirer from 'inquirer'
 import { saveApiToken } from '../utils/file'
 import path from 'path'
 import ask from './ask'
-import { main } from '../main'
+import main from '../main'
 
 
 export async function run() {

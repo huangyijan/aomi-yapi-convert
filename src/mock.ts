@@ -1,3 +1,4 @@
+import main from './main'
 /** test config */
 export const config = {
     'yapiURL': 'http://yapi.miguatech.com/project/445/interface/api',
@@ -35,4 +36,9 @@ export const config = {
             'isLoadFullApi': true
         }
     ]
+}
+
+if (typeof process !== 'undefined') {
+    const { NODE_ENV } = process.env
+    if (NODE_ENV === 'development') main(config as ApiConfig)
 }

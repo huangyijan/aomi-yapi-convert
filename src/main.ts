@@ -1,11 +1,10 @@
 import { getApiDocWithNoNote } from './simple/index'
 import { getApiDocWithJsDoc } from './prompt/index'
-import { config } from './mock'
 import { handleApiRequestError, request } from './utils/request'
 import { getApiToken } from './utils/file'
 
 
-export const main = async (config: ApiConfig) => {
+export default async (config: ApiConfig) => {
     global.apiConfig = config // 注册全局配置
     const { protocol, host, isNeedType, projects } = config
     const baseUrl = `${protocol}//${host}`
@@ -35,5 +34,4 @@ export const main = async (config: ApiConfig) => {
     })
 }
 
-const { NODE_ENV } = process.env
-if (NODE_ENV === 'development') main(config as ApiConfig)
+
