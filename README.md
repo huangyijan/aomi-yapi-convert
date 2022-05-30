@@ -32,18 +32,17 @@
 Using npm: 
 
 ```bash
-$ npm install aomi-yapi-convert
+$ npm install aomi-yapi-convert --save-dev
 
 ```
 
 Using yarn: 
 
 ```bash
-$ yarn add aomi-yapi-convert
+$ yarn add aomi-yapi-convert -D
 
 ```
 
-虽然是是开发工具，属于开发环境依赖，但是因为常用api配置项用了我依赖内的axios配置提示，如果项目构建生产环境没有将注释移除的话，不清楚会不会有依赖丢失的错误。所以推荐将其作为生产发布环境依赖，这个后面再求证
 
 ### 怎么使用
 
@@ -61,7 +60,6 @@ $ npx aomi-yapi-convert
   },
 ```
 
-这样就可以愉快的使用自己想用的命令，而不用添加npx。直接通过 ```npm run build:api ``` 或者 ```yarn build:api``` 来更新api文件了。
 
 首次构建本地配置文件，会询问你几个问题，然后作为依据来生成配置文件（配置文件推荐将其添加为gitignore文件。不会干扰其他开发人员开发，特别是项目大的时候，每个人的对应的项目加起来配置文件将会很长。）
 
