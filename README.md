@@ -90,6 +90,7 @@ const targetJson = {
   host: '', // example: baidu.com
   version: '', // ts/js 两种版本，type类型分别是TsType类型和jsdoc类型
   isNeedType : boolean, 这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
+  isNeedAxiosType: boolean, 这里设置是否需要axios的插件提示，默认为false, 如果设置为true, axios的额外配置项的类型提示将会是插件引入的axios提示.
   outputStyle: 'default', // 支持值defaultExport, nameExport, anonymous,分别对应了默认导出，具名导出，匿名函数导出
   axiosFrom: '', // 这里配置自定义的请求目录，考虑到大部分时候我们都用axios的包，所以使用axios作为默认请求，你也可以使用自定义的请求。
   axiosName: '', // 这里配置自定义的请求Name,这里改成ssr的this指针挂载方式
