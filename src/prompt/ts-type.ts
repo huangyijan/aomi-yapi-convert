@@ -1,7 +1,7 @@
 
 import { getReturnNoteStringItem } from './response/ts'
 import { getRequestNoteStringItem } from './request/ts'
-import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
+import { getUpdateTime, getApiLinkAddress, getReturnType, getAxiosOptionTypeName } from './note'
 import {  getMainRequestMethodStr, getCustomerParamsStr } from '../utils/str-operate'
 import { pathHasParamsRegex } from '../utils/constants'
 
@@ -31,7 +31,7 @@ const getNoteStringItem = (item: JsDocApiItem) => {
 const getAppendRequestParamsTsType = (path: string, paramsName: string, hasNoteData: boolean, requestParamsType: string, project: ProjectConfig) => {
     let requestParams = ''
     path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}: string | number, `)
-    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}?: ${requestParamsType}, ` : ''}options?: AxiosRequestConfig${getCustomerParamsStr(project)
+    requestParams = `(${requestParams}${hasNoteData ? `${paramsName}?: ${requestParamsType}, ` : ''}options?: ${getAxiosOptionTypeName()}${getCustomerParamsStr(project)
     })`
     return requestParams
 }

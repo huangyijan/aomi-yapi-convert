@@ -47,3 +47,16 @@ export const getApiLinkAddress = (baseUrl: string, project_id: number, _id: numb
 /** 获取api最后更新时间 */
 export const getUpdateTime = (time: number) => new Date(time * 1000).toLocaleDateString()
 
+/** 导出axios的额外参数 */
+export const getAxiosType = () => {
+    const { isNeedAxiosType } = global.apiConfig
+    const axiosType = typeof isNeedAxiosType === 'boolean' && isNeedAxiosType ? '\n   * @param { AxiosRequestConfig } options' : ''
+    return axiosType
+}
+
+/** 获取axios 的额外的请求名称 */
+export const getAxiosOptionTypeName = () => { 
+    const { isNeedAxiosType } = global.apiConfig
+    const axiosTypeName = typeof isNeedAxiosType === 'boolean' && isNeedAxiosType ? 'AxiosRequestConfig' : 'any'
+    return axiosTypeName
+}

@@ -1,3 +1,4 @@
+import { getAxiosOptionTypeName } from '../prompt/note'
 import { pathHasParamsRegex } from '../utils/constants'
 import { getMainRequestMethodStr, getCustomerParamsStr } from '../utils/str-operate'
 /** 配置注释 */
@@ -21,7 +22,7 @@ const getNoteStringItem = (item: apiSimpleItem) => {
 export const getAppendRequestParamsTs = (path: string, paramsName: string,project: ProjectConfig) => {
     let requestParams = ''
     path.replace(pathHasParamsRegex, (_, p1) => requestParams += `${p1}: string | number, `)
-    requestParams = `(${requestParams}${`${paramsName}: any, `}options: AxiosRequestConfig${getCustomerParamsStr(project)})`
+    requestParams = `(${requestParams}${`${paramsName}: any, `}options: ${getAxiosOptionTypeName()}${getCustomerParamsStr(project)})`
     return requestParams
 }
 

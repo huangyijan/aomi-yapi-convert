@@ -46,6 +46,7 @@ interface ApiConfig {
   token?: string
   version: Version
   isNeedType: boolean
+  isNeedAxiosType?: boolean
   axiosFrom: string
   axiosName?: string
   outputStyle?: string

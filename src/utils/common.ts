@@ -13,7 +13,7 @@ const getHeaderInfo = () => {
     const config = global.apiConfig
     const axiosFrom = Object.prototype.hasOwnProperty.call(config, 'axiosFrom') ? config.axiosFrom : 'import fetch from \'axios\''
     const tsHeader = config.version === 'ts' ? '\n// @ts-nocheck' : ''
-    const axiosType = config.version === 'ts' ? 'import { AxiosRequestConfig } from \'aomi-yapi-convert\'\n' : ''
+    const axiosType = getTsHeaderAxiosType(config)
 
     return `
 /* eslint-disable */${tsHeader}
@@ -26,15 +26,21 @@ ${axiosType}${axiosFrom}
     `
 }
 
-/** 配置通用的axios config jsdoc Type */
-const getJsdocAxiosType = () => {
+/** ts文件顶部配置通用的axios config Type */
+const getTsHeaderAxiosType = (config: ApiConfig) => {
+    if(config.version !== 'ts' || !config.isNeedAxiosType) return ''
+    return 'import { AxiosRequestConfig } from \'aomi-yapi-convert\'\n'
+}
+
+/** js文件底部配置通用的axios config jsdoc Type */
+const getJsFootAxiosType = () => {
     const { version } = global.apiConfig
-    if (version === 'js') {
-        return `/**
+    const { isNeedAxiosType } = global.apiConfig
+    if (!isNeedAxiosType || version !== 'js') return ''
+
+    return `/**
   * @typedef { import("aomi-yapi-convert").AxiosRequestConfig } AxiosRequestConfig
   */`
-    }
-    return ''
 }
 
 /** api文件导出类型 */
@@ -65,7 +71,7 @@ export const configFileFoot = (fileBufferStringChunk: Array<string>, noteStringC
     const { outputStyle = OutputStyle.Default } = global.apiConfig
     if (outputStyle === OutputStyle.Default) fileBufferStringChunk.push('}')
     fileBufferStringChunk.push(...noteStringChunk)
-    if (getJsdocAxiosType()) fileBufferStringChunk.push(getJsdocAxiosType())
+    if (getJsFootAxiosType()) fileBufferStringChunk.push(getJsFootAxiosType())
     return format(fileBufferStringChunk)
 }
 
