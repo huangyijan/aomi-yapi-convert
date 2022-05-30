@@ -105,10 +105,11 @@ const generateTypeBufferStringByVersion = (version: Version) => {
 }
 
 const getFileName = (path: string, fileNameSet: { [key: string]: number }) => {
-    path = toHumpName(path).replace(/\/{.+}/g, '')
+    path = path.replace(/\/{.+}/g, '')
     path = path.substring(1, path.length)
     const words = path.split('/')
     words.forEach(word => {
+        word = toHumpName(word)
         word = word.replace(/^([A-Z])/, (_, item: string) => item.toLowerCase()) // 转下首字母小写
         fileNameSet[word] ? fileNameSet[word]++ : fileNameSet[word] = 1
     })
