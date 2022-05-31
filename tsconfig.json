@@ -99,6 +99,6 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "exclude": [
-    "test", "api", "src/api", "dist"
+    "api", "src/api", "dist"
   ]
 }

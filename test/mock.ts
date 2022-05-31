@@ -1,4 +1,4 @@
-import main from './main'
+import main from '../src/main'
 /** test config */
 export const config = {
     'yapiURL': 'http://yapi.miguatech.com/project/445/interface/api',
