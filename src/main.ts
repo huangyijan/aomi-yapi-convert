@@ -3,9 +3,20 @@ import { getApiDocWithJsDoc } from './prompt/index'
 import { handleApiRequestError, request } from './utils/request'
 import { getApiToken } from './utils/file'
 
+/**
+ * 注册全局变量，node环境注册global里面的对象，browser环境注册global 到window对象
+ * @param config 配置项
+ */
+const registerGlobal = (config: ApiConfig) => {
+    if (global) {
+        global.apiConfig = config // node注册全局配置
+    } else {
+        window.global.apiConfig = config // 浏览器注册全局变量
+    }
+}
 
 export default async (config: ApiConfig) => {
-    global.apiConfig = config // 注册全局配置
+    registerGlobal(config)
     const { protocol, host, isNeedType, projects } = config
     const baseUrl = `${protocol}//${host}`
     const token = getApiToken()

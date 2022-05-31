@@ -7,6 +7,7 @@ export const config = {
     'axiosFrom': 'import { fetch } from \'@/service/fetch/index\'',
     'protocol': 'http:',
     'host': 'yapi.miguatech.com',
+    'isNeedAxiosType': true,
     'projects': [
         {
             'projectId': '445',

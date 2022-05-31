@@ -58,5 +58,9 @@ interface ApiConfig {
 }
 
 declare global: {
- var apiConfig: ApiConfig
+  var apiConfig: ApiConfig
+  interface Window {
+    global: {
+    apiConfig: ApiConfig
+  }}
 }
