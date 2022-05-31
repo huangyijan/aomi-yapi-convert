@@ -1,5 +1,5 @@
-import { getApiDocWithNoNote } from './simple/index'
-import { getApiDocWithJsDoc } from './prompt/index'
+import { saveFile } from './utils/file'
+import { configFileFoot, getApiFileConfig, getSavePath } from './utils/common'
 import { handleApiRequestError, request } from './utils/request'
 import { getApiToken } from './utils/file'
 
@@ -15,9 +15,10 @@ const registerGlobal = (config: ApiConfig) => {
     }
 }
 
+/** 主流程：获取项目配置 => 获取接口json => 生成接口文档 */
 export default async (config: ApiConfig) => {
     registerGlobal(config)
-    const { protocol, host, isNeedType, projects } = config
+    const { protocol, host, projects } = config
     const baseUrl = `${protocol}//${host}`
     const token = getApiToken()
     
@@ -29,14 +30,12 @@ export default async (config: ApiConfig) => {
             .then(projectConfigStr => {
                 const projectConfig = JSON.parse(projectConfigStr)
                 project.projectBaseConfig = projectConfig.data
-                if (isNeedType) {
-                    project.requestUrl = `${baseUrl}/api/plugin/export?type=json&pid=${projectId}&status=all&isWiki=false` // jsonUrl
-                    getApiDocWithJsDoc(project.requestUrl, project)
-                } else {
-                    project.requestUrl = `${baseUrl}/api/interface/list_menu?project_id=${projectId}` // menuUrl
-                    getApiDocWithNoNote(project.requestUrl, project)
-
-                }
+                project.requestUrl = `${baseUrl}/api/plugin/export?type=json&pid=${projectId}&status=all&isWiki=false` // jsonUrl
+                return request(project.requestUrl, token)
+            })
+            .then(fileString => {
+                const commonJson = JSON.parse(fileString)
+                generatorFileList(commonJson, project)
             })
             .catch(error => {
                 handleApiRequestError(String(error))
@@ -45,4 +44,22 @@ export default async (config: ApiConfig) => {
     })
 }
 
+/** 生成没有注释的API文件，注释有文档链接，可以直接跳转 */
+export const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectConfig) => {
+    const nameChunk = new Map() // 用来处理文件命名的容器
+    const { group, isLoadFullApi } = project
+    const hasSaveNames: string[] = [] // 处理已经命名的容器
 
+    data.forEach((item: JsDocMenuItem) => {
+        const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item, project, hasSaveNames)
+        if (!item.list.length || !fileBufferStringChunk.length) return
+
+        const fileConfig = group?.find(menu => menu.catId == item.list[0].catid)
+
+        if (!isLoadFullApi && !fileConfig) return
+
+        const savePath = getSavePath(FileName, project, fileConfig, nameChunk)
+        const saveFileBuffer = configFileFoot(fileBufferStringChunk, noteStringChunk)
+        saveFile(savePath, saveFileBuffer)
+    })
+}

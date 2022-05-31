@@ -119,7 +119,7 @@ const getAxiosName = () => {
     return axiosName || 'fetch'
 }
 
-export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiItem | apiSimpleItem, requestParamsStr: string, appendParamsStr = '', returnType?: string) => {
+export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiItem, requestParamsStr: string, appendParamsStr = '', returnType?: string) => {
     const requestPath = getAppendPath(item.path, project)
     const requestName = getApiName(item.path, item.method)
     const returnTypeStr = returnType ? `: Promise<${returnType}>` : ''

@@ -128,7 +128,7 @@ const getValidApiPath = (path: string) => {
  * @param project 项目组文件的配置
  * @returns {Object} {文件名：string, 单个API文件流主容器: string}
  */
-export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: ProjectConfig, hasSaveNames: Array<string>) => {
+export const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig, hasSaveNames: Array<string>) => {
     const { list } = item
     const { isNeedType } = global.apiConfig
     const fileNameSet: TimesObject = {}
@@ -141,7 +141,7 @@ export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: Projec
         if (isNeedType) {
             generateTypeBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)
         } else {
-            generateSimpleBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as apiSimpleItem, project)
+            generateSimpleBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item, project)
         }
         getFileName(item.path, fileNameSet)
     })

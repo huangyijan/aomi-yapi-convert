@@ -2,8 +2,8 @@ import main from '../src/main'
 /** test config */
 export const config = {
     'yapiURL': 'http://yapi.miguatech.com/project/445/interface/api',
-    'version': 'ts',
-    'isNeedType': true,
+    'version': 'js',
+    'isNeedType': false,
     'axiosFrom': 'import { fetch } from \'@/service/fetch/index\'',
     'protocol': 'http:',
     'host': 'yapi.miguatech.com',
