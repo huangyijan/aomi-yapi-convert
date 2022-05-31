@@ -1,7 +1,7 @@
 
 import { getReturnNoteStringItem } from './response/js'
 import { getRequestNoteStringItem } from './request/js'
-import { getUpdateTime, getApiLinkAddress, getReturnType } from './note'
+import { getUpdateTime, getApiLinkAddress, getReturnType, getAxiosType } from './note'
 import { getAppendRequestParamsJsdoc, getMainRequestMethodStr } from '../utils/str-operate'
 
 /** 配置地址栏上面的id jsdoc 注释 */
@@ -30,8 +30,7 @@ const getNoteStringItem = (item: JsDocApiItem, project: ProjectConfig) => {
 
     const methodNote = `
   /**
-   * @description ${item.title}${idNote}${getNoteParams(reqType, typeName, hasParamsQuery)} 
-   * @param { AxiosRequestConfig } options
+   * @description ${item.title}${idNote}${getNoteParams(reqType, typeName, hasParamsQuery)}${getAxiosType()}
    * @apiUpdateTime ${getUpdateTime(item.up_time)}
    * @link ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
    * @return { Promise<${getReturnType(returnNameWithType, resType)}> }

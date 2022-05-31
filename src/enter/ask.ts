@@ -83,6 +83,12 @@ const ask = function () {
                 default: true
             },
             {
+                message: '是否需要Axios的额外参数提示?(recommend!)',
+                name: 'isNeedAxiosType',
+                type: 'confirm',
+                default: true
+            },
+            {
                 message: '请选择在哪个文件夹下输出生成的api文件?',
                 name: 'outputDir',
                 type: 'input',
