@@ -81,8 +81,8 @@ export const getSavePath = (recommendName: string, project: ProjectConfig, fileC
     let fileName = recommendName
     let dir = project.outputDir
     // 判断用户是否有自定义配置，如果有取配置文件的。（TODO:用户配置不当可能会导致出错）
-    if (fileConfig && hasProperty(fileConfig, 'fileName')) fileName = fileConfig.fileName
-    if (fileConfig && hasProperty(fileConfig, 'outputDir')) dir = fileConfig.outputDir
+    if (fileConfig && hasProperty(fileConfig, 'fileName') && fileConfig.fileName) fileName = fileConfig.fileName
+    if (fileConfig && hasProperty(fileConfig, 'outputDir') && fileConfig.outputDir) dir = fileConfig.outputDir
 
     let FileNameTimes = nameChunk.get(recommendName)
     if (FileNameTimes) FileNameTimes++ // 如果map已经有值那我们就+1，防止用户命名冲突，虽然不太优雅
@@ -128,7 +128,7 @@ const getValidApiPath = (path: string) => {
  * @param project 项目组文件的配置
  * @returns {Object} {文件名：string, 单个API文件流主容器: string}
  */
-export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: ProjectConfig, hasSaveNames: Array<string>) => {
+export const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig, hasSaveNames: Array<string>) => {
     const { list } = item
     const { isNeedType } = global.apiConfig
     const fileNameSet: TimesObject = {}
@@ -141,7 +141,7 @@ export const getApiFileConfig = (item: MenuItem | JsDocMenuItem, project: Projec
         if (isNeedType) {
             generateTypeBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)
         } else {
-            generateSimpleBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as apiSimpleItem, project)
+            generateSimpleBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item, project)
         }
         getFileName(item.path, fileNameSet)
     })

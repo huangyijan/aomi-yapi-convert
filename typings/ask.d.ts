@@ -7,6 +7,7 @@ enum Version {
 interface Answers {
   yapiURL: string
   token?: string
+  userId?: string
   isLoadFullApi?: boolean
   group?: Array<number>
   version: Version,
@@ -18,8 +19,8 @@ interface Answers {
 
 interface CatConfig {
   catId: number | string
-  fileName: string
-  outputDir: string
+  fileName?: string
+  outputDir?: string
   name: string
 }
 
@@ -44,6 +45,7 @@ interface CustomParam {
 interface ApiConfig {
   yapiURL: string
   token?: string
+  userId?: string
   version: Version
   isNeedType: boolean
   isNeedAxiosType?: boolean
@@ -58,5 +60,9 @@ interface ApiConfig {
 }
 
 declare global: {
- var apiConfig: ApiConfig
+  var apiConfig: ApiConfig
+  interface Window {
+    global: {
+    apiConfig: ApiConfig
+  }}
 }

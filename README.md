@@ -74,7 +74,7 @@ $ npx aomi-yapi-convert
 
 ![you need proxy to see the image](./example/token2.png)
 
-
+* 请输入yapi userId (打开网站network 接口header可看_yapi_uid值)：token和userId对应，否则登录状态将会失效
 
 以添加script为示例，我们看下实际生成的效果
 

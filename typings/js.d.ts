@@ -1,6 +1,7 @@
 
 interface JsDocMenuItem {
   add_time: number
+  name: string
   desc: string
   index: number
   parent_id: number

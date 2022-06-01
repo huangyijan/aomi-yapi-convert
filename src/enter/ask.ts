@@ -1,6 +1,6 @@
 import inquirer from 'inquirer'
 import { hasProperty } from '../utils'
-import { saveApiToken, saveFile } from '../utils/file'
+import { saveApiToken, saveFile, saveUserId } from '../utils/file'
 import { request } from '../utils/request'
 
 const projectRegex = /^(https?:)\/\/(.*)\/project\/(\d+)\/.*/
@@ -23,13 +23,23 @@ const ask = function () {
                 },
             },
             {
-                message: '请粘贴yapi token(打开网站network 接口header可看)：',
+                message: '请粘贴yapi token(打开网站network 接口header可看_yapi_token值)：',
                 name: 'token',
                 type: 'input',
                 validate(input) {
                     if (!input) return '请复制粘贴你的token到这, example:eyJhbGciOiJIUzI ...... pz7uXMwOO9CVwSR8c'
                     if (input.length < 100) return 'token长度不够，请勿粘贴了其他字段'
                     saveApiToken(input)
+                    return true
+                },
+            },
+            {
+                message: '请输入yapi userId (打开网站network 接口header可看_yapi_uid值)：',
+                name: 'userId',
+                type: 'input',
+                validate(input) {
+                    if (!input) return '请输入yapi user ID, example: 446'
+                    saveUserId(input)
                     return true
                 },
             },
@@ -44,12 +54,13 @@ const ask = function () {
                 name: 'group',
                 type: 'checkbox',
                 when: (answers) => answers.isLoadFullApi === false,
-                async choices(answers: { yapiURL: string, token: string }) {
-                    const { yapiURL, token } = answers
+                async choices(answers: Answers) {
+                    const { yapiURL } = answers
+                    global.apiConfig = answers as ApiConfig
                     const [, protocol, host, projectId] = yapiURL.match(projectRegex) as RegExpMatchArray
                     const MenuUrl = `${protocol}//${host}/api/interface/list_menu?project_id=${projectId}`
                     try {
-                        const fileString = await request(MenuUrl, token)
+                        const fileString = await request(MenuUrl)
                         const MenuRes = JSON.parse(fileString)
                         if (!hasProperty(MenuRes, 'errcode')) throw 'cannot find errcode, maybe service error'
                         if (!MenuRes.errcode) {
@@ -136,6 +147,7 @@ const ask = function () {
                 delete config.outputDir
                 delete config.runNow
                 delete config.token
+                delete config.userId
                 saveFile(
                     'api.config.json',
                     JSON.stringify(config, null, 2) + '\n',

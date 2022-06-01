@@ -2,7 +2,7 @@ import { getAxiosType } from '../prompt/note'
 import { getAppendRequestParamsJsdoc, getMainRequestMethodStr } from '../utils/str-operate'
 
 /** 配置注释 */
-const getNoteStringItem = (item: apiSimpleItem) => {
+const getNoteStringItem = (item: JsDocApiItem) => {
     const { protocol, host } = global.apiConfig
     const {project_id} = item
     return `
@@ -14,7 +14,7 @@ const getNoteStringItem = (item: apiSimpleItem) => {
 }
 
 /** 配置请求主方法 */
-const getMainMethodItem = (item: apiSimpleItem, project: ProjectConfig) => {
+const getMainMethodItem = (item: JsDocApiItem, project: ProjectConfig) => {
 
     const paramsName = ['GET', 'DELETE'].includes(item.method.toUpperCase()) ? 'params' : 'data' // 按照一般情况处理
     const requestParams = getAppendRequestParamsJsdoc(item.path, paramsName, true, project)
@@ -22,7 +22,7 @@ const getMainMethodItem = (item: apiSimpleItem, project: ProjectConfig) => {
     return getMainRequestMethodStr(project, item, requestParams, appendParamsStr)
 }
 
-export const handleJsFileString = (fileBufferStringChunk: Array<string>, item: apiSimpleItem, project: ProjectConfig) => {
+export const handleJsFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig) => {
     /** 先配置注释再配置请求主方法 */
     fileBufferStringChunk.push(getNoteStringItem(item))
     fileBufferStringChunk.push(getMainMethodItem(item, project))

@@ -1,6 +1,6 @@
 import typescript from 'rollup-plugin-typescript2'
 
-const override = { compilerOptions: { module: 'ESNEXT'}}
+const override = { compilerOptions: { module: 'ESNEXT' } }
 export default [
     {
         input: 'src/enter/index.ts',
