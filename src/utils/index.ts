@@ -72,3 +72,14 @@ export const getLegalJson = (reqBody: string) => {
 
 }
 
+/** 获取通用请求头 */
+export const getHeader = () => {
+    const config = global.apiConfig
+    const token = config.token
+    const userId = config.userId
+    const HeaderConfig = {
+        Cookie: `_yapi_token=${token}; _yapi_uid=${userId}`,
+        Accept: 'application/json, text/plain, */*'
+    }
+    return HeaderConfig
+}

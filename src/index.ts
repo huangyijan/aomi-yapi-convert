@@ -1,11 +1,10 @@
-import format from './format'
-import { hasProperty, toHumpName } from '.'
+import { format } from './utils/decision'
+import { hasProperty, toHumpName } from './utils'
 
-import { handleJsFileString } from '../simple/js'
-import { handleTsFileString } from '../simple/ts'
-
-import { handleJsdocFileString } from '../prompt/jsdoc'
-import { handleTsTypeFileString } from '../prompt/ts-type'
+import { handleJsFileString } from './simple/js'
+import { handleTsFileString } from './simple/ts'
+import { handleJsdocFileString } from './prompt/jsdoc'
+import { handleTsTypeFileString } from './prompt/ts-type'
 
 
 /** 设置api文件头部文件 */
@@ -28,7 +27,7 @@ ${axiosType}${axiosFrom}
 
 /** ts文件顶部配置通用的axios config Type */
 const getTsHeaderAxiosType = (config: ApiConfig) => {
-    if(config.version !== 'ts' || !config.isNeedAxiosType) return ''
+    if (config.version !== 'ts' || !config.isNeedAxiosType) return ''
     return 'import { AxiosRequestConfig } from \'aomi-yapi-convert\'\n'
 }
 
@@ -122,6 +121,13 @@ const getValidApiPath = (path: string) => {
     return path
 }
 
+/** 获取还没有命名过并且出现次数最多的词作为文件夹名 */
+const getMaxTimesObjectKeyName = (obj: TimesObject, hasSaveNames: Array<string>): string => {
+    const sortKeyByTimes = Object.keys(obj).sort((key1, key2) => obj[key2] - obj[key1])
+    const uinFileName = sortKeyByTimes.find(key => !hasSaveNames.includes(key)) || 'common'
+    return uinFileName
+}
+
 /**
  * 获取Js文件的单个API文件的保存文件名和写入的文件流字符串
  * @param item 接口菜单单项
@@ -153,9 +159,3 @@ export const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig, ha
     return { FileName, fileBufferStringChunk, noteStringChunk }
 }
 
-/** 获取还没有命名过并且出现次数最多的词作为文件夹名 */
-export const getMaxTimesObjectKeyName = (obj: TimesObject, hasSaveNames: Array<string>): string => {
-    const sortKeyByTimes = Object.keys(obj).sort((key1, key2) => obj[key2] - obj[key1])
-    const uinFileName = sortKeyByTimes.find(key => !hasSaveNames.includes(key)) || 'common'
-    return uinFileName
-}

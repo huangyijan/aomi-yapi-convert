@@ -1,6 +1,6 @@
-import { configFileFoot, getApiFileConfig, getSavePath } from './utils/common'
-import { handleApiRequestError, request } from './utils/request'
-import { getApiToken, getUserId, saveFile } from './utils/file'
+import { configFileFoot, getApiFileConfig, getSavePath } from '..'
+import { handleApiRequestError, request } from './request'
+import { getApiToken, getUserId, saveFile } from './file'
 
 /**
  * 注册全局变量，node环境注册global里面的对象，browser环境注册global 到window对象
