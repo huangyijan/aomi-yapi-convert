@@ -2,17 +2,14 @@ import { getHeader } from '../utils'
 
 
 export const request = (url: string, method = 'get') => {
+    document.cookie = getHeader().Cookie
     return new Promise<string>((resolve, reject) => {
         const http = new XMLHttpRequest()
-      
-        function setHeader(headers: any) {
-            for (const key in headers) {
-                const value = headers[key]
-                http.setRequestHeader(key, value)
-            }
-        }
+
         http.open(method, url, true)
-        setHeader(getHeader())
+        http.withCredentials = true
+
+        http.setRequestHeader('Accept', getHeader().Accept)
 
         http.onreadystatechange = function () {
             if (http.readyState == 4 && http.status == 200) {

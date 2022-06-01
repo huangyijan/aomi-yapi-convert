@@ -6,7 +6,7 @@ import { handleApiRequestError, request } from './request'
  * @param config 配置项
  */
 const registerGlobal = (config: ApiConfig) => {
-    window.global.apiConfig = config // 浏览器注册全局变量
+    window.global = { apiConfig: config } as any // 浏览器注册全局变量
 }
 
 /** 主流程：获取项目配置 => 获取接口json => 生成接口文档 */
@@ -54,6 +54,6 @@ export const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectCo
         const savePath = getSavePath(FileName, project, fileConfig, nameChunk)
         const saveFileBuffer = configFileFoot(fileBufferStringChunk, noteStringChunk)
         console.log(savePath, saveFileBuffer)
-        
+
     })
 }

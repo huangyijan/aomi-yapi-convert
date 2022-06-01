@@ -7,14 +7,10 @@ import { getApiToken, getUserId, saveFile } from './file'
  * @param config 配置项
  */
 const registerGlobal = (config: ApiConfig) => {
-    if (global) {
-        const token = getApiToken()
-        const userId = getUserId()
-        Object.assign(config, {token, userId})
-        global.apiConfig = config // node注册全局配置
-    } else {
-        window.global.apiConfig = config // 浏览器注册全局变量
-    }
+    const token = getApiToken()
+    const userId = getUserId()
+    Object.assign(config, {token, userId})
+    global.apiConfig = config // node注册全局配置
 }
 
 /** 主流程：获取项目配置 => 获取接口json => 生成接口文档 */
