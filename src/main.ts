@@ -1,7 +1,6 @@
-import { saveFile } from './utils/file'
 import { configFileFoot, getApiFileConfig, getSavePath } from './utils/common'
 import { handleApiRequestError, request } from './utils/request'
-import { getApiToken } from './utils/file'
+import { getApiToken, getUserId, saveFile } from './utils/file'
 
 /**
  * 注册全局变量，node环境注册global里面的对象，browser环境注册global 到window对象
@@ -9,6 +8,9 @@ import { getApiToken } from './utils/file'
  */
 const registerGlobal = (config: ApiConfig) => {
     if (global) {
+        const token = getApiToken()
+        const userId = getUserId()
+        Object.assign(config, {token, userId})
         global.apiConfig = config // node注册全局配置
     } else {
         window.global.apiConfig = config // 浏览器注册全局变量
@@ -20,18 +22,17 @@ export default async (config: ApiConfig) => {
     registerGlobal(config)
     const { protocol, host, projects } = config
     const baseUrl = `${protocol}//${host}`
-    const token = getApiToken()
     
     projects.forEach(project => {
         const { projectId } = project
         const projectConfigUrl = `${baseUrl}/api/project/get?id=${projectId}`
         
-        request(projectConfigUrl, token)
+        request(projectConfigUrl)
             .then(projectConfigStr => {
                 const projectConfig = JSON.parse(projectConfigStr)
                 project.projectBaseConfig = projectConfig.data
                 project.requestUrl = `${baseUrl}/api/plugin/export?type=json&pid=${projectId}&status=all&isWiki=false` // jsonUrl
-                return request(project.requestUrl, token)
+                return request(project.requestUrl)
             })
             .then(fileString => {
                 const commonJson = JSON.parse(fileString)

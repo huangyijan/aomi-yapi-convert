@@ -25,6 +25,7 @@ declare interface ProjectBaseConfig {
   _id: number
 }
 
+
 declare interface ReqBodyForm {
   name: string,
   type: string,

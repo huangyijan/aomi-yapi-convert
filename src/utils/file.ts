@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
-import { TOKEN_NAME } from './constants'
+import { TOKEN_NAME, USER_ID } from './constants'
 
 
 export const GetSafePath = function (relativePath: string) {
@@ -62,4 +62,18 @@ export const saveApiToken = (token: string) => {
         const API_TOKEN = execSync(`npm set ${TOKEN_NAME} ${token}`)
         resolve(API_TOKEN)
     })
+}
+
+/** 存储用户ID，不然token无法生效 */
+export const saveUserId = (userId: string) => {
+    return new Promise((resolve) => {
+        const id = execSync(`npm set ${USER_ID} ${userId}`)
+        resolve(id)
+    })
+}
+
+/** 获取本地存储的用户ID */
+export const getUserId = () => {
+    const API_TOKEN = execSync(`npm config get ${USER_ID}`, { stdio: ['ignore', 'pipe', 'pipe'] }).toString().replace(/\n$/, '')
+    return API_TOKEN
 }

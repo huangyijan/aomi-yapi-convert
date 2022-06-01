@@ -7,6 +7,7 @@ export const pathHasParamsRegex = /\/\{([a-zA-Z0-9]*)\}/g // 獲取接口参数�
 export const NormalType = ['boolean', 'string', 'number', 'object', 'array']
 
 export const TOKEN_NAME = 'API_TOKEN'
+export const USER_ID = 'YAPI_USER_ID'
 
 export const NameRegex = /[-|_]([a-zA-Z])/g // 重命名捕获替换字符串
 export const quotaRegex = /(,)\s*\n*.*\}/g // 匹配json字符串最后一个逗号

@@ -81,8 +81,8 @@ export const getSavePath = (recommendName: string, project: ProjectConfig, fileC
     let fileName = recommendName
     let dir = project.outputDir
     // 判断用户是否有自定义配置，如果有取配置文件的。（TODO:用户配置不当可能会导致出错）
-    if (fileConfig && hasProperty(fileConfig, 'fileName')) fileName = fileConfig.fileName
-    if (fileConfig && hasProperty(fileConfig, 'outputDir')) dir = fileConfig.outputDir
+    if (fileConfig && hasProperty(fileConfig, 'fileName') && fileConfig.fileName) fileName = fileConfig.fileName
+    if (fileConfig && hasProperty(fileConfig, 'outputDir') && fileConfig.outputDir) dir = fileConfig.outputDir
 
     let FileNameTimes = nameChunk.get(recommendName)
     if (FileNameTimes) FileNameTimes++ // 如果map已经有值那我们就+1，防止用户命名冲突，虽然不太优雅

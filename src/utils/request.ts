@@ -18,18 +18,22 @@ const openURL = (url: string) => {
     }
 }
 
-const getHeader = (token: string) => {
+
+const getHeader = () => {
+    const config = global.apiConfig
+    const token = config.token
+    const userId = config.userId
     const HeaderConfig = {
-        Cookie: `_yapi_token=${token}; _yapi_uid=466`,
+        Cookie: `_yapi_token=${token}; _yapi_uid=${userId}`,
         Accept: 'application/json, text/plain, */*'
     }
     return HeaderConfig
 }
 
-export const request = (url: string, token: string) => {
+export const request = (url: string) => {
     const client = /^http/.test(url) ? http : https
     return new Promise<string>((resolve, reject) => {
-        const req = client.request(url, { method: 'get', headers: getHeader(token) }, (res) => {
+        const req = client.request(url, { method: 'get', headers: getHeader() }, (res) => {
             let chunk = '' // api文件容器
             res.on('data', data => {
                 chunk += data

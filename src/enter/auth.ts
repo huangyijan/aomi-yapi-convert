@@ -1,10 +1,10 @@
 import inquirer from 'inquirer'
-import { saveApiToken } from '../utils/file'
+import { saveApiToken, saveUserId } from '../utils/file'
 import path from 'path'
 import ask from './ask'
 import main from '../main'
 
-
+/** 插件入口 */
 export async function run() {
     const configPath = path.resolve('api.config.json')
     let config = {} as ApiConfig
@@ -17,6 +17,7 @@ export async function run() {
     main(config)
 }
 
+/** 登录过期 */
 export const refreshToken = () => {
     return new Promise<any>(resolve => {
         inquirer.prompt([
@@ -31,8 +32,18 @@ export const refreshToken = () => {
                     return true
                 },
             },
+            {
+                message: '请输入yapi userId (打开网站network 接口header可看_yapi_uid值)：',
+                name: 'userId',
+                type: 'input',
+                validate(input) {
+                    if (!input) return '请输入yapi user ID, example: 446'
+                    saveUserId(input)
+                    return true
+                },
+            },
         ]).then(answer => {
-            resolve(answer.token)
+            resolve(answer)
         })
     })
 }
