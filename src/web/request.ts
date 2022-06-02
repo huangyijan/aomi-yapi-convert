@@ -1,25 +1,20 @@
 import { getHeader } from '../utils'
 
 
-export const request = (url: string, method = 'get') => {
-    document.cookie = getHeader().Cookie
-    return new Promise<string>((resolve, reject) => {
+export const request = (url: string, method = 'post') => {
+    return new Promise<string>((resolve) => {
         const http = new XMLHttpRequest()
 
         http.open(method, url, true)
-        http.withCredentials = true
 
-        http.setRequestHeader('Accept', getHeader().Accept)
 
         http.onreadystatechange = function () {
             if (http.readyState == 4 && http.status == 200) {
                 resolve(http.responseText)
-            } else {
-                reject(http.responseText)
-            }
+            } 
         }
-
-        http.send()
+        const headerBody = JSON.stringify(getHeader())
+        http.send(headerBody)
     })
 }
 

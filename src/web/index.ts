@@ -42,7 +42,6 @@ export const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectCo
     const nameChunk = new Map() // 用来处理文件命名的容器
     const { group, isLoadFullApi } = project
     const hasSaveNames: string[] = [] // 处理已经命名的容器
-
     data.forEach((item: JsDocMenuItem) => {
         const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item, project, hasSaveNames)
         if (!item.list.length || !fileBufferStringChunk.length) return
@@ -54,6 +53,7 @@ export const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectCo
         const savePath = getSavePath(FileName, project, fileConfig, nameChunk)
         const saveFileBuffer = configFileFoot(fileBufferStringChunk, noteStringChunk)
         console.log(savePath, saveFileBuffer)
-
     })
 }
+
+export { getApiFileConfig }

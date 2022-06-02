@@ -132,6 +132,7 @@ const getMaxTimesObjectKeyName = (obj: TimesObject, hasSaveNames: Array<string>)
  * 获取Js文件的单个API文件的保存文件名和写入的文件流字符串
  * @param item 接口菜单单项
  * @param project 项目组文件的配置
+ * @param hasSaveNames 已经取名的容器
  * @returns {Object} {文件名：string, 单个API文件流主容器: string}
  */
 export const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig, hasSaveNames: Array<string>) => {
