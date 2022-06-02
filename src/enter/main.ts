@@ -1,4 +1,4 @@
-import { configFileFoot, getApiFileConfig, getSavePath } from '..'
+import { generatorFileCode, getApiFileName, getSavePath } from '..'
 import { handleApiRequestError, request } from './request'
 import { getApiToken, getUserId, saveFile } from './file'
 
@@ -9,7 +9,7 @@ import { getApiToken, getUserId, saveFile } from './file'
 const registerGlobal = (config: ApiConfig) => {
     const token = getApiToken()
     const userId = getUserId()
-    Object.assign(config, {token, userId})
+    Object.assign(config, { token, userId })
     global.apiConfig = config // node注册全局配置
 }
 
@@ -18,11 +18,11 @@ export default async (config: ApiConfig) => {
     registerGlobal(config)
     const { protocol, host, projects } = config
     const baseUrl = `${protocol}//${host}`
-    
+
     projects.forEach(project => {
         const { projectId } = project
         const projectConfigUrl = `${baseUrl}/api/project/get?id=${projectId}`
-        
+
         request(projectConfigUrl)
             .then(projectConfigStr => {
                 const projectConfig = JSON.parse(projectConfigStr)
@@ -48,15 +48,15 @@ export const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectCo
     const hasSaveNames: string[] = [] // 处理已经命名的容器
 
     data.forEach((item: JsDocMenuItem) => {
-        const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item, project, hasSaveNames)
-        if (!item.list.length || !fileBufferStringChunk.length) return
-
+        if(!item.list.length) return 
         const fileConfig = group?.find(menu => menu.catId == item.list[0].catid)
-
         if (!isLoadFullApi && !fileConfig) return
 
+        const saveFileBuffer = generatorFileCode(item, project)
+        if (!saveFileBuffer) return
+
+        const FileName = getApiFileName(item, hasSaveNames)
         const savePath = getSavePath(FileName, project, fileConfig, nameChunk)
-        const saveFileBuffer = configFileFoot(fileBufferStringChunk, noteStringChunk)
         saveFile(savePath, saveFileBuffer)
     })
 }

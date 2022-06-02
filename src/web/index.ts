@@ -1,4 +1,4 @@
-import { configFileFoot, getApiFileConfig, getSavePath } from '..'
+import { generatorFileCode, getApiFileName, getSavePath } from '..'
 import { handleApiRequestError, request } from './request'
 
 /**
@@ -43,17 +43,17 @@ export const generatorFileList = (data: Array<JsDocMenuItem>, project: ProjectCo
     const { group, isLoadFullApi } = project
     const hasSaveNames: string[] = [] // 处理已经命名的容器
     data.forEach((item: JsDocMenuItem) => {
-        const { FileName, fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item, project, hasSaveNames)
-        if (!item.list.length || !fileBufferStringChunk.length) return
-
+        if(!item.list.length) return 
         const fileConfig = group?.find(menu => menu.catId == item.list[0].catid)
-
         if (!isLoadFullApi && !fileConfig) return
 
+        const saveFileBuffer = generatorFileCode(item, project)
+        if(!saveFileBuffer) return
+        
+        const FileName = getApiFileName(item, hasSaveNames)
         const savePath = getSavePath(FileName, project, fileConfig, nameChunk)
-        const saveFileBuffer = configFileFoot(fileBufferStringChunk, noteStringChunk)
         console.log(savePath, saveFileBuffer)
     })
 }
 
-export { getApiFileConfig }
+export { generatorFileCode }
