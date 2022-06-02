@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
-import { TOKEN_NAME, USER_ID } from './constants'
+import { TOKEN_NAME, USER_ID } from '../utils/constants'
 
 
 export const GetSafePath = function (relativePath: string) {

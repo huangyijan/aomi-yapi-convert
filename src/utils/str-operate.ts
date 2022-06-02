@@ -1,4 +1,4 @@
-import { OutputStyle } from './common'
+import { OutputStyle } from '..'
 import { ApiNameRegex, illegalRegex, longBiasRegex, pathHasParamsRegex } from './constants'
 import { getSuitableDefault, getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote } from './decision'
 

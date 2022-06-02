@@ -1,7 +1,7 @@
 import inquirer from 'inquirer'
 import { hasProperty } from '../utils'
-import { saveApiToken, saveFile, saveUserId } from '../utils/file'
-import { request } from '../utils/request'
+import { saveApiToken, saveFile, saveUserId } from './file'
+import { request } from './request'
 
 const projectRegex = /^(https?:)\/\/(.*)\/project\/(\d+)\/.*/
 

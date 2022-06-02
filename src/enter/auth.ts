@@ -1,8 +1,8 @@
 import inquirer from 'inquirer'
-import { saveApiToken, saveUserId } from '../utils/file'
+import { saveApiToken, saveUserId } from './file'
 import path from 'path'
 import ask from './ask'
-import main from '../main'
+import main from './main'
 
 /** 插件入口 */
 export async function run() {
