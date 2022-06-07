@@ -40,7 +40,9 @@ export const dealResponseData = (res: any) => {
 
 
 /** 获取文档地址 */
-export const getApiLinkAddress = (baseUrl: string, project_id: number, _id: number) => {
+export const getApiLinkAddress = (project_id: number, _id: number | string) => {
+    const { protocol, host } = global.apiConfig
+    const baseUrl = `${protocol}//${host}`
     return `${baseUrl}/project/${project_id}/interface/api/${_id}`
 }
 
@@ -55,7 +57,7 @@ export const getAxiosType = () => {
 }
 
 /** 获取axios 的额外的请求名称 */
-export const getAxiosOptionTypeName = () => { 
+export const getAxiosOptionTypeName = () => {
     const { isNeedAxiosType } = global.apiConfig
     const axiosTypeName = typeof isNeedAxiosType === 'boolean' && isNeedAxiosType ? 'AxiosRequestConfig' : 'any'
     return axiosTypeName

@@ -5,6 +5,9 @@
 
 > 针对yapi文档转js或者ts文件的自动化npm插件
 
+## 演示地址
+
+功能体验地址: [http://yapi.mbiquwu.co/](http://yapi.mbiquwu.co/)
 
 ## 功能
 

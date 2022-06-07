@@ -19,6 +19,22 @@ export default [
         ]
     },
     {
+        input: 'src/web/index.ts',
+        output: [
+            {
+                file: 'dist/aomi-yapi.js',
+                format: 'es',
+                name: 'aomi-yapi'
+            }
+        ],
+        plugins: [
+            typescript({
+                tsconfigOverride: override
+            }),
+
+        ]
+    },
+    {
         input: 'typings/index.ts', // 加一个空的配置，方便让index.d.ts发挥作用并且不报错
         output: [
             {

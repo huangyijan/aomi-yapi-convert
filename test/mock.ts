@@ -1,4 +1,4 @@
-import main from '../src/main'
+import node from '../src/enter/main'
 /** test config */
 export const config: ApiConfig = {
     yapiURL: 'http://yapi.miguatech.com/project/445/interface/api',
@@ -42,5 +42,5 @@ export const config: ApiConfig = {
 
 if (typeof process !== 'undefined') {
     const { NODE_ENV } = process.env
-    if (NODE_ENV === 'development') main(config)
+    if (NODE_ENV === 'development') node(config)
 }
