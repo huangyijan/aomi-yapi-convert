@@ -5,20 +5,25 @@ import { handleJsFileString } from './simple/js'
 import { handleTsFileString } from './simple/ts'
 import { handleJsdocFileString } from './prompt/jsdoc'
 import { handleTsTypeFileString } from './prompt/ts-type'
+import { getApiLinkAddress } from './prompt/note'
 
 
 /** 设置api文件头部文件 */
-const getHeaderInfo = () => {
+const getHeaderInfo = (item: JsDocMenuItem) => {
     const config = global.apiConfig
     const axiosFrom = Object.prototype.hasOwnProperty.call(config, 'axiosFrom') ? config.axiosFrom : 'import fetch from \'axios\''
     const tsHeader = config.version === 'ts' ? '\n// @ts-nocheck' : ''
     const axiosType = getTsHeaderAxiosType(config)
-
+    
+    const menuItem = item.list.find(item => !!item)
+    const menuLink = menuItem? getApiLinkAddress(menuItem.project_id, `cat_${menuItem.catid}`) : ''
     return `
 /* eslint-disable */${tsHeader}
 /**
- * @file 该文件由aomi-yapi-convert自动生成，请不要改动这个文件。
+ * @description ${item.name}
+ * @file 该文件由aomi-yapi-convert自动生成，请不要手动改动这个文件, 可能会被插件更新覆盖
  * @docUpdateTime ${new Date().toLocaleDateString()}
+ * @link ${menuLink}
  */
 
 ${axiosType}${axiosFrom}
@@ -28,7 +33,7 @@ ${axiosType}${axiosFrom}
 /** ts文件顶部配置通用的axios config Type */
 const getTsHeaderAxiosType = (config: ApiConfig) => {
     if (config.version !== 'ts' || !config.isNeedAxiosType) return ''
-    return 'import { AxiosRequestConfig } from \'aomi-yapi-convert\'\n'
+    return 'import type { AxiosRequestConfig } from \'aomi-yapi-convert\'\n'
 }
 
 /** js文件底部配置通用的axios config jsdoc Type */
@@ -53,9 +58,9 @@ export enum OutputStyle {
 }
 
 /** 配置文件头部 */
-export const configFileHead = () => {
+export const configFileHead = (item: JsDocMenuItem) => {
     const fileBufferStringChunk = []
-    fileBufferStringChunk.push(getHeaderInfo())
+    fileBufferStringChunk.push(getHeaderInfo(item))
 
     const { outputStyle = OutputStyle.Default } = global.apiConfig
     if (outputStyle !== OutputStyle.Default) return fileBufferStringChunk
@@ -137,7 +142,7 @@ const getMaxTimesObjectKeyName = (obj: TimesObject, hasSaveNames: Array<string>)
 const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig) => {
     const { list } = item
     const { isNeedType } = global.apiConfig
-    const fileBufferStringChunk: Array<string> = configFileHead() // 单个API文件流
+    const fileBufferStringChunk: Array<string> = configFileHead(item) // 单个API文件流
     const noteStringChunk: Array<string> = ['\n'] // 存储Jsdoc注释的容器
     list.forEach((item) => {
         if (project.hideUnDoneApi && item.status === 'undone') return

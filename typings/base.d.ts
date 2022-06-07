@@ -9,7 +9,6 @@ declare interface ProjectBaseConfig {
     header: any[],
     name: string,
     domain: string,
-    name: string,
     _id: number|string
   }>,
   group_id: number,
