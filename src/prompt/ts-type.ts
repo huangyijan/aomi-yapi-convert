@@ -17,7 +17,7 @@ const getNoteStringItem = (item: JsDocApiItem) => {
   /**
    * @description ${item.title}
    * @apiUpdateTime ${getUpdateTime(item.up_time)}
-   * @link ${getApiLinkAddress('http://yapi.miguatech.com', item.project_id, item._id)}
+   * @link ${getApiLinkAddress(item.project_id, item._id)}
    */`
 }
 

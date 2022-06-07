@@ -1,15 +1,13 @@
-import { getAxiosType } from '../prompt/note'
+import { getApiLinkAddress, getAxiosType } from '../prompt/note'
 import { getAppendRequestParamsJsdoc, getMainRequestMethodStr } from '../utils/str-operate'
 
 /** 配置注释 */
 const getNoteStringItem = (item: JsDocApiItem) => {
-    const { protocol, host } = global.apiConfig
-    const {project_id} = item
     return `
  /**
    * @description ${item.title}${getAxiosType()}
    * @apiUpdateTime ${new Date(item.up_time * 1000).toLocaleDateString()}
-   * @link ${protocol}//${host}/project/${project_id}/interface/api/${item._id}
+   * @link  ${getApiLinkAddress(item.project_id, item._id)}
    */`
 }
 
