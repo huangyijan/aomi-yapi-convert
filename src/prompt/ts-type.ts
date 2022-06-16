@@ -1,9 +1,8 @@
 
-import { getReturnNoteStringItem } from './response/ts'
-import { getRequestNoteStringItem } from './request/ts'
-import { getUpdateTime, getApiLinkAddress, getReturnType, getAxiosOptionTypeName } from './note'
+import { getUpdateTime, getApiLinkAddress,  getAxiosOptionTypeName } from './note'
 import {  getMainRequestMethodStr, getCustomerParamsStr } from '../utils/str-operate'
 import { pathHasParamsRegex } from '../utils/constants'
+import { TsApiItem } from '../utils/model'
 
 /** 获取请求上参数ts 类型名称 */
 const getParamsTypeName = (reqType: string, typeName: string) => {
@@ -12,7 +11,7 @@ const getParamsTypeName = (reqType: string, typeName: string) => {
 }
 
 /** 配置请求注释 */
-const getNoteStringItem = (item: JsDocApiItem) => {
+export const getNoteStringItem = (item: JsDocApiItem) => {
     return  `
   /**
    * @description ${item.title}
@@ -37,7 +36,7 @@ const getAppendRequestParamsTsType = (path: string, paramsName: string, hasNoteD
 }
 
 /** 配置请求主方法 */
-const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: ProjectConfig, requestParamsType: string, returnParamsType: string) => {
+export const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: ProjectConfig, requestParamsType: string, returnParamsType: string) => {
     const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
     const paramsName = hasParamsQuery ? 'params' : 'data'
     const requestParams = getAppendRequestParamsTsType(item.path, paramsName, hasNoteData, requestParamsType, project)
@@ -46,20 +45,16 @@ const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: Pr
 }
  
 export const handleTsTypeFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig, noteStringChunk: Array<string>) => {
-    const { reqType, typeName } = getRequestNoteStringItem(item, project)
-    const { resType , returnNameWithType} = getReturnNoteStringItem(item)
-    const methodNote = getNoteStringItem(item)
+    const apiItem = new TsApiItem(item)
+    apiItem.setMethodStr(project)
     
-    const requestParamsType = getParamsTypeName(reqType, typeName)
-    const returnParamsType = getReturnType(returnNameWithType, resType)
-
-    const hasNoteData = Boolean(reqType)
-    const methodStr = getMainMethodItem(item, hasNoteData, project, requestParamsType, returnParamsType)
-
     /** 先配置注释再配置请求主方法 */
-    fileBufferStringChunk.push(methodNote)
-    fileBufferStringChunk.push(methodStr)
+    fileBufferStringChunk.push(apiItem.methodNote)
+    fileBufferStringChunk.push(apiItem.methodStr)
 
-    if (reqType) noteStringChunk.push(reqType)
-    if (resType) noteStringChunk.push(resType)
-}
+    apiItem.paramsArr.forEach(item => {
+        if(item.typeString) noteStringChunk.push(item.typeString)
+    })
+
+    if (apiItem.returnData.typeString) noteStringChunk.push(apiItem.returnData.typeString)
+} 

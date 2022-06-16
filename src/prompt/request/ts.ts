@@ -55,7 +55,8 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
 
 
 /** 获取注释的jsDoc类型 */
-export const getReqType = (item: JsDocApiItem, typeName: string, hasParamsQuery: boolean) => {
+export const getReqType = (item: JsDocApiItem, typeName: string) => {
+    const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
     if (hasParamsQuery) {
         return getConfigNoteParams(item.req_query, typeName)
     } else {
@@ -66,11 +67,10 @@ export const getReqType = (item: JsDocApiItem, typeName: string, hasParamsQuery:
 
 
 /** 获取请求的参数注释和参数名 */
-export const getRequestNoteStringItem = (item: JsDocApiItem, project: ProjectConfig): RequestNoteStringItem => {
-    const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
+export const getRequestNoteStringItem = (item: JsDocApiItem): RequestNoteStringItem => {
 
-    const typeName = getNoteNameByParamsType(item, project, hasParamsQuery) // 正常object使用的名字
-    const reqType = getReqType(item, typeName, hasParamsQuery)
+    const typeName = getNoteNameByParamsType(item) // 正常object使用的名字
+    const reqType = getReqType(item, typeName)
 
     return {reqType, typeName}
 }

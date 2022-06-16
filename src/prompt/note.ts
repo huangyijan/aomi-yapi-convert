@@ -3,7 +3,8 @@ import { getApiName, getUpperCaseName } from '../utils/str-operate'
 
 
 /** 获取传参名称 */
-export const getNoteNameByParamsType = (item: JsDocApiItem, project: ProjectConfig, hasParamsQuery: boolean) => {
+export const getNoteNameByParamsType = (item: JsDocApiItem) => {
+    const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
     const requestName = getApiName(item.path, item.method)
     const ParamsName = getUpperCaseName(requestName)
     return ParamsName + (hasParamsQuery ? 'Params' : 'Data')

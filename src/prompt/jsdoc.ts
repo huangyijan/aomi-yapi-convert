@@ -21,10 +21,10 @@ const getNoteParams = (reqType: string, typeName: string, hasParamsQuery: boolea
 }
 
 /** 配置请求注释 */
-const getNoteStringItem = (item: JsDocApiItem, project: ProjectConfig) => {
+const getNoteStringItem = (item: JsDocApiItem) => {
     const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
 
-    const { reqType, typeName } = getRequestNoteStringItem(item, project)
+    const { reqType, typeName } = getRequestNoteStringItem(item)
     const { resType, returnNameWithType } = getReturnNoteStringItem(item)
     const idNote = getAppendIdNote(item.req_params)
 
@@ -49,7 +49,7 @@ const getMainMethodItem = (item: JsDocApiItem, hasNoteData: boolean, project: Pr
 }
 
 export const handleJsdocFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig, noteStringChunk: Array<string>) => {
-    const { methodNote, reqType, resType } = getNoteStringItem(item, project)
+    const { methodNote, reqType, resType } = getNoteStringItem(item)
 
 
     const hasNoteData = Boolean(reqType)
