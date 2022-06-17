@@ -119,6 +119,15 @@ const getAxiosName = () => {
     return axiosName || 'fetch'
 }
 
+/**
+ * 根据导出类型获取单个请求的method字符串
+ * @param project 项目配置
+ * @param item 请求配置
+ * @param requestParamsStr 请求参数字符串
+ * @param appendParamsStr method使用的额外的参数字符串
+ * @param returnType 服务端返回的类型或类型名
+ * @returns string 主方法字符串
+ */
 export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiItem, requestParamsStr: string, appendParamsStr = '', returnType?: string) => {
     const requestPath = getAppendPath(item.path, project)
     const requestName = getApiName(item.path, item.method)
@@ -134,7 +143,7 @@ export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiIt
     switch (outputStyle) { 
         case OutputStyle.Name:
             return `   export function ${requestName}${requestParamsStr}${returnTypeStr} ${requestContent}`
-        case OutputStyle.Anonymous:
+        case OutputStyle.Anonymous: 
             return `   export const ${requestName} = ${requestParamsStr}${returnTypeStr} => ${requestContent}`
         default:
             return ` ${requestName}: ${requestParamsStr}${returnTypeStr} => ${requestContent},`

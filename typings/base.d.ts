@@ -60,3 +60,17 @@ interface requestConfig {
   requestPath: string // api path str
   requestParams: string // api params str
 }
+
+
+interface ParamsItem {
+  name: string,
+  typeName?: string,
+  typeString?: string
+}
+
+interface ReturnData {
+  name: string,
+  typeName?: string,
+  typeString?: string,
+  childType?: Array<string>
+}

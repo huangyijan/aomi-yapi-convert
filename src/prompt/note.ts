@@ -2,12 +2,11 @@ import { getTypeByValue, hasProperty } from '../utils'
 import { getApiName, getUpperCaseName } from '../utils/str-operate'
 
 
-/** 获取传参名称 */
+/** 获取传参名称, TODO，移除params和data,所有的地方都需要额外做处理 */
 export const getNoteNameByParamsType = (item: JsDocApiItem) => {
-    const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
     const requestName = getApiName(item.path, item.method)
     const ParamsName = getUpperCaseName(requestName)
-    return ParamsName + (hasParamsQuery ? 'Params' : 'Data')
+    return ParamsName
 }
 
 
