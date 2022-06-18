@@ -63,14 +63,19 @@ interface requestConfig {
 
 
 interface ParamsItem {
-  name: string,
-  typeName?: string,
+  name: string
+  typeName?: string
   typeString?: string
+  description?: string
+  /** request方法是否不传? */
+  exInclude?: boolean
+
 }
 
 interface ReturnData {
-  name: string,
-  typeName?: string,
-  typeString?: string,
+  name: string
+  typeName?: string
+  typeString?: string
+  description?: string
   childType?: Array<string>
 }

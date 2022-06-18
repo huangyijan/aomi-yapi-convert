@@ -1,15 +1,7 @@
-import {  getLegalJson, removeProperties } from '../../utils'
-import { getNoteNameByParamsType } from '../note'
-
+import {  removeProperties } from '../../utils'
 import { getType } from '../../utils/str-operate'
 import { getSecondNoteAndName } from '../second'
 import { getSuitableDefault, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getSuitableType, getSuitDescription } from '../../utils/decision'
- 
-
-interface RequestNoteStringItem {
-  reqType: string
-  typeName: string
-}
 
 
 /** 获取请求参数（query）传输参数，考虑到query一律是传地址栏，所以type默认设置为string */
@@ -51,27 +43,5 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
     })
 
     return getSuitableTsInterface(requestName, bodyStr, appendNoteJsdocType)
-}
-
-
-/** 获取注释的jsDoc类型 */
-export const getReqType = (item: JsDocApiItem, typeName: string) => {
-    const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
-    if (hasParamsQuery) {
-        return getConfigNoteParams(item.req_query, typeName)
-    } else {
-        const body = getLegalJson(item.req_body_other) // 获取合法的json数据
-        return getJsonToJsDocParams(body, typeName)
-    }
-}
-
-
-/** 获取请求的参数注释和参数名 */
-export const getRequestNoteStringItem = (item: JsDocApiItem): RequestNoteStringItem => {
-
-    const typeName = getNoteNameByParamsType(item) // 正常object使用的名字
-    const reqType = getReqType(item, typeName)
-
-    return {reqType, typeName}
 }
 

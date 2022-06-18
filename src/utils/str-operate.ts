@@ -2,7 +2,7 @@ import { OutputStyle } from '..'
 import { ApiNameRegex, illegalRegex, longBiasRegex, pathHasParamsRegex } from './constants'
 import { getSuitableDefault, getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote } from './decision'
 
- 
+
 /** 处理传Id的API请求参数 */
 export const getAppendRequestParams = (path: string) => {
     let requestParams = ''
@@ -60,7 +60,7 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
     if (version === 'ts') {
         keyNote.forEach(item => {
             const { key, type, description } = item
-            const example = getSuitableDefault(item) 
+            const example = getSuitableDefault(item)
             noteString += getSuitableTsTypeNote(description, example)
             noteString += getSuitableTsType(key, type)
         })
@@ -70,7 +70,7 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
     if (version === 'js') {
         keyNote.forEach(item => {
             const { key, type, description } = item
-            const example = getSuitableDefault(item) 
+            const example = getSuitableDefault(item)
             noteString += getSuitableJsdocProperty(key, type, description, example)
         })
         return getSuitableJsdocType(typeName, noteString)
@@ -131,7 +131,7 @@ const getAxiosName = () => {
 export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiItem, requestParamsStr: string, appendParamsStr = '', returnType?: string) => {
     const requestPath = getAppendPath(item.path, project)
     const requestName = getApiName(item.path, item.method)
-    const returnTypeStr = returnType ? `: Promise<${returnType}>` : ''
+    const returnTypeStr = global.apiConfig.isNeedType && returnType ? `: Promise<${returnType}>` : ''
 
     const { outputStyle = OutputStyle.Default } = global.apiConfig
 
@@ -140,10 +140,10 @@ export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiIt
       return ${getAxiosName()}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
    }`
 
-    switch (outputStyle) { 
+    switch (outputStyle) {
         case OutputStyle.Name:
             return `   export function ${requestName}${requestParamsStr}${returnTypeStr} ${requestContent}`
-        case OutputStyle.Anonymous: 
+        case OutputStyle.Anonymous:
             return `   export const ${requestName} = ${requestParamsStr}${returnTypeStr} => ${requestContent}`
         default:
             return ` ${requestName}: ${requestParamsStr}${returnTypeStr} => ${requestContent},`

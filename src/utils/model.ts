@@ -1,4 +1,3 @@
-
 abstract class ApiItem {
 
     public apiItem: JsDocApiItem
@@ -16,12 +15,12 @@ abstract class ApiItem {
         this.returnData = { name: 'response' }
     }
 
+    /** 获取地址栏上的Id参数数组 */
+    protected abstract getIdsData(): ParamsItem[]
     /** 获取接口Query类型的请求参数 */
     protected abstract getQueryData(): ParamsItem
     /** 获取接口Body类型的请求参数 */
     protected abstract getBodyData(): ParamsItem
-    /** 获取地址栏上的Id参数数组 */
-    protected abstract getIdsData(): ParamsItem[]
     /** 设置单个接口的主要参数数组 */
     protected abstract setParamsArr(): void
     /** 设置单个接口的返回数据 */

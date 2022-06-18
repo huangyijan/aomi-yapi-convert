@@ -3,17 +3,19 @@ import { getApiName, getUpperCaseName } from '../utils/str-operate'
 
 
 /** 获取传参名称, TODO，移除params和data,所有的地方都需要额外做处理 */
-export const getNoteNameByParamsType = (item: JsDocApiItem) => {
+export const getNoteNameByParamsType = (item: JsDocApiItem, suffix: string) => {
+    if (!global.apiConfig.isNeedType) return 'any'
     const requestName = getApiName(item.path, item.method)
     const ParamsName = getUpperCaseName(requestName)
-    return ParamsName
+    return ParamsName + getUpperCaseName(suffix)
 }
 
 
 /** 获取放在Promise<xxx>的名字 */
-export const getReturnType = (returnName: string, resType: string) => {
+export const getReturnType = (returnName: string | undefined, resType: string | undefined) => {
+    if (!returnName || !resType) return 'any'
     if (returnName === 'array') return '[]'
-    return resType ? returnName : 'any'
+    return returnName
 }
 
 /** 获取返回的参数名 */
@@ -48,13 +50,6 @@ export const getApiLinkAddress = (project_id: number, _id: number | string) => {
 
 /** 获取api最后更新时间 */
 export const getUpdateTime = (time: number) => new Date(time * 1000).toLocaleDateString()
-
-/** 导出axios的额外参数 */
-export const getAxiosType = () => {
-    const { isNeedAxiosType } = global.apiConfig
-    const axiosType = typeof isNeedAxiosType === 'boolean' && isNeedAxiosType ? '\n   * @param { AxiosRequestConfig } options' : ''
-    return axiosType
-}
 
 /** 获取axios 的额外的请求名称 */
 export const getAxiosOptionTypeName = () => {
