@@ -7,4 +7,5 @@ module.exports = {
     collectCoverage: true,
     coverageDirectory: 'out/coverage',
     coverageProvider: 'v8'
-} 
+}
+
