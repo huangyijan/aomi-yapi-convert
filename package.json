@@ -1,6 +1,6 @@
 {
   "name": "aomi-yapi-convert",
-  "version": "0.1.33",
+  "version": "1.0.2",
   "description": "application for aomi yapi web turn to .ts or .js api file",
   "license": "ISC",
   "main": "dist/index.js",

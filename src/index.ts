@@ -1,8 +1,5 @@
 import { format } from './utils/decision'
 import { hasProperty, toHumpName } from './utils'
-
-import { handleJsFileString } from './simple/js'
-import { handleTsFileString } from './simple/ts'
 import { handleJsdocFileString } from './prompt/jsdoc'
 import { handleTsTypeFileString } from './prompt/ts-type'
 import { getApiLinkAddress } from './prompt/note'
@@ -97,11 +94,6 @@ export const getSavePath = (recommendName: string, project: ProjectConfig, fileC
     return path
 }
 
-/** 根据文件类型获取生成简介版本的方法名 */
-const generateSimpleBufferStringByVersion = (version: Version) => {
-    const configFunctionName = version === 'ts' ? handleTsFileString : handleJsFileString
-    return configFunctionName
-}
 /** 根据文件类型获取生成智能提示版本的方法名 */
 const generateTypeBufferStringByVersion = (version: Version) => {
     const configFunctionName = version === 'ts' ? handleTsTypeFileString : handleJsdocFileString
@@ -141,17 +133,12 @@ const getMaxTimesObjectKeyName = (obj: TimesObject, hasSaveNames: Array<string>)
  */
 const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig) => {
     const { list } = item
-    const { isNeedType } = global.apiConfig
     const fileBufferStringChunk: Array<string> = configFileHead(item) // 单个API文件流
     const noteStringChunk: Array<string> = ['\n'] // 存储Jsdoc注释的容器
     list.forEach((item) => {
         if (project.hideUnDoneApi && item.status === 'undone') return
         item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题
-        if (isNeedType) {
-            generateTypeBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)
-        } else {
-            generateSimpleBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item, project)
-        }
+        generateTypeBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)
     })
 
     return {  fileBufferStringChunk, noteStringChunk }
