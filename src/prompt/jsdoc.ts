@@ -75,7 +75,7 @@ class JsApiItem extends ApiItem {
         let noteParamsStr = ''
         this.paramsArr.forEach(item => {
             if(!global.apiConfig.isNeedType && item.typeName === 'any') return 
-            noteParamsStr += `\n   * @param { ${item.typeName} } ${item.name}`
+            noteParamsStr += `\n   * @param { ${item.typeName} } ${item.name} ${item.description || ''}`
         })
         return noteParamsStr
     }
