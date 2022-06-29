@@ -1,80 +1,5 @@
-import { format } from './utils/decision'
 import { hasProperty, toHumpName } from './utils'
-import { handleJsdocFileString } from './prompt/jsdoc'
-import { handleTsTypeFileString } from './prompt/ts-type'
-import { getApiLinkAddress } from './prompt/note'
-
-
-/** 设置api文件头部文件 */
-const getHeaderInfo = (item: JsDocMenuItem) => {
-    const config = global.apiConfig
-    const axiosFrom = Object.prototype.hasOwnProperty.call(config, 'axiosFrom') ? config.axiosFrom : 'import fetch from \'axios\''
-    const tsHeader = config.version === 'ts' ? '\n// @ts-nocheck' : ''
-    const axiosType = getTsHeaderAxiosType(config)
-    
-    const menuItem = item.list.find(item => !!item)
-    const menuLink = menuItem? getApiLinkAddress(menuItem.project_id, `cat_${menuItem.catid}`) : ''
-    return `
-/* eslint-disable */${tsHeader}
-/**
- * @description ${item.name}
- * @file 该文件由aomi-yapi-convert自动生成，请不要手动改动这个文件, 可能会被插件更新覆盖
- * @docUpdateTime ${new Date().toLocaleDateString()}
- * @link ${menuLink}
- */
-
-${axiosType}${axiosFrom}
-    `
-}
-
-/** ts文件顶部配置通用的axios config Type */
-const getTsHeaderAxiosType = (config: ApiConfig) => {
-    if (config.version !== 'ts' || !config.isNeedAxiosType) return ''
-    return 'import type { AxiosRequestConfig } from \'aomi-yapi-convert\'\n'
-}
-
-/** js文件底部配置通用的axios config jsdoc Type */
-const getJsFootAxiosType = () => {
-    const { version } = global.apiConfig
-    const { isNeedAxiosType } = global.apiConfig
-    if (!isNeedAxiosType || version !== 'js') return ''
-
-    return `/**
-  * @typedef { import("aomi-yapi-convert").AxiosRequestConfig } AxiosRequestConfig
-  */`
-}
-
-/** api文件导出类型 */
-export enum OutputStyle {
-    /** 默认导出 */
-    Default = 'defaultExport',
-    /** 具名导出 */
-    Name = 'nameExport',
-    /** 匿名导出 */
-    Anonymous = 'anonymous'
-}
-
-/** 配置文件头部 */
-export const configFileHead = (item: JsDocMenuItem) => {
-    const fileBufferStringChunk = []
-    fileBufferStringChunk.push(getHeaderInfo(item))
-
-    const { outputStyle = OutputStyle.Default } = global.apiConfig
-    if (outputStyle !== OutputStyle.Default) return fileBufferStringChunk
-    fileBufferStringChunk.push('export default {')
-    return fileBufferStringChunk
-
-}
-
-/** 配置文件尾部 */
-export const configFileFoot = (fileBufferStringChunk: Array<string>, noteStringChunk: Array<string>) => {
-
-    const { outputStyle = OutputStyle.Default } = global.apiConfig
-    if (outputStyle === OutputStyle.Default) fileBufferStringChunk.push('}')
-    fileBufferStringChunk.push(...noteStringChunk)
-    if (getJsFootAxiosType()) fileBufferStringChunk.push(getJsFootAxiosType())
-    return format(fileBufferStringChunk)
-}
+import { CommonFileItem } from './prompt'
 
 /** 获取文件存储的路径 */
 export const getSavePath = (recommendName: string, project: ProjectConfig, fileConfig: CatConfig | undefined, nameChunk: Map<string, number>) => {
@@ -94,12 +19,6 @@ export const getSavePath = (recommendName: string, project: ProjectConfig, fileC
     return path
 }
 
-/** 根据文件类型获取生成智能提示版本的方法名 */
-const generateTypeBufferStringByVersion = (version: Version) => {
-    const configFunctionName = version === 'ts' ? handleTsTypeFileString : handleJsdocFileString
-    return configFunctionName
-}
-
 const getFileName = (path: string, fileNameSet: { [key: string]: number }) => {
     path = path.replace(/\/{.+}/g, '')
     path = path.substring(1, path.length)
@@ -111,12 +30,6 @@ const getFileName = (path: string, fileNameSet: { [key: string]: number }) => {
     })
 }
 
-/** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
-const getValidApiPath = (path: string) => {
-    if (path.includes('?')) path = path.split('?')[0]
-    if (path.endsWith('/')) path = path.slice(0, path.length - 1)
-    return path
-}
 
 /** 获取还没有命名过并且出现次数最多的词作为文件夹名 */
 const getMaxTimesObjectKeyName = (obj: TimesObject, hasSaveNames: Array<string>): string => {
@@ -126,34 +39,14 @@ const getMaxTimesObjectKeyName = (obj: TimesObject, hasSaveNames: Array<string>)
 }
 
 /**
- * 获取Js文件的单个API文件写入的文件流字符串和注释类型
- * @param item 接口菜单单项
- * @param project 项目组文件的配置
- * @returns {Object}
- */
-const getApiFileConfig = (item: JsDocMenuItem, project: ProjectConfig) => {
-    const { list } = item
-    const fileBufferStringChunk: Array<string> = configFileHead(item) // 单个API文件流
-    const noteStringChunk: Array<string> = ['\n'] // 存储Jsdoc注释的容器
-    list.forEach((item) => {
-        if (project.hideUnDoneApi && item.status === 'undone') return
-        item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题
-        generateTypeBufferStringByVersion(global.apiConfig.version)(fileBufferStringChunk, item as JsDocApiItem, project, noteStringChunk)
-    })
-
-    return {  fileBufferStringChunk, noteStringChunk }
-}
-
-/**
  * 生成一个文件的文件流
  * @param item 单个菜单对象
  * @param project 用户配置项目对象，详见readme.md或者type文件
  * @returns 单个文件字符流
  */
 export const generatorFileCode = (item: JsDocMenuItem, project: ProjectConfig) => {
-    const { fileBufferStringChunk, noteStringChunk } = getApiFileConfig(item, project)
-    if (!fileBufferStringChunk.length) return ''
-    const saveFileBuffer = configFileFoot(fileBufferStringChunk, noteStringChunk)
+    const File = new CommonFileItem(project, item)
+    const saveFileBuffer = File.getFileCode()
     return saveFileBuffer
 }
 

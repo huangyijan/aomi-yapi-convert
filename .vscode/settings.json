@@ -4,6 +4,7 @@
     "catid",
     "errcode",
     "errmsg",
+    "nocheck",
     "yapi"
   ],
   "eslint.format.enable": true,

@@ -1,5 +1,4 @@
-import { OutputStyle } from '..'
-import { ApiNameRegex, illegalRegex, longBiasRegex, pathHasParamsRegex } from './constants'
+import { ApiNameRegex, illegalRegex, longBiasRegex, OutputStyle, pathHasParamsRegex } from './constants'
 import { getSuitableDefault, getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote } from './decision'
 
 
@@ -142,10 +141,10 @@ export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiIt
 
     switch (outputStyle) {
         case OutputStyle.Name:
-            return `   export function ${requestName}${requestParamsStr}${returnTypeStr} ${requestContent}`
+            return `   export function ${requestName}${requestParamsStr}${returnTypeStr} ${requestContent}\n`
         case OutputStyle.Anonymous:
-            return `   export const ${requestName} = ${requestParamsStr}${returnTypeStr} => ${requestContent}`
+            return `   export const ${requestName} = ${requestParamsStr}${returnTypeStr} => ${requestContent}\n`
         default:
-            return ` ${requestName}: ${requestParamsStr}${returnTypeStr} => ${requestContent},`
+            return ` ${requestName}: ${requestParamsStr}${returnTypeStr} => ${requestContent},\n`
     }
 }

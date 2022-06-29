@@ -7,7 +7,7 @@ import { getConfigNoteParams, getJsonToJsDocParams } from './request/ts'
 import { getLegalJson } from '../utils'
 
 
-class TsApiItem extends ApiItem {
+export class TsApiItem extends ApiItem {
 
     constructor(apiItem: JsDocApiItem, project: ProjectConfig) {
         super(apiItem, project)
@@ -104,18 +104,3 @@ class TsApiItem extends ApiItem {
     }
 }
 
-
-export const handleTsTypeFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig, noteStringChunk: Array<string>) => {
-    const apiItem = new TsApiItem(item, project)
-
-    /** 先配置注释再配置请求主方法 */
-    fileBufferStringChunk.push(apiItem.methodNote)
-    fileBufferStringChunk.push(apiItem.methodStr)
-
-    if (global.apiConfig.isNeedType) {
-        apiItem.paramsArr.forEach(item => {
-            if (item.typeString) noteStringChunk.push(item.typeString)
-        })
-        if (apiItem.returnData.typeString) noteStringChunk.push(apiItem.returnData.typeString)
-    }
-} 

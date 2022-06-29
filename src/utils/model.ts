@@ -31,5 +31,25 @@ abstract class ApiItem {
     protected abstract setMethodStr(): void
 }
 
+abstract class FileItem {
+    public menuItem: JsDocMenuItem
+    public project: ProjectConfig
+    public fileHeader: Array<string> = []
+    public apiContent: Array<ApiItem> = []
+    public fileFoot: Array<string> = []
 
-export { ApiItem }
+    constructor(project: ProjectConfig, menuItem: JsDocMenuItem) {
+        this.project = project
+        this.menuItem = menuItem
+    }
+    /** 设置文件头部信息 */
+    protected abstract setFileHeader(): void
+    /** 设置文件底部信息 */
+    protected abstract setFileFoot(): void
+    /** 设置文件文字信息 */
+    protected abstract setApiContent(): void
+    /** 获取文件输出字符串 */
+    protected abstract getFileCode(): void
+}
+
+export { FileItem, ApiItem }
