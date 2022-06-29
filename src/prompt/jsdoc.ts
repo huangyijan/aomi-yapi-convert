@@ -5,7 +5,7 @@ import { getUpdateTime, getApiLinkAddress, getReturnType, getNoteNameByParamsTyp
 import { getCustomerParamsStr, getMainRequestMethodStr } from '../utils/str-operate'
 import { ApiItem } from '../utils/model'
 import { getLegalJson } from '../utils'
-class JsApiItem extends ApiItem {
+export class JsApiItem extends ApiItem {
 
     constructor(apiItem: JsDocApiItem, project: ProjectConfig) {
         super(apiItem, project)
@@ -88,8 +88,7 @@ class JsApiItem extends ApiItem {
     protected setMethodNote(): void {
         const item = this.apiItem
 
-        this.methodNote = `
-  /**
+        this.methodNote = `/**
    * @description ${item.title}${this.getNoteParams()}
    * @apiUpdateTime ${getUpdateTime(item.up_time)}
    * @link ${getApiLinkAddress(item.project_id, item._id)}${this.getReturnParamsStr()}
@@ -114,18 +113,3 @@ class JsApiItem extends ApiItem {
 
 }
 
-
-export const handleJsdocFileString = (fileBufferStringChunk: Array<string>, item: JsDocApiItem, project: ProjectConfig, noteStringChunk: Array<string>) => {
-    const apiItem = new JsApiItem(item, project)
-
-    /** 先配置注释再配置请求主方法 */
-    fileBufferStringChunk.push(apiItem.methodNote)
-    fileBufferStringChunk.push(apiItem.methodStr)
-
-    if (global.apiConfig.isNeedType) {
-        apiItem.paramsArr.forEach(item => {
-            if (item.typeString) noteStringChunk.push(item.typeString)
-        })
-        if (apiItem.returnData.typeString) noteStringChunk.push(apiItem.returnData.typeString)
-    }
-}

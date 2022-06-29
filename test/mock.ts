@@ -1,3 +1,4 @@
+import { Version } from '../src/utils/constants'
 import node from '../src/enter/main'
 /** test config */
 export const config: ApiConfig = {

@@ -1,8 +1,4 @@
 
-enum Version {
-  JS = 'js',
-  TS = 'ts'
-}
 
 interface Answers {
   yapiURL: string

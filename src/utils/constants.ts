@@ -12,3 +12,26 @@ export const USER_ID = 'YAPI_USER_ID'
 export const NameRegex = /[-|_]([a-zA-Z])/g // 重命名捕获替换字符串
 export const quotaRegex = /(,)\s*\n*.*\}/g // 匹配json字符串最后一个逗号
 export const illegalJsonRegex = /(\/\/\s.*)\n/g // 非法json注释匹配
+
+export const eslintInfo = '/* eslint-disable */'
+export const tsInfo = '// @ts-nocheck'
+export const axiosFrom = 'import fetch from \'axios\''
+export const axiosType = 'import type { AxiosRequestConfig } from \'aomi-yapi-convert\''
+export const jsdocAxiosType = `/**
+  * @typedef { import("aomi-yapi-convert").AxiosRequestConfig } AxiosRequestConfig
+  */`
+
+export const enum Version {
+  JS = 'js',
+  TS = 'ts'
+}
+
+/** api文件导出类型 */
+export const enum OutputStyle {
+  /** 默认导出 */
+  Default = 'defaultExport',
+  /** 具名导出 */
+  Name = 'nameExport',
+  /** 匿名导出 */
+  Anonymous = 'anonymous'
+}
