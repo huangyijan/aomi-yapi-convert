@@ -14,7 +14,9 @@ export async function run() {
         config = await ask()
         if (!config.runNow) return
     }
-    main(config)
+    await Promise.all(await main(config))
+    console.log('🎉🎉🎉', '文件加载完毕！')
+    
 }
 
 /** 登录过期 */
