@@ -19,7 +19,7 @@ export default [
         ]
     },
     {
-        input: 'src/web/index.ts',
+        input: 'src/index.ts',
         output: [
             {
                 file: 'dist/aomi-yapi.js',
