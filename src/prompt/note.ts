@@ -56,3 +56,16 @@ export const getAxiosOptionTypeName = () => {
     const axiosTypeName = typeof isNeedAxiosType === 'boolean' && isNeedAxiosType ? 'AxiosRequestConfig' : 'any'
     return axiosTypeName
 }
+
+/** 获取头部jsdoc描述信息 */
+export const getFileJsdocInfo = (item: JsDocMenuItem) => {
+    const menuItem = item.list.find(item => !!item)
+    const menuLink = menuItem ? getApiLinkAddress(menuItem.project_id, `cat_${menuItem.catid}`) : ''
+    return `
+/**
+ * @description ${item.name}
+ * @file 该文件由aomi-yapi-convert自动生成，请不要手动改动这个文件, 可能会被插件更新覆盖
+ * @docUpdateTime ${new Date().toLocaleDateString()}
+ * @link ${menuLink}
+ */`
+}

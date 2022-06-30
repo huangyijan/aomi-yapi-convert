@@ -32,16 +32,27 @@ abstract class ApiItem {
 }
 
 abstract class FileItem {
+    public fileName = ''
+    public savePath = ''
     public menuItem: JsDocMenuItem
     public project: ProjectConfig
     public fileHeader: Array<string> = []
     public apiContent: Array<ApiItem> = []
     public fileFoot: Array<string> = []
+    public fileConfig: CatConfig | undefined
 
     constructor(project: ProjectConfig, menuItem: JsDocMenuItem) {
         this.project = project
         this.menuItem = menuItem
+
+        if (menuItem.list.length) {
+            this.fileConfig = this.project.group?.find(menu => menu.catId == menuItem.list[0].catid)
+        }
     }
+    /** 设置文件名称 */
+    protected abstract setFileName(): void
+    /** 设置文件保存路径 */
+    protected abstract setSavePath(): void
     /** 设置文件头部信息 */
     protected abstract setFileHeader(): void
     /** 设置文件底部信息 */
