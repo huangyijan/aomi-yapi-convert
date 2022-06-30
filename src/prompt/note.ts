@@ -61,8 +61,7 @@ export const getAxiosOptionTypeName = () => {
 export const getFileJsdocInfo = (item: JsDocMenuItem) => {
     const menuItem = item.list.find(item => !!item)
     const menuLink = menuItem ? getApiLinkAddress(menuItem.project_id, `cat_${menuItem.catid}`) : ''
-    return `
-/**
+    return `/**
  * @description ${item.name}
  * @file 该文件由aomi-yapi-convert自动生成，请不要手动改动这个文件, 可能会被插件更新覆盖
  * @docUpdateTime ${new Date().toLocaleDateString()}
