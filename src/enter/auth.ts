@@ -6,6 +6,9 @@ import main from './main'
 
 /** 插件入口 */
 export async function run() {
+    const loading = new TerminalLoading()
+    loading.start()
+
     const configPath = path.resolve('api.config.json')
     let config = {} as ApiConfig
     try {
@@ -16,8 +19,27 @@ export async function run() {
     }
     await Promise.all(await main(config))
     console.log('🎉🎉🎉', '文件加载完毕！')
+    loading.close()
     
 }
+/** 搞一个加载动画 */
+class TerminalLoading {
+    private terminalStr = ['\\', '|', '/', '-']
+    private index = 0
+    private clock: null | NodeJS.Timer = null 
+
+    public start() { 
+        this.clock = setInterval(() => {
+            process.stdout.write(this.terminalStr[this.index++]+ '\r')
+            this.index = this.index & 3
+        }, 50)
+    }
+
+    public close() { 
+        if(this.clock) clearInterval(this.clock)
+    }
+}
+
 
 /** 登录过期 */
 export const refreshToken = () => {

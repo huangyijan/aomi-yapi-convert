@@ -15,7 +15,7 @@ const registerGlobal = (config: ApiConfig) => {
 
 /** 主流程：获取项目配置 => 获取接口json => 生成接口文档 */
 export default async function main(config: ApiConfig) {
-    
+
     registerGlobal(config)
     const { protocol, host, projects } = config
     const baseUrl = `${protocol}//${host}`

@@ -4,7 +4,6 @@ import { saveApiToken, saveFile, saveUserId } from './file'
 import { request } from './request'
 
 const projectRegex = /^(https?:)\/\/(.*)\/project\/(\d+)\/.*/
-
 let menus: any[] = []
 
 const ask = function () {

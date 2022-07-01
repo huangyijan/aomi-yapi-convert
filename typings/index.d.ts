@@ -1,6 +1,8 @@
 
 /** 这个文件是属于我搬运axios的类型，作为默认参数的导出 */
 
+import CommonFileItem from "src";
+
 export type AxiosRequestHeaders = Record<string, string | number | boolean>;
 
 export type AxiosResponseHeaders = Record<string, string> & {
@@ -168,3 +170,6 @@ export interface CancelToken {
   reason?: Cancel;
   throwIfRequested(): void;
 }
+
+export default CommonFileItem
+export { CommonFileItem }
