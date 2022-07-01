@@ -19,20 +19,20 @@ export const GetSafePath = function (relativePath: string) {
     return filePath
 }
 
-type CallBack = (res: NodeJS.ErrnoException | null) => void
-
 /**
  * 存儲方法
  * @param url 存儲目標路徑
  * @param file 存儲文件
  */
-export const saveFile = (url: string, file: string | NodeJS.ArrayBufferView, call?: CallBack) => {
-    fs.writeFile(GetSafePath(url), file, { encoding: 'utf-8' },
-        (res) => {
-            if(call) call(res)
-            console.log('📗', `Api文件更新${res ? '失败' : '成功'}:${url}`)
-        }
-    )
+export const saveFile = (url: string, file: string | NodeJS.ArrayBufferView) => {
+    return new Promise<void>((resolve) => {
+        fs.writeFile(GetSafePath(url), file, { encoding: 'utf-8' },
+            (res) => {
+                console.log('📗', `Api文件更新${res ? '失败' : '成功'}:${url} `)
+                resolve()
+            }
+        )
+    })
 }
 
 /**
