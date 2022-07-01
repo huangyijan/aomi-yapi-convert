@@ -135,16 +135,16 @@ export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiIt
     const { outputStyle = OutputStyle.Default } = global.apiConfig
 
     const requestContent = `{
-      const method = '${item.method}'
-      return ${getAxiosName()}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
-   }`
+    const method = '${item.method}'
+    return ${getAxiosName()}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
+}`
 
     switch (outputStyle) {
         case OutputStyle.Name:
-            return `   export function ${requestName}${requestParamsStr}${returnTypeStr} ${requestContent}\n`
+            return `export function ${requestName}${requestParamsStr}${returnTypeStr} ${requestContent}\n`
         case OutputStyle.Anonymous:
-            return `   export const ${requestName} = ${requestParamsStr}${returnTypeStr} => ${requestContent}\n`
+            return `export const ${requestName} = ${requestParamsStr}${returnTypeStr} => ${requestContent}\n`
         default:
-            return ` ${requestName}: ${requestParamsStr}${returnTypeStr} => ${requestContent},\n`
+            return `${requestName}: ${requestParamsStr}${returnTypeStr} => ${requestContent},\n`
     }
 }

@@ -83,7 +83,7 @@ export class CommonFileItem extends FileItem {
         this.fileHeader.push(eslintInfo)
         if (this.config.version === Version.TS) {
             this.fileHeader.push(tsInfo)
-            this.config.isNeedAxiosType && this.fileHeader.push(axiosType)
+            this.config.isNeedType && this.config.isNeedAxiosType && this.fileHeader.push(axiosType)
         }
         if (hasProperty(this.config, 'axiosFrom')) this.fileHeader.push(this.config.axiosFrom || axiosFrom)
         this.fileHeader.push('')
@@ -102,7 +102,7 @@ export class CommonFileItem extends FileItem {
     }
 
     protected setFileFoot(): void {
-        if (this.config.version === Version.JS || this.config.isNeedType) {
+        if (this.config.version === Version.JS && this.config.isNeedType) {
             this.fileFoot.push(jsdocAxiosType)
         }
     }
@@ -130,8 +130,10 @@ export class CommonFileItem extends FileItem {
         })
 
         this.setFileFoot()
+
+        const indent = (!this.config.outputStyle || this.config.outputStyle === OutputStyle.Default)? 0 : 2
       
-        return format(this.fileHeader.concat(mainContentStr, this.fileFoot))
+        return format(this.fileHeader.concat(mainContentStr, this.fileFoot), indent)
     }
 
 }

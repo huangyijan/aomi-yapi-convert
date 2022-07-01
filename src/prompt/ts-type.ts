@@ -83,12 +83,11 @@ export class TsApiItem extends ApiItem {
 
     protected setMethodNote(): void {
         const item = this.apiItem
-        this.methodNote =  `
-  /**
-   * @description ${item.title}
-   * @apiUpdateTime ${getUpdateTime(item.up_time)}
-   * @link ${getApiLinkAddress(item.project_id, item._id)}
-   */`
+        this.methodNote =  `/**
+ * @description ${item.title}
+ * @apiUpdateTime ${getUpdateTime(item.up_time)}
+ * @link ${getApiLinkAddress(item.project_id, item._id)}
+ */`
     }
 
 

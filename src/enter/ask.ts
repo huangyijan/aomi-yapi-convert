@@ -4,7 +4,6 @@ import { saveApiToken, saveFile, saveUserId } from './file'
 import { request } from './request'
 
 const projectRegex = /^(https?:)\/\/(.*)\/project\/(\d+)\/.*/
-
 let menus: any[] = []
 
 const ask = function () {
@@ -150,8 +149,7 @@ const ask = function () {
                 delete config.userId
                 saveFile(
                     'api.config.json',
-                    JSON.stringify(config, null, 2) + '\n',
-                    () => console.log('配置文件生成成功: api.config.json')
+                    JSON.stringify(config, null, 2) + '\n'
                 )
             }
             resolve({ ...config, runNow})
