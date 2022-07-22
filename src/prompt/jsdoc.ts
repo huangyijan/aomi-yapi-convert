@@ -75,24 +75,24 @@ export class JsApiItem extends ApiItem {
         let noteParamsStr = ''
         this.paramsArr.forEach(item => {
             if(!global.apiConfig.isNeedType && item.typeName === 'any') return 
-            noteParamsStr += `\n  * @param { ${item.typeName} } ${item.name} ${item.description || ''}`
+            noteParamsStr += `\n * @param { ${item.typeName} } ${item.name}`
         })
         return noteParamsStr
     }
 
     private getReturnParamsStr() {
         if(!global.apiConfig.isNeedType) return ''
-        return `\n  * @return { Promise<${getReturnType(this.returnData.typeName, this.returnData.typeString)}> }`
+        return `\n * @return { Promise<${getReturnType(this.returnData.typeName, this.returnData.typeString)}> }`
     }
 
     protected setMethodNote(): void {
         const item = this.apiItem
 
         this.methodNote = `/**
-  * @description ${item.title}${this.getNoteParams()}
-  * @apiUpdateTime ${getUpdateTime(item.up_time)}
-  * @link ${getApiLinkAddress(item.project_id, item._id)}${this.getReturnParamsStr()}
-  */`
+ * @description ${item.title}${this.getNoteParams()}
+ * @apiUpdateTime ${getUpdateTime(item.up_time)}
+ * @link ${getApiLinkAddress(item.project_id, item._id)}${this.getReturnParamsStr()}
+ */`
     }
 
     private getAppendRequestParamsJsdoc() {
