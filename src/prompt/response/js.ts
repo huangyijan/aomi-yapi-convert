@@ -8,7 +8,7 @@ interface ReturnNoteStringItem {
     returnNameWithType: string
     resType: string
 }
- 
+
 
 /** 配置返回注释 */
 export const getReturnNoteStringItem = (item: JsDocApiItem): ReturnNoteStringItem => {
@@ -36,10 +36,9 @@ export const getReturnNoteStringItem = (item: JsDocApiItem): ReturnNoteStringIte
 
 /** 处理返回的数据类型处理 */
 export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
-
+    
     let bodyStr = ''
     let appendNoteJsdocType = '' // 额外的JsDocType
-
 
     if (!Object.keys(data).length) return '' // 空的对象不做处理，提高性能
 
@@ -51,13 +50,13 @@ export const dealJsonToJsDocReturn = (data: object, returnName: string) => {
 
         // 处理二层的Type类型
         const addTypeName = getType(type, key, returnName)
-        const {note, name} = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
+        const { note, name } = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)
         appendNoteJsdocType = note
-        
-        if(name !== type) type = name
+
+        if (name !== type) type = name
 
         bodyStr += getSuitableJsdocProperty(key, type, description)
     })
-    
+
     return getSuitableJsdocType(returnName, bodyStr, appendNoteJsdocType)
 }

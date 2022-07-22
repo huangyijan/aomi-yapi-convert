@@ -104,6 +104,10 @@ export const getSecondNoteAndName = (value: any, addTypeName: string, type: stri
             appendNoteJsdocType += addNote
         }
 
+        if (!global.apiConfig.isNeedSecondType) {
+            type = 'Array'
+            appendNoteJsdocType = ''
+        }
     }
  
 
@@ -116,6 +120,11 @@ export const getSecondNoteAndName = (value: any, addTypeName: string, type: stri
         if (addNote === 'boolean' || addNote === 'number') {
             appendNoteJsdocType = ''
             type = addNote
+        }
+
+        if (!global.apiConfig.isNeedSecondType) {
+            type = 'Object'
+            appendNoteJsdocType = ''
         }
    
     }

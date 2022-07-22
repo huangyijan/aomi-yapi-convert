@@ -4,7 +4,7 @@ import { ApiItem, FileItem } from '../utils/model'
 import { JsApiItem } from './jsdoc'
 import { getFileJsdocInfo } from './note'
 import { TsApiItem } from './ts-type'
-import { axiosFrom, axiosType, eslintInfo, jsdocAxiosType, OutputStyle, tsInfo, Version } from '../utils/constants'
+import { axiosFrom, axiosType, jsdocAxiosType, OutputStyle, Version } from '../utils/constants'
 
 
 /** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
@@ -71,7 +71,7 @@ export class CommonFileItem extends FileItem {
         if (fileConfig && hasProperty(fileConfig, 'fileName') && fileConfig.fileName) fileName = fileConfig.fileName
         if (fileConfig && hasProperty(fileConfig, 'outputDir') && fileConfig.outputDir) dir = fileConfig.outputDir
 
-        const { version } = global.apiConfig
+        const { version } = this.config
         const path = `${dir}/${fileName}.${version}`
         this.savePath = path
     }
@@ -80,9 +80,9 @@ export class CommonFileItem extends FileItem {
     protected setFileHeader(): void {
 
         this.fileHeader.push(getFileJsdocInfo(this.menuItem))
-        this.fileHeader.push(eslintInfo)
+        if (Array.isArray(this.config.customerSnippet)) this.config.customerSnippet.forEach(str => this.fileHeader.push(str))
+
         if (this.config.version === Version.TS) {
-            this.fileHeader.push(tsInfo)
             this.config.isNeedType && this.config.isNeedAxiosType && this.fileHeader.push(axiosType)
         }
         if (hasProperty(this.config, 'axiosFrom')) this.fileHeader.push(this.config.axiosFrom || axiosFrom)
@@ -109,7 +109,7 @@ export class CommonFileItem extends FileItem {
 
     /** 导出形式为默认的时候需要将整个对象包裹起来 */
     private dealExportDefault(): void {
-        if (!this.config.outputStyle || this.config.outputStyle === OutputStyle.Default) {
+        if (this.config.outputStyle === OutputStyle.Default) {
             this.fileHeader.push('export default {')
             this.fileFoot.push('}\n')
         }
@@ -121,8 +121,7 @@ export class CommonFileItem extends FileItem {
         this.apiContent.forEach(apiItem => {
             mainContentStr.push(apiItem.methodNote)
             mainContentStr.push(apiItem.methodStr)
-            
-            if (!global.apiConfig.isNeedType) return
+            if (!this.config.isNeedType) return
             apiItem.paramsArr.forEach(item => {
                 if (item.typeString) this.fileFoot.push(item.typeString)
             })

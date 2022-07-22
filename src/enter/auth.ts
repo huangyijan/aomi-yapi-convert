@@ -6,9 +6,6 @@ import main from './main'
 
 /** 插件入口 */
 export async function run() {
-    const loading = new TerminalLoading()
-    loading.start()
-
     const configPath = path.resolve('api.config.json')
     let config = {} as ApiConfig
     try {
@@ -17,6 +14,9 @@ export async function run() {
         config = await ask()
         if (!config.runNow) return
     }
+    
+    const loading = new TerminalLoading()
+    loading.start()
     await Promise.all(await main(config))
     console.log('🎉🎉🎉', '文件加载完毕！')
     loading.close()

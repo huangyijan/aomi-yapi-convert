@@ -135,7 +135,7 @@ const ask = function () {
             }
 
             const config = Object.assign({}, answers, {
-                axiosFrom: 'import fetch from \'axios\'',
+                customerSnippet: ['/* eslint-disable */'],
                 protocol, host, projects: [projects]
             })
 

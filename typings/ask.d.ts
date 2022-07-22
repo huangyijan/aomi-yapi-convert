@@ -45,12 +45,14 @@ interface ApiConfig {
   version: Version
   isNeedType: boolean
   isNeedAxiosType?: boolean
-  axiosFrom: string
+  isNeedSecondType?: boolean
+  axiosFrom?: string
   axiosName?: string
   outputStyle?: string
   protocol: string
   host: string
   runNow?: boolean
+  customerSnippet?: Array<string>
   customParams?: Array<CustomParam>
   projects: Array<ProjectConfig>
 }

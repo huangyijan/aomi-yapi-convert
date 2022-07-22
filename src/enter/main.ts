@@ -1,6 +1,7 @@
 import { CommonFileItem } from '..'
 import { handleApiRequestError, request } from './request'
 import { getApiToken, getUserId, saveFile } from './file'
+import { baseConfig } from '../utils/constants'
 
 /**
  * 注册全局变量，node环境注册global里面的对象，browser环境注册global 到window对象
@@ -9,8 +10,8 @@ import { getApiToken, getUserId, saveFile } from './file'
 const registerGlobal = (config: ApiConfig) => {
     const token = getApiToken()
     const userId = getUserId()
-    Object.assign(config, { token, userId })
-    global.apiConfig = config // node注册全局配置
+    const targetConfig = Object.assign(baseConfig, config, { token, userId })
+    global.apiConfig = targetConfig // node注册全局配置
 }
 
 /** 主流程：获取项目配置 => 获取接口json => 生成接口文档 */
