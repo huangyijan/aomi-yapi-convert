@@ -85,53 +85,37 @@ $ npx aomi-yapi-convert
 
 然后你就会发现在根目录会生成一个api.config.json的配置文件。目前暂时的配置约定是这样的
 
-```
-const targetJson = {
-  protocol: '', // 协议头https: 或http: 由文档地址决定
-  host: '', // example: baidu.com
-  version: '', // ts/js 两种版本，type类型分别是TsType类型和jsdoc类型
-  isNeedType : boolean, // 这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
-  isNeedAxiosType: boolean, // 这里设置是否需要axios的插件提示，默认为false, 如果设置为true, axios的额外配置项的类型提示将会是插件引入的axios提示.
-  isNeedSecondType: boolean, // 默认为true，可以设置false不加载二层分类 
-  outputStyle: 'defaultExport', // 支持值defaultExport, nameExport, anonymous,分别对应了默认导出，具名导出，匿名函数导出
-  axiosFrom: '', // 这里配置自定义的请求目录，考虑到大部分时候我们都用axios的包，所以使用axios作为默认请求，你也可以使用自定义的请求。
-  axiosName: '', // 这里配置自定义的请求Name,这里改成ssr的this指针挂载方式
-  customerSnippet: ['xxx'], // 用户自定义片段，字符串数组，每项占据一行
-  customer: [ // 这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，建议使用project里面的来定义，可能存在同一个项目调用不同的业务线api的情况
-   {
-     name: 'name', // 形参名
-     default: 'base' // 默认值
-   }
-  ],
-  projects: [ // 可以通过传入多个project项来完成添加不同项目的api文件
-    {
-      projectId: 445, // 项目id
-      outputDir: '', // 统一的文件生成路径，请注意默认文件夹是src/api目录，如果该目录下已经有文件了，建议在该目录起一个子目录名称：ep: src/api/auto/.
-      isLoadFullApi: false, // 这里配置是否全量加载api文件，原有项目已经有api的文件，请设置为false局部更新，全量更新会生成重复代码，徒增冗余
-      hideUnDoneApi: true, // 这里配置是否加载服务端接口显示未完成的Api。开发期间Api接口可能还是未完成状态。方便前端调试,默认加载。
-      prefix: '', // 一般该项设置为空，但我注意到部分接口服务端不配置服务名（比如超市的接口），需要前端手动添加，所以加了该配置项。这个配置项加了之后会在该项目组下所有接口添加这个字符串
-      customer: [ // 这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，不设置会默认继承全局的。
-        {
-          name: 'name', // 形参名
-          default: 'base' // 默认值
-        }
-      ],
-      group: [
-        {
-          catId: 8366, // 后台项目下的菜单id
-          outputDir: '', // 可以自定义生成文件路径，不设置继承project的路径
-          fileName: '' // 如果不喜欢程序生成的文件名可以自定义文件名
-        }
-      ]
-    },
-    { 
-      projectId: 220,
-      outputDir: '',
-      isLoadFullApi: true
-    }
-  ]
-}
-```
+### Api配置
+
+|参数名称|类型|默认值|备注|
+|---|---|---|---|
+|protocol|string||协议头https: 或http: 由文档地址决定
+|host|string||example: baidu.com
+|version|string||ts/js 两种版本，type类型分别是TsType类型和jsdoc类型
+|axiosFrom|string|import fetch from 'axios'|这里配置自定义的请求目录，考虑到大部分时候我们都用axios的包，所以使用axios作为默认请求，你也可以使用自定义的请求。
+|axiosName|string|fetch|这里配置自定义的请求Name,这里改成ssr的this指针挂载方式
+|isNeedType|boolean|true|这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
+|isNeedAxiosType|boolean|true|这里设置是否需要axios的插件提示，默认为false, 如果设置为true, axios的额外配置项的类型提示将会是插件引入的axios提示.
+|isNeedSecondType|boolean|true|可以设置false不加载二层分类 
+|customerSnippet|string[]||用户自定义片段，字符串数组，每项占据一行
+|customer|Array<{name: string, default: ''}>||这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，建议使用project里面的来定义，可能存在同一个项目调用不同的业务线api的情况
+|outputStyle|string>|defaultExport|支持值defaultExport, nameExport, anonymous,分别对应了默认导出，具名导出，匿名函数导出
+|projects|project[]>||project配置见下表
+
+### Project 配置
+
+|参数名称|类型|默认值|备注|
+|---|---|---|---|
+|projectId|number||项目id
+|outputDir|string||统一的文件生成路径，请注意默认文件夹是src/api目录，如果该目录下已经有文件了，建议在该目录起一个子目录名称：ep: src/api/auto/.
+|isLoadFullApi|boolean||这里配置是否全量加载api文件，原有项目已经有api的文件，请设置为false局部更新，全量更新会生成重复代码，徒增冗余
+|hideUnDoneApi|boolean||这里配置是否加载服务端接口显示未完成的Api。开发期间Api接口可能还是未完成状态。方便前端调试,默认加载。
+|prefix|string||一般该项设置为空，但我注意到部分接口服务端不配置服务名（比如超市的接口），需要前端手动添加，所以加了该配置项。这个配置项加了之后会在该项目组下所有接口添加这个字符串
+|customer|Array<{name: string, default: ''}>|| 这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，不设置会默认继承全局的。
+|group|Array<{catId: number, outputDir: string, fileName: ''}>|| {          catId: 后台项目下的菜单id   outputDir: 可以自定义生成文件路径，不设置继承project的路径   fileName:  如果不喜欢程序生成的文件名可以自定义文件名        }
+
+
+
 
 好了，走到一步了，如果没有出现意外的话，你会在src/api（如果输出文件路径没有修改的话）目录下看到由插件自动化生成api文件。示例(ts/js)：
 
