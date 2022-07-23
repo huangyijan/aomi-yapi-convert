@@ -99,8 +99,8 @@ $ npx aomi-yapi-convert
 |isNeedSecondType|boolean|true|可以设置false不加载二层分类 
 |customerSnippet|string[]||用户自定义片段，字符串数组，每项占据一行
 |customer|Array<{name: string, default: ''}>||这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，建议使用project里面的来定义，可能存在同一个项目调用不同的业务线api的情况
-|outputStyle|string>|defaultExport|支持值defaultExport, nameExport, anonymous,分别对应了默认导出，具名导出，匿名函数导出
-|projects|project[]>||project配置见下表
+|outputStyle|string|defaultExport|支持值defaultExport, nameExport, anonymousExport,分别对应了默认导出，具名导出，匿名函数导出
+|projects|project[]||project配置见下表
 
 ### Project 配置
 

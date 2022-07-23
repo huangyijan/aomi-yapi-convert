@@ -30,14 +30,14 @@ export const enum OutputStyle {
   /** 具名导出 */
   Name = 'nameExport',
   /** 匿名导出 */
-  Anonymous = 'anonymous'
+  Anonymous = 'anonymousExport'
 }
 
 export const baseConfig = {
     isNeedType: true,
     isNeedAxiosType: true,
     isNeedSecondType: true,
-    outputStyle: 'defaultExport',
+    outputStyle: OutputStyle.Default,
     axiosFrom: 'import fetch from \'axios\'',
     axiosName: 'fetch'
 }
