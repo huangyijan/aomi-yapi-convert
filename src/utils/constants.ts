@@ -23,6 +23,14 @@ export const enum Version {
   TS = 'ts'
 }
 
+/** 兼容简写与全写 */
+export const Versions = {
+    typescript: Version.TS,
+    ts: Version.TS,
+    javascript: Version.JS,
+    js: Version.JS
+}
+
 /** api文件导出类型 */
 export const enum OutputStyle {
   /** 默认导出 */

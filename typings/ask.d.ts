@@ -1,4 +1,4 @@
-
+type OutVersion = 'ts' | 'js' | 'typescript' | 'javascript'
 
 interface Answers {
   yapiURL: string
@@ -6,7 +6,7 @@ interface Answers {
   userId?: string
   isLoadFullApi?: boolean
   group?: Array<number>
-  version: Version,
+  version: OutVersion,
   isNeedType: boolean,
   saveConfig?: boolean,
   outputDir?: string,
@@ -42,7 +42,7 @@ interface ApiConfig {
   yapiURL: string
   token?: string
   userId?: string
-  version: Version
+  version: OutVersion
   isNeedType: boolean
   isNeedAxiosType?: boolean
   isNeedSecondType?: boolean

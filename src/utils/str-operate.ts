@@ -1,4 +1,4 @@
-import { ApiNameRegex, illegalRegex, longBiasRegex, OutputStyle, pathHasParamsRegex } from './constants'
+import { ApiNameRegex, illegalRegex, longBiasRegex, OutputStyle, pathHasParamsRegex, Version, Versions } from './constants'
 import { getSuitableDefault, getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote } from './decision'
 
 
@@ -53,10 +53,10 @@ export const getUpperCaseName = (name: string) => {
 export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) => {
     if (!keyNote.length) return ''
 
-    const version = global.apiConfig.version
+    const version = Versions[global.apiConfig.version]
     let noteString = ''
 
-    if (version === 'ts') {
+    if (version === Version.TS) {
         keyNote.forEach(item => {
             const { key, type, description } = item
             const example = getSuitableDefault(item)
@@ -66,7 +66,7 @@ export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) =>
         return getSuitableTsInterface(typeName, noteString)
     }
 
-    if (version === 'js') {
+    if (version === Version.JS) {
         keyNote.forEach(item => {
             const { key, type, description } = item
             const example = getSuitableDefault(item)
