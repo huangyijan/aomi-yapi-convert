@@ -91,7 +91,7 @@ export const getSecondNoteAndName = (value: any, addTypeName: string, type: stri
     if (type.includes('array')) {
         const typeName = addTypeName.substring(0, addTypeName.length - 2)
         const addNote = getArrayTypeNote(value, typeName)
-    
+
         if (addNote === 'string' || addNote === 'number') type = `${addNote}[]` // 处理字符串数组和特殊的api自动生成错误
         if (addNote.includes('@typedef')) { // 有正常序列的Jsdoc
             type = addTypeName
@@ -105,7 +105,7 @@ export const getSecondNoteAndName = (value: any, addTypeName: string, type: stri
         }
 
         if (!global.apiConfig.isNeedSecondType) {
-            type = 'Array'
+            type = 'Array<any>'
             appendNoteJsdocType = ''
         }
     }

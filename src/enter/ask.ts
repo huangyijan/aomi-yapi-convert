@@ -135,7 +135,7 @@ const ask = function () {
             }
 
             const config = Object.assign({}, answers, {
-                customerSnippet: ['/* eslint-disable */'],
+                customerSnippet: ['/* eslint-disable */', '// @ts-nocheck'],
                 protocol, host, projects: [projects]
             })
 
