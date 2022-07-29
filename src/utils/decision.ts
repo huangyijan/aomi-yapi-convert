@@ -22,7 +22,7 @@ export const getSuitableType = (value: any) => {
             if (value === null) return 'any'
             if (hasProperty(value, 'type')) return transformType(value.type)
             if (hasProperty(value, 'default')) return getTypeByValue(value.default)
-            return 'any'
+            return valueType
         case 'undefined':
             return 'any'
         case 'number':

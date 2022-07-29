@@ -29,12 +29,11 @@ export const getReturnName = (requestName: string, value: any) => {
 /** 处理一下detailMsg最外层和数组的序列对象 */
 export const dealResponseData = (res: any) => {
     let isArray = false // 是否为数组对象
-    if (hasProperty(res, 'detailMsg')) {
-        res = res.detailMsg
-        if (hasProperty(res, 'items') && res.type === 'array') { // 数组的结构专门处理
-            res = res.items
-            isArray = true
-        }
+    const { dataParseName = 'detailMsg' } = global.apiConfig
+    if (hasProperty(res, dataParseName)) res = res[dataParseName]
+    if (hasProperty(res, 'items') && res.type === 'array') { // 数组的结构专门处理
+        res = res.items
+        isArray = true
     }
     return { res, isArray }
 }
@@ -47,13 +46,13 @@ export const getApiLinkAddress = (project_id: number, _id: number | string) => {
     return `${baseUrl}/project/${project_id}/interface/api/${_id}`
 }
 
-/** 获取api最后更新时间 */
+/** 获取api最后更新时间(服务端) */
 export const getUpdateTime = (time: number) => new Date(time * 1000).toLocaleDateString()
 
 /** 获取axios 的额外的请求名称 */
 export const getAxiosOptionTypeName = () => {
     const { isNeedAxiosType } = global.apiConfig
-    const axiosTypeName = typeof isNeedAxiosType === 'boolean' && isNeedAxiosType ? 'AxiosRequestConfig' : 'any'
+    const axiosTypeName = isNeedAxiosType ? 'AxiosRequestConfig' : 'any'
     return axiosTypeName
 }
 

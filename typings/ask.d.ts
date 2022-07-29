@@ -48,6 +48,7 @@ interface ApiConfig {
   isNeedSecondType?: boolean
   axiosFrom?: string
   axiosName?: string
+  dataParseName?: string
   outputStyle?: string
   protocol: string
   host: string

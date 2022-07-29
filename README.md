@@ -94,6 +94,7 @@ $ npx aomi-yapi-convert
 |version|string||ts/js 两种版本，type类型分别是TsType类型和jsdoc类型
 |axiosFrom|string|import fetch from 'axios'|这里配置自定义的请求目录，考虑到大部分时候我们都用axios的包，所以使用axios作为默认请求，你也可以使用自定义的请求。
 |axiosName|string|fetch|这里配置自定义的请求Name,这里改成ssr的this指针挂载方式
+|dataParseName|string|detailMsg|这里配置服务端统一返回的数据结构开始序列的对应key信息
 |isNeedType|boolean|true|这里设置是否需要js doc类型，建议设置为true。会有非常完善的提示，来自后台的配置注释我迁移过来了
 |isNeedAxiosType|boolean|true|这里设置是否需要axios的插件提示，默认为false, 如果设置为true, axios的额外配置项的类型提示将会是插件引入的axios提示.
 |isNeedSecondType|boolean|true|可以设置false不加载二层分类 
