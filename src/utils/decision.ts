@@ -1,6 +1,6 @@
 import { hasProperty, getTypeByValue } from '.'
 import { NormalType } from './constants'
-
+import prettier from 'prettier'
 /** 后台类型转前端类型 */
 export const transformType = (serviceType: string) => {
     serviceType = String(serviceType)
@@ -103,5 +103,5 @@ export const format = (lines: string[], tabSize = 2) => {
         return code
     })
         .join('\n')
-    return codeString
+    return prettier.format(codeString, { semi: false, parser: 'typescript' })
 }
