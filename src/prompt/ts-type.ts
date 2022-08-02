@@ -1,9 +1,9 @@
 
-import { getUpdateTime, getApiLinkAddress, getAxiosOptionTypeName, getReturnType, getNoteNameByParamsType } from './note'
+import { getUpdateTime, getApiLinkAddress, getAxiosOptionTypeName, getNoteNameByParamsType } from './note'
 import { getMainRequestMethodStr, getCustomerParamsStr } from '../utils/str-operate'
 import { ApiItem } from '../utils/model'
-import { getReturnNoteStringItem } from './response/ts'
-import { getConfigNoteParams, getJsonToJsDocParams } from './request/ts'
+import { dealJsonToTsTypeReturn } from './response/ts'
+import { getConfigNoteParams, getConfigNoteData } from './request/ts'
 import { getLegalJson } from '../utils'
 
 
@@ -40,9 +40,11 @@ export class TsApiItem extends ApiItem {
     protected getBodyData(): ParamsItem {
         const item = this.apiItem
         const name = 'data'
-        const typeName = getNoteNameByParamsType(item, name)
+        const interfaceName = getNoteNameByParamsType(item, name)
         const body = getLegalJson(item.req_body_other) // 获取合法的json数据
-        const typeString = getJsonToJsDocParams(body, typeName)
+        const typeString = getConfigNoteData(body, interfaceName)
+        let typeName = body?.items ? `Array<${interfaceName}>` : interfaceName
+        if (!typeString) typeName = 'any'
         return { name, typeName, typeString }
     }
 
@@ -50,8 +52,11 @@ export class TsApiItem extends ApiItem {
     protected setReturnData(): void {
         const item = this.apiItem
         const name = 'response'
-        const { resType: typeString, returnNameWithType } = getReturnNoteStringItem(item)
-        const typeName = getReturnType(returnNameWithType, typeString)
+        const interfaceName = getNoteNameByParamsType(item, name)
+        const body = getLegalJson(item.res_body) // 获取合法的json数据
+        const typeString = dealJsonToTsTypeReturn(body, interfaceName)
+        let typeName = body?.items ? `Array<${interfaceName}>` : interfaceName
+        if(!typeString) typeName = 'any'
         this.returnData = { name, typeName, typeString }
     }
 
@@ -84,10 +89,10 @@ export class TsApiItem extends ApiItem {
     protected setMethodNote(): void {
         const item = this.apiItem
         this.methodNote =  `/**
- * @description ${item.title}
- * @apiUpdateTime ${getUpdateTime(item.up_time)}
- * @link ${getApiLinkAddress(item.project_id, item._id)}
- */`
+        * @description ${item.title}
+        * @apiUpdateTime ${getUpdateTime(item.up_time)}
+        * @link ${getApiLinkAddress(item.project_id, item._id)}
+        */`
     }
 
 

@@ -95,5 +95,28 @@ export const getSuitableJsdocType = (noteName: string, noteStr: string, childNot
 export const format = (lines: string[]) => {
     const codeString = lines.join('\n')
     return prettier.format(codeString, prettierDefaultOption)
-    return codeString
+}
+
+/** 获取Ts类型Str */
+export const getTsTypeStr = (data: object) => {
+    /** Ts数据机构处理json schema 数据结构, 由于存在内部调用，所以就写成了内部函数 */
+    const dealJsonSchema = (child: JsonSchema) => {
+        let childType = getSuitableType(child)
+        if (childType === 'object' && child?.properties) {
+            childType = `{\n${getTsTypeStr(child.properties)}}`
+        }
+        if (childType === 'array' && child?.items) {
+            childType = `Array<${dealJsonSchema(child.items)}>`
+        }
+        return childType
+    }
+
+    let bodyStr = ''
+    Object.entries(data).forEach(([key, value]) => {
+        const description = getSuitDescription(value)
+        const type = dealJsonSchema(value)
+        bodyStr += getSuitableTsTypeNote(description)
+        bodyStr += getSuitableTsType(key, type)
+    })
+    return bodyStr
 }

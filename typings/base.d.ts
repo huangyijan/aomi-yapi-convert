@@ -83,7 +83,7 @@ interface ReturnData {
 type ServiceType = 'string' | 'integer' | 'number' | 'object' | 'array' | 'null' | 'boolean'
 interface JsonSchema {
   type: ServiceType
-  properties?: { [key: string]: object }
+  properties?: Properties
   items?: JsonSchema
   description?: string
 }
