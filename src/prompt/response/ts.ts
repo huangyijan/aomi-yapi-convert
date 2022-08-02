@@ -1,9 +1,6 @@
-import { getApiName, getType } from '../../utils/str-operate'
-import { removeProperties, getLegalJson, hasProperty } from '../../utils'
-import { getSecondNoteAndName } from '../second'
-import { dealResponseData, getReturnName } from '../note'
+import { getApiName } from '../../utils/str-operate'
+import {  getLegalJson } from '../../utils'
 import { getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getSuitableType, getSuitDescription } from '../../utils/decision'
-
 interface ReturnNoteStringItem {
     returnNameWithType: string
     resType: string
@@ -33,36 +30,22 @@ const getTsTypeStr = (data: object) => {
     let bodyStr = ''
     Object.entries(data).forEach(([key, value]) => {
         const description = getSuitDescription(value)
-        let type = getSuitableType(value)
-        if (type === 'object' && hasProperty(value, 'properties')) {
-            type = `{\n${getTsTypeStr(value.properties)}}\n`
-        }
-        if (type === 'array' && hasProperty(value, 'items')) {
-            type = getArrayDataStr(value)
-        }
+        const type = commonDeal(value)
         bodyStr += getSuitableTsTypeNote(description)
         bodyStr += getSuitableTsType(key, type)
     })
     return bodyStr
 }
 
-interface JsonSchema {
-    type: 'string' | 'integer' | 'number' | 'object' | 'array' | 'null' | 'boolean'
-    properties?: { [key: string]: object }
-    items?: JsonSchema
-    description?: string
-}
 
-
-const getArrayDataStr = (value: JsonSchema) => {
-    const child = value.items
+/** 统一处理json schema 数据结构 */
+const commonDeal = (child: JsonSchema) => {
     let childType = getSuitableType(child)
     if (childType === 'object' && child?.properties) {
         childType = `{\n${getTsTypeStr(child.properties)}}`
     }
     if (childType === 'array' && child?.items) {
-        childType = getArrayDataStr(child)
+        childType = `Array<${commonDeal(child.items)}>`
     }
-    childType = `Array<${childType}>`
     return childType
 }

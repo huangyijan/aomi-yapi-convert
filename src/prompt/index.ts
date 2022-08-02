@@ -129,10 +129,8 @@ export class CommonFileItem extends FileItem {
         })
 
         this.setFileFoot()
-
-        const indent = this.config.outputStyle === OutputStyle.Default? 0 : 2
       
-        return format(this.fileHeader.concat(mainContentStr, this.fileFoot), indent)
+        return format(this.fileHeader.concat(mainContentStr, this.fileFoot))
     }
 
 }

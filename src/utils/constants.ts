@@ -1,3 +1,4 @@
+import type { Options } from 'prettier'
 /* eslint-disable no-useless-escape */
 export const ApiNameRegex = /[\/|\-|_|{|}]+([a-zA-Z])/g // 獲取接口名稱
 export const illegalRegex = /[^a-zA-Z0-9]/g // 用来剔除不合法的符号
@@ -48,4 +49,11 @@ export const baseConfig = {
     outputStyle: OutputStyle.Default,
     axiosFrom: 'import fetch from \'axios\'',
     axiosName: 'fetch'
+}
+
+export const prettierDefaultOption: Options = {
+    parser: 'typescript',
+    semi: false,
+    printWidth: 150,
+    tabWidth: 4
 }

@@ -22,13 +22,14 @@ const getApiBaseUrl = (project: ProjectConfig) => {
 
 /** 接口名决策方案：如果有参数先去除参数，然后把接口path剩余数据转成驼峰命名，缺点：接口path如果太长，命名也会比较长 */
 export const getApiName = (path: string, method: string) => {
+    const appendName = pathHasParamsRegex.test(path) ? 'byId' : ''
     path = path.replace(pathHasParamsRegex, '')
     // 处理名字太长
     const biasCount = --path.split('/').length
     if (biasCount >= 3) path = path.replace(longBiasRegex, '')
     path = path.replace(ApiNameRegex, (_, item) => item.toUpperCase())
     // 防止restful API 导致命名相同
-    return method.toLowerCase() + path.replace(illegalRegex, '')
+    return method.toLowerCase() + path.replace(illegalRegex, '') + appendName
 }
 
 /**
