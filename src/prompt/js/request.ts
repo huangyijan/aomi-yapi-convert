@@ -1,6 +1,6 @@
 import {  removeProperties } from '../../utils'
 import { getType } from '../../utils/str-operate'
-import { getSecondNoteAndName } from '../second'
+import { getSecondNoteAndName } from '../../utils/second'
 import { getSuitableDefault, getSuitableJsdocProperty, getSuitableJsdocType, getSuitableType, getSuitDescription } from '../../utils/decision'
 
 

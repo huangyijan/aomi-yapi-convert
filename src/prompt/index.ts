@@ -1,9 +1,9 @@
 import { format } from '../utils/decision'
 import { hasProperty, toHumpName } from '../utils'
 import { ApiItem, FileItem } from '../utils/model'
-import { JsApiItem } from './jsdoc'
-import { getFileJsdocInfo } from './note'
-import { TsApiItem } from './ts-type'
+import { JsApiItem } from './js/jsdoc'
+import { getFileJsdocInfo } from '../utils/note'
+import { TsApiItem } from './ts/ts-type'
 import { axiosType, jsdocAxiosType, OutputStyle, Version, Versions } from '../utils/constants'
 
 

@@ -1,5 +1,5 @@
-import { getTypeByValue, hasProperty } from '../utils'
-import { getApiName, getUpperCaseName } from '../utils/str-operate'
+import { getTypeByValue, hasProperty } from '.'
+import { getApiName, getUpperCaseName } from './str-operate'
 
 /** 获取传参名称, TODO，移除params和data,所有的地方都需要额外做处理 */
 export const getNoteNameByParamsType = (item: JsDocApiItem, suffix: string) => {

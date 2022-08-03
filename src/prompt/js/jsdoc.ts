@@ -1,10 +1,10 @@
 
-import { getReturnNoteStringItem } from './response/js'
-import { getConfigNoteParams, getJsonToJsDocParams } from './request/js'
-import { getUpdateTime, getApiLinkAddress, getReturnType, getNoteNameByParamsType, getAxiosOptionTypeName } from './note'
-import { getCustomerParamsStr, getMainRequestMethodStr } from '../utils/str-operate'
-import { ApiItem } from '../utils/model'
-import { getLegalJson } from '../utils'
+import { getReturnNoteStringItem } from './response'
+import { getConfigNoteParams, getJsonToJsDocParams } from './request'
+import { getUpdateTime, getApiLinkAddress, getReturnType, getNoteNameByParamsType, getAxiosOptionTypeName } from '../../utils/note'
+import { getCustomerParamsStr, getMainRequestMethodStr } from '../../utils/str-operate'
+import { ApiItem } from '../../utils/model'
+import { getLegalJson } from '../../utils'
 export class JsApiItem extends ApiItem {
 
     constructor(apiItem: JsDocApiItem, project: ProjectConfig) {

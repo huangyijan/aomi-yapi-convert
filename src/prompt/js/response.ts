@@ -1,7 +1,7 @@
 import { getApiName, getType } from '../../utils/str-operate'
 import { removeProperties, getLegalJson } from '../../utils'
-import { getSecondNoteAndName } from '../second'
-import { dealResponseData, getReturnName } from '../note'
+import { getSecondNoteAndName } from '../../utils/second'
+import { dealResponseData, getReturnName } from '../../utils/note'
 import { getSuitableJsdocProperty, getSuitableJsdocType, getSuitableType, getSuitDescription } from '../../utils/decision'
 
 interface ReturnNoteStringItem {
