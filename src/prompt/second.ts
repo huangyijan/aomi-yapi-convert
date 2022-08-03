@@ -51,7 +51,7 @@ export const getObjectTypeNote = (objectValue: { [key: string]: any }, addTypeNa
         return { key, type, description, default: defaultStr }
     })
 
-    if(!commonArr. length) return ''
+    if (!commonArr. length) return ''
   
     return getCommandNote(commonArr, addTypeName)
 }

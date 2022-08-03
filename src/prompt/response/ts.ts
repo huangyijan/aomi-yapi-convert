@@ -11,6 +11,6 @@ export const dealJsonToTsTypeReturn = (data: JsonSchema, interfaceName: string):
 
 
     const bodyStr = getTsTypeStr(data.properties)
-    if(!bodyStr.length) return ''
+    if (!bodyStr.length) return ''
     return getSuitableTsInterface(interfaceName, bodyStr)
 }

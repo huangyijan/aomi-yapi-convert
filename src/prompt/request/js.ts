@@ -30,7 +30,7 @@ export const getJsonToJsDocParams = (json: { properties: Properties }, requestNa
 
         const description = getSuitDescription(value)
         let type = getSuitableType(value)
-
+        
 
         const addTypeName = getType(type, key, requestName) // 这里处理额外的类型
         const { note, name } = getSecondNoteAndName(value, addTypeName, type, appendNoteJsdocType)

@@ -23,7 +23,7 @@
     "test": "jest --watch",
     "build:api": "node out/enter/index.js",
     "build": "rollup -c",
-    "lint": "eslint --ext .ts src/ --fix"
+    "lint": "eslint --ext .ts ./ --fix"
   },
   "repository": "https://github.com/huangyijan/aomi-yapi-convert",
   "author": "yijian",
@@ -33,7 +33,6 @@
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
     "eslint": "^8.11.0",
-    "eslint-config-prettier": "^8.5.0",
     "jest": "^27.5.1",
     "rollup": "^2.70.1",
     "rollup-plugin-typescript2": "^0.31.2",

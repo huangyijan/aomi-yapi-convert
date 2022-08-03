@@ -9,7 +9,7 @@ export const toHumpName = (str: string) => {
 
 /** hasOwnProperty太长了，写一个代理当简写 */
 export const hasProperty = function (obj: object, key: string) {
-    if(!obj) return false
+    if (!obj) return false
     return Object.prototype.hasOwnProperty.call(obj, key)
 }
 
@@ -40,7 +40,7 @@ export const removeProperties = (data: any) => {
 
 /** 判断api数据里面的数据类型 */
 export const getTypeByValue = (value: any) => {
-    if(value === null) return 'string'
+    if (value === null) return 'string' 
     const jsType = typeof value
     switch (jsType) {
         case 'object': // 引用类型都是object，需要处理不同引用类型

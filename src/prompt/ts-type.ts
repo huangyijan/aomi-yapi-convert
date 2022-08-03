@@ -56,7 +56,7 @@ export class TsApiItem extends ApiItem {
         const body = getLegalJson(item.res_body) // 获取合法的json数据
         const typeString = dealJsonToTsTypeReturn(body, interfaceName)
         let typeName = body?.items ? `Array<${interfaceName}>` : interfaceName
-        if(!typeString) typeName = 'any'
+        if (!typeString) typeName = 'any'
         this.returnData = { name, typeName, typeString }
     }
 

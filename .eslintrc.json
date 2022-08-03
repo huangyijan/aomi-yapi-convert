@@ -5,8 +5,7 @@
     },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "prettier"
+        "plugin:@typescript-eslint/recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -23,7 +22,12 @@
             4, 
             { "SwitchCase": 1 }
         ],
+        "object-curly-spacing": [
+            "error",
+            "always"
+        ],
         "no-multiple-empty-lines": "error",
+        "keyword-spacing": "error",
         "linebreak-style": "off",
         "quotes": [
             "error",

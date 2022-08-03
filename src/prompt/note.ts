@@ -58,7 +58,7 @@ export const getAxiosOptionTypeName = () => {
 
 /** 获取头部jsdoc描述信息 */
 export const getFileJsdocInfo = (item: JsDocMenuItem) => {
-    const menuItem = item.list.find(item => !!item)
+    const menuItem = item.list.find((item) => !!item)
     const menuLink = menuItem ? getApiLinkAddress(menuItem.project_id, `cat_${menuItem.catid}`) : ''
     return `/**
  * @description ${item.name}

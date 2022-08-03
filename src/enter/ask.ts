@@ -152,7 +152,7 @@ const ask = function () {
                     JSON.stringify(config, null, 2) + '\n'
                 )
             }
-            resolve({ ...config, runNow})
+            resolve({ ...config, runNow })
         })
     })
 }

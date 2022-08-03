@@ -116,7 +116,7 @@ export class CommonFileItem extends FileItem {
     }
 
     public getFileCode(): string {
-        if(!this.apiContent.length) return ''
+        if (!this.apiContent.length) return ''
         const mainContentStr: Array<string> = []
         this.apiContent.forEach(apiItem => {
             mainContentStr.push(apiItem.methodNote)

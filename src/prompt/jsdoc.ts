@@ -74,14 +74,14 @@ export class JsApiItem extends ApiItem {
     private getNoteParams() {
         let noteParamsStr = ''
         this.paramsArr.forEach(item => {
-            if(!global.apiConfig.isNeedType && item.typeName === 'any') return 
+            if (!global.apiConfig.isNeedType && item.typeName === 'any') return 
             noteParamsStr += `\n * @param { ${item.typeName} } ${item.name}`
         })
         return noteParamsStr
     }
 
     private getReturnParamsStr() {
-        if(!global.apiConfig.isNeedType) return ''
+        if (!global.apiConfig.isNeedType) return ''
         return `\n * @return { Promise<${getReturnType(this.returnData.typeName, this.returnData.typeString)}> }`
     }
 

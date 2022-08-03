@@ -15,7 +15,7 @@ export const getConfigNoteParams = (reqQuery: Array<reqQuery>, requestName: stri
 
 /** 处理请求体(data)的逻辑规则 */
 export const getConfigNoteData = (data: JsonSchema, interfaceName: string) => {
-    if(data?.items) data = data.items
+    if (data?.items) data = data.items
     if (!data || !data.properties || !Object.keys(data).length) return '' // 空的对象不做处理
     const bodyStr = getTsTypeStr(data.properties)
     if (!bodyStr.length) return ''
