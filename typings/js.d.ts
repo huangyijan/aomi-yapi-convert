@@ -16,6 +16,7 @@ interface reqQuery {
   value: string
   example: string
   desc: string
+  type: string
   _id: string
 }
 interface JsDocApiItem {

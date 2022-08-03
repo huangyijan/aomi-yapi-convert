@@ -40,6 +40,10 @@ export class TsApiItem extends ApiItem {
         const item = this.apiItem
         const name = 'data'
         const interfaceName = getNoteNameByParamsType(item, name)
+        if (item.req_body_type === 'form') {
+            const typeString = getConfigNoteParams(item.req_body_form, interfaceName)
+            return { name, typeName: interfaceName, typeString }
+        }
         const body = getLegalJson(item.req_body_other) // 获取合法的json数据
         const typeString = getConfigNoteData(body, interfaceName)
         const typeName = getTypeName(interfaceName, body, typeString)
@@ -65,7 +69,7 @@ export class TsApiItem extends ApiItem {
         const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
         if (hasParamsQuery) this.paramsArr.push(this.getQueryData())
 
-        const hasParamsBody = item.req_body_other
+        const hasParamsBody = item.req_body_other || item.req_body_form.length
         if (hasParamsBody) this.paramsArr.push(this.getBodyData())
 
         this.paramsArr.push({

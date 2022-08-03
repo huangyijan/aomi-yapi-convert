@@ -1,4 +1,4 @@
-import { getSuitableDefault, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getTsTypeStr } from '../../utils/decision'
+import { getSuitableDefault, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getSuitableType, getTsTypeStr } from '../../utils/decision'
 
 /** 如果在解析不出来interface类型的情况下返回any类型容错 */
 export const getTypeName = (interfaceName: string, body: JsonSchema, typeString: string) => {
@@ -21,13 +21,13 @@ export const dealJsonToTsTypeReturn = (data: JsonSchema, interfaceName: string):
     return getSuitableTsInterface(interfaceName, bodyStr)
 }
 
-/** 获取请求参数（query）传输参数，考虑到query一律是传地址栏，所以type默认设置为string */
-export const getConfigNoteParams = (reqQuery: Array<reqQuery>, requestName: string) => {
+/** 获取请求参数（query）传输参数，考虑到query一律是传地址栏，所以type默认设置为string(兼容用req_body_form数据类型) */
+export const getConfigNoteParams = (reqQuery: Array<reqQuery | ReqBodyForm>, requestName: string) => {
     let paramsStr = ''
     reqQuery.forEach(item => {
         const example = getSuitableDefault(item)
         paramsStr += getSuitableTsTypeNote(item.desc, example)
-        paramsStr += getSuitableTsType(item.name, 'string')
+        paramsStr += getSuitableTsType(item.name, item?.type ? getSuitableType(item) : 'string')
     })
     if (!paramsStr) return ''
     return getSuitableTsInterface(requestName, paramsStr)

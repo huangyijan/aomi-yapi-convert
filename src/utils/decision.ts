@@ -7,6 +7,8 @@ export const transformType = (serviceType: string) => {
     switch (serviceType) {
         case 'integer':
             return 'number'
+        case 'text':
+            return 'string'
         case 'bool':
             return 'boolean'
         default:
