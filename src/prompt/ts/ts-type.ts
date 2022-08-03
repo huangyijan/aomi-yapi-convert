@@ -2,7 +2,7 @@
 import { getUpdateTime, getApiLinkAddress, getAxiosOptionTypeName, getNoteNameByParamsType } from '../../utils/note'
 import { getMainRequestMethodStr, getCustomerParamsStr } from '../../utils/str-operate'
 import { ApiItem } from '../../utils/model'
-import { dealJsonToTsTypeReturn, getConfigNoteParams, getConfigNoteData } from '.'
+import { dealJsonToTsTypeReturn, getConfigNoteParams, getConfigNoteData, getTypeName } from '.'
 import { getLegalJson } from '../../utils'
 
 
@@ -42,8 +42,7 @@ export class TsApiItem extends ApiItem {
         const interfaceName = getNoteNameByParamsType(item, name)
         const body = getLegalJson(item.req_body_other) // 获取合法的json数据
         const typeString = getConfigNoteData(body, interfaceName)
-        let typeName = body?.items ? `Array<${interfaceName}>` : interfaceName
-        if (!typeString) typeName = 'any'
+        const typeName = getTypeName(interfaceName, body, typeString)
         return { name, typeName, typeString }
     }
 
@@ -54,8 +53,7 @@ export class TsApiItem extends ApiItem {
         const interfaceName = getNoteNameByParamsType(item, name)
         const body = getLegalJson(item.res_body) // 获取合法的json数据
         const typeString = dealJsonToTsTypeReturn(body, interfaceName)
-        let typeName = body?.items ? `Array<${interfaceName}>` : interfaceName
-        if (!typeString) typeName = 'any'
+        const typeName = getTypeName(interfaceName, body, typeString)
         this.returnData = { name, typeName, typeString }
     }
 

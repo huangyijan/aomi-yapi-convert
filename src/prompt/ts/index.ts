@@ -1,4 +1,10 @@
-import {  getSuitableDefault, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getTsTypeStr } from '../../utils/decision'
+import { getSuitableDefault, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote, getTsTypeStr } from '../../utils/decision'
+
+/** 如果在解析不出来interface类型的情况下返回any类型容错 */
+export const getTypeName = (interfaceName: string, body: JsonSchema, typeString: string) => {
+    if (!typeString) return 'any'
+    return body?.items ? `Array<${interfaceName}>` : interfaceName
+}
 
 /** 处理请求的return response参数 */
 export const dealJsonToTsTypeReturn = (data: JsonSchema, interfaceName: string): string => {
