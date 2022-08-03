@@ -1,5 +1,4 @@
-import { ApiNameRegex, illegalRegex, longBiasRegex, OutputStyle, pathHasParamsRegex, Version, Versions } from './constants'
-import { getSuitableDefault, getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote } from './decision'
+import { ApiNameRegex, illegalRegex, longBiasRegex, OutputStyle, pathHasParamsRegex } from './constants'
 
 
 /** 处理传Id的API请求参数 */
@@ -51,44 +50,6 @@ export const getUpperCaseName = (name: string) => {
     return name.replace(/^([a-zA-Z])/, (_, item: string) => item.toUpperCase())
 }
 
-export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) => {
-    if (!keyNote.length) return ''
-
-    const version = Versions[global.apiConfig.version]
-    let noteString = ''
-
-    if (version === Version.TS) {
-        keyNote.forEach(item => {
-            const { key, type, description } = item
-            const example = getSuitableDefault(item)
-            noteString += getSuitableTsTypeNote(description, example)
-            noteString += getSuitableTsType(key, type)
-        })
-        return getSuitableTsInterface(typeName, noteString)
-    }
-
-    if (version === Version.JS) {
-        keyNote.forEach(item => {
-            const { key, type, description } = item
-            const example = getSuitableDefault(item)
-            noteString += getSuitableJsdocProperty(key, type, description, example)
-        })
-        return getSuitableJsdocType(typeName, noteString)
-    }
-
-    return ''
-}
-
-/** 处理返回的数据类型typeName */
-export const getType = (type: string, key: string, typeName: string) => {
-    if (type === 'array') {
-        return typeName + getUpperCaseName(key) + '[]'
-    }
-    if (type === 'object') {
-        return typeName + getUpperCaseName(key)
-    }
-    return type
-}
 
 /** 根据用户配置自定义参数去获取请求的额外参数, requestParams */
 export const getCustomerParamsStr = (project: ProjectConfig, showDefault = true) => {
@@ -113,11 +74,6 @@ const getAppendPath = (path: string, project: ProjectConfig) => {
     return `\`${prefix}${path.replace(pathHasParamsRegex, (_, p1) => `/$\{${p1}\}`)}\``
 }
 
-/** 获取用户axiosName, 可能会有ssr,或者将axios 挂载在this指针的情况  */
-const getAxiosName = () => {
-    const { axiosName } = global.apiConfig
-    return axiosName
-}
 
 /**
  * 根据导出类型获取单个请求的method字符串
@@ -133,11 +89,11 @@ export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiIt
     const requestName = getApiName(item.path, item.method)
     const returnTypeStr = global.apiConfig.isNeedType && returnType ? `: Promise<${returnType}>` : ''
 
-    const { outputStyle = OutputStyle.Default } = global.apiConfig
+    const { outputStyle = OutputStyle.Default, axiosName } = global.apiConfig
 
     const requestContent = `{
     const method = '${item.method}'
-    return ${getAxiosName()}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
+    return ${axiosName}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
 }`
 
     switch (outputStyle) {

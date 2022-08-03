@@ -1,4 +1,4 @@
-import { getTypeByValue, hasProperty } from '.'
+import { getTypeByValue } from '.'
 import { getApiName, getUpperCaseName } from './str-operate'
 
 /** 获取传参名称, TODO，移除params和data,所有的地方都需要额外做处理 */
@@ -24,18 +24,6 @@ export const getReturnName = (requestName: string, value: any) => {
     if (type === 'string' || type === 'array') return type // 如果是字符串或者数组，直接返回类型作为类型名
 
     return returnName
-}
-
-/** 处理一下detailMsg最外层和数组的序列对象 */
-export const dealResponseData = (res: any) => {
-    let isArray = false // 是否为数组对象
-    const { dataParseName = 'detailMsg' } = global.apiConfig
-    if (hasProperty(res, dataParseName)) res = res[dataParseName]
-    if (hasProperty(res, 'items') && res.type === 'array') { // 数组的结构专门处理
-        res = res.items
-        isArray = true
-    }
-    return { res, isArray }
 }
 
 

@@ -1,7 +1,7 @@
 type OutVersion = 'ts' | 'js' | 'typescript' | 'javascript'
 
 interface Answers {
-  yapiURL: string
+  yapiURL?: string
   token?: string
   userId?: string
   isLoadFullApi?: boolean
@@ -39,7 +39,7 @@ interface CustomParam {
 }
 
 interface ApiConfig {
-  yapiURL: string
+  yapiURL?: string
   token?: string
   userId?: string
   version: OutVersion
