@@ -40,6 +40,7 @@ export class TsApiItem extends ApiItem {
         const item = this.apiItem
         const name = 'data'
         const interfaceName = getNoteNameByParamsType(item, name)
+        /** yapi 传body可能是form传输，也有可能是json传输，这里做一下兼容 */
         if (item.req_body_type === 'form') {
             const typeString = getConfigNoteParams(item.req_body_form, interfaceName)
             return { name, typeName: interfaceName, typeString }

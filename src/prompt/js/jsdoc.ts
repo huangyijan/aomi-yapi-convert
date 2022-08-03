@@ -38,6 +38,11 @@ export class JsApiItem extends ApiItem {
         const item = this.apiItem
         const name = 'data'
         const typeName = getNoteNameByParamsType(item, name)
+        /** yapi 传body可能是form传输，也有可能是json传输，这里做一下兼容 */
+        if (item.req_body_type === 'form') {
+            const typeString = getConfigNoteParams(item.req_body_form, typeName)
+            return { name, typeName, typeString }
+        }
         const body = getLegalJson(item.req_body_other) // 获取合法的json数据
         const typeString = getJsonToJsDocParams(body, typeName)
         return { name, typeName, typeString }
@@ -59,7 +64,7 @@ export class JsApiItem extends ApiItem {
         const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
         if (hasParamsQuery) this.paramsArr.push(this.getQueryData())
 
-        const hasParamsBody = item.req_body_other
+        const hasParamsBody = item.req_body_other || item.req_body_form.length
         if (hasParamsBody) this.paramsArr.push(this.getBodyData())
 
         const { isNeedAxiosType } = global.apiConfig

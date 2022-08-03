@@ -102,13 +102,13 @@ export const format = (lines: string[]) => {
 /** 获取Ts类型Str */
 export const getTsTypeStr = (data: object) => {
     /** Ts数据机构处理json schema 数据结构, 由于存在内部调用，所以就写成了内部函数 */
-    const dealJsonSchema = (child: JsonSchema) => {
+    const getInterfaceType = (child: JsonSchema) => {
         let childType = getSuitableType(child)
         if (childType === 'object' && child?.properties) {
             childType = `{\n${getTsTypeStr(child.properties)}}`
         }
         if (childType === 'array' && child?.items) {
-            childType = `Array<${dealJsonSchema(child.items)}>`
+            childType = `Array<${getInterfaceType(child.items)}>`
         }
         return childType
     }
@@ -116,9 +116,10 @@ export const getTsTypeStr = (data: object) => {
     let bodyStr = ''
     Object.entries(data).forEach(([key, value]) => {
         const description = getSuitDescription(value)
-        const type = dealJsonSchema(value)
+        const type = getInterfaceType(value)
         bodyStr += getSuitableTsTypeNote(description)
         bodyStr += getSuitableTsType(key, type)
     })
     return bodyStr
 }
+
