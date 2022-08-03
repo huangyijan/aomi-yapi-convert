@@ -7,7 +7,7 @@
 
 ## 演示地址
 
-功能体验地址: [http://yapi.mbiquwu.co/](http://yapi.theapi.world/)
+功能体验地址: [http://yapi.theapi.world/](http://yapi.theapi.world/)
 
 ## 功能
 

@@ -1,7 +1,6 @@
 import node from '../src/enter/main'
 /** test config */
 export const config: ApiConfig = {
-    yapiURL: 'http://yapi.miguatech.com/project/445/interface/api',
     version: 'js',
     isNeedType: true,
     axiosFrom: 'import { fetch } from \'@/service/fetch/index\'',
