@@ -1,6 +1,7 @@
 import { hasProperty, getTypeByValue } from '.'
 import { NormalType, prettierDefaultOption } from './constants'
 import prettier from 'prettier'
+import { getUpperCaseName } from './str-operate'
 /** 后台类型转前端类型 */
 export const transformType = (serviceType: string) => {
     serviceType = String(serviceType)
@@ -123,3 +124,28 @@ export const getTsTypeStr = (data: object) => {
     return bodyStr
 }
 
+/** 通用处理JSON schema的数据结构，根据版本获取返回的type类型 */
+export const dealJsonSchemaArr = (data: object, types: Types[], typeName: string) => {
+    /** 处理json schema 数据结构, 由于存在内部调用，所以就写成了内部函数 */
+    const getJsdocType = (child: JsonSchema, key: string) => {
+        let childType = getSuitableType(child)
+        if (childType === 'object' && child?.properties) {
+            const keyName = typeName + getUpperCaseName(key)
+            dealJsonSchemaArr(child.properties, types, keyName)
+            childType = keyName
+        }
+        if (childType === 'array' && child?.items) {
+            childType = `Array.<${getJsdocType(child.items, key)}>`
+        }
+        return childType
+    }
+
+    let bodyStr = ''
+    Object.entries(data).forEach(([key, value]) => {
+        const description = getSuitDescription(value)
+        const type = getJsdocType(value, key)
+        bodyStr += getSuitableJsdocProperty(key, type, description)
+
+    })
+    if (bodyStr.length) types.unshift({ typeName, typeString: bodyStr })
+}

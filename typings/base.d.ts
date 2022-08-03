@@ -87,3 +87,8 @@ interface JsonSchema {
   items?: JsonSchema
   description?: string
 }
+
+interface Types {
+  typeName: string,
+  typeString: string
+}

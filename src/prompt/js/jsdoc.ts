@@ -1,10 +1,10 @@
 
-import { getReturnNoteStringItem } from './response'
-import { getConfigNoteParams, getJsonToJsDocParams } from './request'
+import { dealJsonToJsDocReturn, getConfigNoteParams, getJsonToJsDocParams } from '.'
 import { getUpdateTime, getApiLinkAddress, getReturnType, getNoteNameByParamsType, getAxiosOptionTypeName } from '../../utils/note'
 import { getCustomerParamsStr, getMainRequestMethodStr } from '../../utils/str-operate'
 import { ApiItem } from '../../utils/model'
 import { getLegalJson } from '../../utils'
+import { getTypeName } from '../ts'
 export class JsApiItem extends ApiItem {
 
     constructor(apiItem: JsDocApiItem, project: ProjectConfig) {
@@ -51,8 +51,10 @@ export class JsApiItem extends ApiItem {
     protected setReturnData(): void {
         const item = this.apiItem
         const name = 'response'
-        const { resType: typeString, returnNameWithType } = getReturnNoteStringItem(item)
-        const typeName = getReturnType(returnNameWithType, typeString)
+        const interfaceName = getNoteNameByParamsType(item, name)
+        const body = getLegalJson(item.res_body) // 获取合法的json数据
+        const typeString = dealJsonToJsDocReturn(body, interfaceName)
+        const typeName = getTypeName(interfaceName, body, typeString)
         this.returnData = { name, typeName, typeString }
     }
 
