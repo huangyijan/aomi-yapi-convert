@@ -4,7 +4,7 @@ import { ApiItem, FileItem } from '../utils/model'
 import { JsApiItem } from './jsdoc'
 import { getFileJsdocInfo } from './note'
 import { TsApiItem } from './ts-type'
-import { axiosFrom, axiosType, jsdocAxiosType, OutputStyle, Version, Versions } from '../utils/constants'
+import { axiosType, jsdocAxiosType, OutputStyle, Version, Versions } from '../utils/constants'
 
 
 /** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
@@ -85,7 +85,7 @@ export class CommonFileItem extends FileItem {
         if (Versions[this.config.version] === Version.TS) {
             this.config.isNeedType && this.config.isNeedAxiosType && this.fileHeader.push(axiosType)
         }
-        if (hasProperty(this.config, 'axiosFrom')) this.fileHeader.push(this.config.axiosFrom || axiosFrom)
+        if (this.config?.axiosFrom) this.fileHeader.push(this.config.axiosFrom)
         this.fileHeader.push('')
     }
 
