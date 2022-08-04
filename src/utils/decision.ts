@@ -1,5 +1,5 @@
 import { hasProperty, getTypeByValue } from '.'
-import { NormalType, prettierDefaultOption } from './constants'
+import { NormalType, prettierDefaultOption, Version, Versions } from './constants'
 import prettier from 'prettier'
 import { getUpperCaseName } from './str-operate'
 /** 后台类型转前端类型 */
@@ -68,6 +68,12 @@ export const getSuitableDefault = (value: any) => {
     }
 }
 
+/**
+ * 获取合适的TS类型
+ * @param description 单个字段的描述
+ * @param example 单个字段的示例或者默认值
+ * @returns {string} 单个字段的Ts的单行展示
+ */
 export const getSuitableTsTypeNote = (description: string, example?: string) => {
     if (!description && !example) return ''
     const desc = description || ''
@@ -76,8 +82,8 @@ export const getSuitableTsTypeNote = (description: string, example?: string) => 
 }
 
 
+/** 剔除不合法的符号 */
 export const getSuitableTsType = (key: string, type: string) => {
-    /** 剔除不合法的符号 */
     key = key.replace(/\W/g, '')
     return `${key}?: ${type}\n`
 }
@@ -131,8 +137,9 @@ export const dealJsonSchemaArr = (data: object, types: Types[], typeName: string
         let childType = getSuitableType(child)
         if (childType === 'object' && child?.properties) {
             const keyName = typeName + getUpperCaseName(key)
+            const preArrLength = types.length // 记录数组的长度，如果没有变化说明types没有变化，说明类型为空
             dealJsonSchemaArr(child.properties, types, keyName)
-            childType = keyName
+            childType = preArrLength === types.length ? 'any' : keyName
         }
         if (childType === 'array' && child?.items) {
             childType = `Array.<${getJsdocType(child.items, key)}>`
@@ -141,10 +148,17 @@ export const dealJsonSchemaArr = (data: object, types: Types[], typeName: string
     }
 
     let bodyStr = ''
+    const { version } = global.apiConfig
     Object.entries(data).forEach(([key, value]) => {
         const description = getSuitDescription(value)
         const type = getJsdocType(value, key)
-        bodyStr += getSuitableJsdocProperty(key, type, description)
+        // Ts和Jsdoc的类型不一样
+        if (Versions[version] === Version.TS) {
+            bodyStr += getSuitableTsTypeNote(description)
+            bodyStr += getSuitableTsType(key, type)
+        } else {
+            bodyStr += getSuitableJsdocProperty(key, type, description)
+        }
 
     })
     if (bodyStr.length) types.unshift({ typeName, typeString: bodyStr })

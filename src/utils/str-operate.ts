@@ -44,8 +44,11 @@ export const getAppendRequestParamsJsdoc = (path: string, paramsName: string, ha
     return requestParams
 }
 
-
-/** 首字母大写 */
+/**
+ * 单词首字母转大写
+ * @param name 单词字符串
+ * @returns {string} 首字母为大写的单词字符串
+ */
 export const getUpperCaseName = (name: string) => {
     return name.replace(/^([a-zA-Z])/, (_, item: string) => item.toUpperCase())
 }

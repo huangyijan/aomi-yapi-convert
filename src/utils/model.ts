@@ -1,3 +1,4 @@
+/** 通用api对象的抽象类 */
 abstract class ApiItem {
 
     public apiItem: JsDocApiItem
@@ -30,7 +31,7 @@ abstract class ApiItem {
     /** 设置单个接口的主要请求方法 */
     protected abstract setMethodStr(): void
 }
-
+/** 文件对象的抽象类 */
 abstract class FileItem {
     public fileName = ''
     public savePath = ''
