@@ -2,23 +2,7 @@ import http from 'http'
 import https from 'https'
 import { run } from './auth'
 import { refreshToken } from './auth'
-import { spawn } from 'child_process'
 import { getHeader } from '../utils'
-
-/** 不同平台使用node打开浏览器的方式不同，required会被中断，暂时不打开URL了，后面再看下啥问题 */
-const openURL = (url: string) => {
-    switch (process.platform) {
-        case 'darwin':
-            spawn('open', [url])
-            break
-        case 'win32':
-            spawn('start', [url])
-            break
-        default:
-            spawn('xdg-open', [url])
-    }
-}
-
 
 export const request = (url: string) => {
     const client = /^http/.test(url) ? http : https

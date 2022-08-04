@@ -1,10 +1,10 @@
 
-import { getReturnNoteStringItem } from './response/js'
-import { getConfigNoteParams, getJsonToJsDocParams } from './request/js'
-import { getUpdateTime, getApiLinkAddress, getReturnType, getNoteNameByParamsType, getAxiosOptionTypeName } from './note'
-import { getCustomerParamsStr, getMainRequestMethodStr } from '../utils/str-operate'
-import { ApiItem } from '../utils/model'
-import { getLegalJson } from '../utils'
+import { dealJsonToJsDocReturn, getConfigNoteParams, getJsonToJsDocParams } from '.'
+import { getUpdateTime, getApiLinkAddress, getReturnType, getNoteNameByParamsType, getAxiosOptionTypeName } from '../../utils/note'
+import { getCustomerParamsStr, getMainRequestMethodStr } from '../../utils/str-operate'
+import { ApiItem } from '../../utils/model'
+import { getLegalJson } from '../../utils'
+import { getTypeName } from '../ts'
 export class JsApiItem extends ApiItem {
 
     constructor(apiItem: JsDocApiItem, project: ProjectConfig) {
@@ -38,6 +38,11 @@ export class JsApiItem extends ApiItem {
         const item = this.apiItem
         const name = 'data'
         const typeName = getNoteNameByParamsType(item, name)
+        /** yapi 传body可能是form传输，也有可能是json传输，这里做一下兼容 */
+        if (item.req_body_type === 'form') {
+            const typeString = getConfigNoteParams(item.req_body_form, typeName)
+            return { name, typeName, typeString }
+        }
         const body = getLegalJson(item.req_body_other) // 获取合法的json数据
         const typeString = getJsonToJsDocParams(body, typeName)
         return { name, typeName, typeString }
@@ -46,8 +51,10 @@ export class JsApiItem extends ApiItem {
     protected setReturnData(): void {
         const item = this.apiItem
         const name = 'response'
-        const { resType: typeString, returnNameWithType } = getReturnNoteStringItem(item)
-        const typeName = getReturnType(returnNameWithType, typeString)
+        const interfaceName = getNoteNameByParamsType(item, name)
+        const body = getLegalJson(item.res_body) // 获取合法的json数据
+        const typeString = dealJsonToJsDocReturn(body, interfaceName)
+        const typeName = getTypeName(interfaceName, body, typeString)
         this.returnData = { name, typeName, typeString }
     }
 
@@ -59,7 +66,7 @@ export class JsApiItem extends ApiItem {
         const hasParamsQuery = Array.isArray(item.req_query) && Boolean(item.req_query.length)
         if (hasParamsQuery) this.paramsArr.push(this.getQueryData())
 
-        const hasParamsBody = item.req_body_other
+        const hasParamsBody = item.req_body_other || item.req_body_form.length
         if (hasParamsBody) this.paramsArr.push(this.getBodyData())
 
         const { isNeedAxiosType } = global.apiConfig
@@ -74,14 +81,14 @@ export class JsApiItem extends ApiItem {
     private getNoteParams() {
         let noteParamsStr = ''
         this.paramsArr.forEach(item => {
-            if(!global.apiConfig.isNeedType && item.typeName === 'any') return 
+            if (!global.apiConfig.isNeedType && item.typeName === 'any') return 
             noteParamsStr += `\n * @param { ${item.typeName} } ${item.name}`
         })
         return noteParamsStr
     }
 
     private getReturnParamsStr() {
-        if(!global.apiConfig.isNeedType) return ''
+        if (!global.apiConfig.isNeedType) return ''
         return `\n * @return { Promise<${getReturnType(this.returnData.typeName, this.returnData.typeString)}> }`
     }
 

@@ -22,7 +22,12 @@
             4, 
             { "SwitchCase": 1 }
         ],
+        "object-curly-spacing": [
+            "error",
+            "always"
+        ],
         "no-multiple-empty-lines": "error",
+        "keyword-spacing": "error",
         "linebreak-style": "off",
         "quotes": [
             "error",

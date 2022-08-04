@@ -43,7 +43,7 @@ export const saveFile = (url: string, file: string | NodeJS.ArrayBufferView) => 
 export const readFile = (url: string) => {
     return new Promise<string>((resolve, reject) => {
         fs.readFile(url, { encoding: 'utf-8' }, (err, data) => {
-            if(err) reject(err)
+            if (err) reject(err)
             resolve(data)
         })
     })

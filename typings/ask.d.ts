@@ -1,12 +1,12 @@
-
+type OutVersion = 'ts' | 'js' | 'typescript' | 'javascript'
 
 interface Answers {
-  yapiURL: string
+  yapiURL?: string
   token?: string
   userId?: string
   isLoadFullApi?: boolean
   group?: Array<number>
-  version: Version,
+  version: OutVersion,
   isNeedType: boolean,
   saveConfig?: boolean,
   outputDir?: string,
@@ -39,15 +39,16 @@ interface CustomParam {
 }
 
 interface ApiConfig {
-  yapiURL: string
+  yapiURL?: string
   token?: string
   userId?: string
-  version: Version
+  version: OutVersion
   isNeedType: boolean
   isNeedAxiosType?: boolean
   isNeedSecondType?: boolean
   axiosFrom?: string
   axiosName?: string
+  dataParseName?: string
   outputStyle?: string
   protocol: string
   host: string

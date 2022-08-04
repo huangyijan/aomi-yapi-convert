@@ -1,5 +1,4 @@
 import { ApiNameRegex, illegalRegex, longBiasRegex, OutputStyle, pathHasParamsRegex } from './constants'
-import { getSuitableDefault, getSuitableJsdocProperty, getSuitableJsdocType, getSuitableTsInterface, getSuitableTsType, getSuitableTsTypeNote } from './decision'
 
 
 /** 处理传Id的API请求参数 */
@@ -22,13 +21,14 @@ const getApiBaseUrl = (project: ProjectConfig) => {
 
 /** 接口名决策方案：如果有参数先去除参数，然后把接口path剩余数据转成驼峰命名，缺点：接口path如果太长，命名也会比较长 */
 export const getApiName = (path: string, method: string) => {
+    const appendName = pathHasParamsRegex.test(path) ? 'byId' : ''
     path = path.replace(pathHasParamsRegex, '')
     // 处理名字太长
     const biasCount = --path.split('/').length
     if (biasCount >= 3) path = path.replace(longBiasRegex, '')
     path = path.replace(ApiNameRegex, (_, item) => item.toUpperCase())
     // 防止restful API 导致命名相同
-    return method.toLowerCase() + path.replace(illegalRegex, '')
+    return method.toLowerCase() + path.replace(illegalRegex, '') + appendName
 }
 
 /**
@@ -44,50 +44,15 @@ export const getAppendRequestParamsJsdoc = (path: string, paramsName: string, ha
     return requestParams
 }
 
-
-/** 首字母大写 */
+/**
+ * 单词首字母转大写
+ * @param name 单词字符串
+ * @returns {string} 首字母为大写的单词字符串
+ */
 export const getUpperCaseName = (name: string) => {
     return name.replace(/^([a-zA-Z])/, (_, item: string) => item.toUpperCase())
 }
 
-export const getCommandNote = (keyNote: Array<keyNoteItem>, typeName: string) => {
-    if (!keyNote.length) return ''
-
-    const version = global.apiConfig.version
-    let noteString = ''
-
-    if (version === 'ts') {
-        keyNote.forEach(item => {
-            const { key, type, description } = item
-            const example = getSuitableDefault(item)
-            noteString += getSuitableTsTypeNote(description, example)
-            noteString += getSuitableTsType(key, type)
-        })
-        return getSuitableTsInterface(typeName, noteString)
-    }
-
-    if (version === 'js') {
-        keyNote.forEach(item => {
-            const { key, type, description } = item
-            const example = getSuitableDefault(item)
-            noteString += getSuitableJsdocProperty(key, type, description, example)
-        })
-        return getSuitableJsdocType(typeName, noteString)
-    }
-
-    return ''
-}
-
-/** 处理返回的数据类型typeName */
-export const getType = (type: string, key: string, typeName: string) => {
-    if (type === 'array') {
-        return typeName + getUpperCaseName(key) + '[]'
-    }
-    if (type === 'object') {
-        return typeName + getUpperCaseName(key)
-    }
-    return type
-}
 
 /** 根据用户配置自定义参数去获取请求的额外参数, requestParams */
 export const getCustomerParamsStr = (project: ProjectConfig, showDefault = true) => {
@@ -112,11 +77,6 @@ const getAppendPath = (path: string, project: ProjectConfig) => {
     return `\`${prefix}${path.replace(pathHasParamsRegex, (_, p1) => `/$\{${p1}\}`)}\``
 }
 
-/** 获取用户axiosName, 可能会有ssr,或者将axios 挂载在this指针的情况  */
-const getAxiosName = () => {
-    const { axiosName } = global.apiConfig
-    return axiosName
-}
 
 /**
  * 根据导出类型获取单个请求的method字符串
@@ -132,11 +92,11 @@ export const getMainRequestMethodStr = (project: ProjectConfig, item: JsDocApiIt
     const requestName = getApiName(item.path, item.method)
     const returnTypeStr = global.apiConfig.isNeedType && returnType ? `: Promise<${returnType}>` : ''
 
-    const { outputStyle = OutputStyle.Default } = global.apiConfig
+    const { outputStyle = OutputStyle.Default, axiosName } = global.apiConfig
 
     const requestContent = `{
     const method = '${item.method}'
-    return ${getAxiosName()}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
+    return ${axiosName}(${requestPath}, { ${appendParamsStr}method, ...options }${getCustomerParamsStr(project, false)})
 }`
 
     switch (outputStyle) {

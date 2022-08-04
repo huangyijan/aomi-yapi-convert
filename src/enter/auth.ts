@@ -36,7 +36,7 @@ class TerminalLoading {
     }
 
     public close() { 
-        if(this.clock) clearInterval(this.clock)
+        if (this.clock) clearInterval(this.clock) 
     }
 }
 

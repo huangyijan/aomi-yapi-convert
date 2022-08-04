@@ -3,6 +3,7 @@ import { handleApiRequestError, request } from './request'
 import { getApiToken, getUserId, saveFile } from './file'
 import { baseConfig } from '../utils/constants'
 
+
 /**
  * 注册全局变量，node环境注册global里面的对象，browser环境注册global 到window对象
  * @param config 配置项
