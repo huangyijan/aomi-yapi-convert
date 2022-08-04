@@ -1,10 +1,10 @@
 import { format } from '../utils/decision'
 import { hasProperty, toHumpName } from '../utils'
 import { ApiItem, FileItem } from '../utils/model'
-import { JsApiItem } from './jsdoc'
-import { getFileJsdocInfo } from './note'
-import { TsApiItem } from './ts-type'
-import { axiosFrom, axiosType, jsdocAxiosType, OutputStyle, Version } from '../utils/constants'
+import { JsApiItem } from './js/jsdoc'
+import { getFileJsdocInfo } from '../utils/note'
+import { TsApiItem } from './ts/ts-type'
+import { axiosType, jsdocAxiosType, OutputStyle, Version, Versions } from '../utils/constants'
 
 
 /** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
@@ -82,10 +82,10 @@ export class CommonFileItem extends FileItem {
         this.fileHeader.push(getFileJsdocInfo(this.menuItem))
         if (Array.isArray(this.config.customerSnippet)) this.config.customerSnippet.forEach(str => this.fileHeader.push(str))
 
-        if (this.config.version === Version.TS) {
+        if (Versions[this.config.version] === Version.TS) {
             this.config.isNeedType && this.config.isNeedAxiosType && this.fileHeader.push(axiosType)
         }
-        if (hasProperty(this.config, 'axiosFrom')) this.fileHeader.push(this.config.axiosFrom || axiosFrom)
+        if (this.config?.axiosFrom) this.fileHeader.push(this.config.axiosFrom)
         this.fileHeader.push('')
     }
 
@@ -95,14 +95,14 @@ export class CommonFileItem extends FileItem {
             if (this.project.hideUnDoneApi && item.status === 'undone') return
             item.path = getValidApiPath(item.path) // 处理一些后台在地址栏上加参数的问题
 
-            const apiItem: ApiItem = this.config.version === Version.TS ? new TsApiItem(item, this.project) : new JsApiItem(item, this.project)
+            const apiItem: ApiItem = Versions[this.config.version] === Version.TS ? new TsApiItem(item, this.project) : new JsApiItem(item, this.project)
 
             this.apiContent.push(apiItem)
         })
     }
 
     protected setFileFoot(): void {
-        if (this.config.version === Version.JS && this.config.isNeedType) {
+        if (Versions[this.config.version] === Version.JS && this.config.isNeedType) {
             this.fileFoot.push(jsdocAxiosType)
         }
     }
@@ -116,7 +116,7 @@ export class CommonFileItem extends FileItem {
     }
 
     public getFileCode(): string {
-        if(!this.apiContent.length) return ''
+        if (!this.apiContent.length) return ''
         const mainContentStr: Array<string> = []
         this.apiContent.forEach(apiItem => {
             mainContentStr.push(apiItem.methodNote)
@@ -129,10 +129,8 @@ export class CommonFileItem extends FileItem {
         })
 
         this.setFileFoot()
-
-        const indent = this.config.outputStyle === OutputStyle.Default? 0 : 2
       
-        return format(this.fileHeader.concat(mainContentStr, this.fileFoot), indent)
+        return format(this.fileHeader.concat(mainContentStr, this.fileFoot))
     }
 
 }

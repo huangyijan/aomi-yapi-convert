@@ -9,12 +9,12 @@ describe('utils decision', () => {
         expect(getSuitableType(undefined)).toEqual('any')
         expect(getSuitableType(null)).toEqual('any')
         const obj = {}
-        expect(getSuitableType(obj)).toEqual('any')
-        const obj1 = {type: 'string'}
+        expect(getSuitableType(obj)).toEqual('object')
+        const obj1 = { type: 'string' }
         expect(getSuitableType(obj1)).toEqual('string')
-        const obj2 = { type: 'integer'}
+        const obj2 = { type: 'integer' }
         expect(getSuitableType(obj2)).toEqual('number')
-        const obj3 = { type: 'bool'}
+        const obj3 = { type: 'bool' }
         expect(getSuitableType(obj3)).toEqual('boolean')
 
     })
@@ -35,15 +35,15 @@ describe('utils decision', () => {
         expect(getSuitDescription(null)).toBe('')
         expect(getSuitDescription(undefined)).toBe('')
         expect(getSuitDescription('any')).toBe('')
-        expect(getSuitDescription({description: 'hello'})).toBe('hello')
+        expect(getSuitDescription({ description: 'hello' })).toBe('hello')
     })
 
     const getSuitableDefault = outputTemplate.getSuitableDefault
     test(getSuitableDefault.name, () => {
-        expect(getSuitableDefault({default: '0'})).toBe('0')
-        expect(getSuitableDefault({ default: 111})).toBe('111')
-        expect(getSuitableDefault({ default: 'String'})).toBe('')
-        expect(getSuitableDefault({ default: 'number'})).toBe('number')
+        expect(getSuitableDefault({ default: '0' })).toBe('0')
+        expect(getSuitableDefault({ default: 111 })).toBe('111')
+        expect(getSuitableDefault({ default: 'String' })).toBe('')
+        expect(getSuitableDefault({ default: 'number' })).toBe('number')
         expect(getSuitableDefault(null)).toBe('')
         expect(getSuitableDefault(undefined)).toBe('')
         expect(getSuitableDefault('xxx')).toBe('xxx')

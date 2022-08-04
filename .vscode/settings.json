@@ -4,6 +4,7 @@
     "catid",
     "errcode",
     "errmsg",
+    "linebreak",
     "nocheck",
     "yapi"
   ],

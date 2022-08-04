@@ -79,3 +79,16 @@ interface ReturnData {
   description?: string
   childType?: Array<string>
 }
+
+type ServiceType = 'string' | 'integer' | 'number' | 'object' | 'array' | 'null' | 'boolean'
+interface JsonSchema {
+  type: ServiceType
+  properties?: Properties
+  items?: JsonSchema
+  description?: string
+}
+
+interface Types {
+  typeName: string,
+  typeString: string
+}

@@ -1,2 +1,2 @@
-import {run} from './auth'
+import { run } from './auth'
 run()

@@ -1,5 +1,5 @@
-import { getTypeByValue, hasProperty } from '../utils'
-import { getApiName, getUpperCaseName } from '../utils/str-operate'
+import { getTypeByValue } from '.'
+import { getApiName, getUpperCaseName } from './str-operate'
 
 /** 获取传参名称, TODO，移除params和data,所有的地方都需要额外做处理 */
 export const getNoteNameByParamsType = (item: JsDocApiItem, suffix: string) => {
@@ -26,19 +26,6 @@ export const getReturnName = (requestName: string, value: any) => {
     return returnName
 }
 
-/** 处理一下detailMsg最外层和数组的序列对象 */
-export const dealResponseData = (res: any) => {
-    let isArray = false // 是否为数组对象
-    if (hasProperty(res, 'detailMsg')) {
-        res = res.detailMsg
-        if (hasProperty(res, 'items') && res.type === 'array') { // 数组的结构专门处理
-            res = res.items
-            isArray = true
-        }
-    }
-    return { res, isArray }
-}
-
 
 /** 获取文档地址 */
 export const getApiLinkAddress = (project_id: number, _id: number | string) => {
@@ -47,19 +34,19 @@ export const getApiLinkAddress = (project_id: number, _id: number | string) => {
     return `${baseUrl}/project/${project_id}/interface/api/${_id}`
 }
 
-/** 获取api最后更新时间 */
+/** 获取api最后更新时间(服务端) */
 export const getUpdateTime = (time: number) => new Date(time * 1000).toLocaleDateString()
 
 /** 获取axios 的额外的请求名称 */
 export const getAxiosOptionTypeName = () => {
     const { isNeedAxiosType } = global.apiConfig
-    const axiosTypeName = typeof isNeedAxiosType === 'boolean' && isNeedAxiosType ? 'AxiosRequestConfig' : 'any'
+    const axiosTypeName = isNeedAxiosType ? 'AxiosRequestConfig' : 'any'
     return axiosTypeName
 }
 
 /** 获取头部jsdoc描述信息 */
 export const getFileJsdocInfo = (item: JsDocMenuItem) => {
-    const menuItem = item.list.find(item => !!item)
+    const menuItem = item.list.find((item) => !!item)
     const menuLink = menuItem ? getApiLinkAddress(menuItem.project_id, `cat_${menuItem.catid}`) : ''
     return `/**
  * @description ${item.name}

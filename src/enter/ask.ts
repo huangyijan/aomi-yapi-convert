@@ -56,7 +56,7 @@ const ask = function () {
                 async choices(answers: Answers) {
                     const { yapiURL } = answers
                     global.apiConfig = answers as ApiConfig
-                    const [, protocol, host, projectId] = yapiURL.match(projectRegex) as RegExpMatchArray
+                    const [, protocol, host, projectId] = yapiURL?.match(projectRegex) as RegExpMatchArray
                     const MenuUrl = `${protocol}//${host}/api/interface/list_menu?project_id=${projectId}`
                     try {
                         const fileString = await request(MenuUrl)
@@ -119,7 +119,7 @@ const ask = function () {
         ]).then((answers: Answers) => {
 
             const { yapiURL, group, outputDir, isLoadFullApi, runNow } = answers
-            const [, protocol, host, projectId] = yapiURL.match(projectRegex) as RegExpMatchArray
+            const [, protocol, host, projectId] = yapiURL?.match(projectRegex) as RegExpMatchArray
 
             const projects: any = {
                 projectId: projectId,
@@ -135,11 +135,12 @@ const ask = function () {
             }
 
             const config = Object.assign({}, answers, {
-                customerSnippet: ['/* eslint-disable */'],
+                customerSnippet: ['/* eslint-disable */', '// @ts-nocheck'],
                 protocol, host, projects: [projects]
             })
 
             if (config.saveConfig) {
+                delete config.yapiURL
                 delete config.saveConfig
                 delete config.group
                 delete config.isLoadFullApi
@@ -152,7 +153,7 @@ const ask = function () {
                     JSON.stringify(config, null, 2) + '\n'
                 )
             }
-            resolve({ ...config, runNow})
+            resolve({ ...config, runNow })
         })
     })
 }
