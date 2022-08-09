@@ -3,7 +3,17 @@ import { dealJsonSchemaArr, getSuitableDefault, getSuitableTsInterface, getSuita
 /** 如果在解析不出来interface类型的情况下返回any类型容错 */
 export const getTypeName = (interfaceName: string, body: JsonSchema, typeString: string) => {
     if (!typeString) return 'any'
-    return body?.items ? `Array<${interfaceName}>` : interfaceName
+
+    return typeIsArray(body) ? `Array<${interfaceName}>` : interfaceName
+}
+
+const typeIsArray = (body: JsonSchema): boolean => {
+    const outDataTypeIsArray = !!body?.items // 最外层的数据是否数组类型，下面的不合法的数据默认返回该类型
+    const { dataParseName } = global.apiConfig
+    if (!dataParseName) return outDataTypeIsArray
+    if (body.items) body = body.items
+    if (!body || !body.properties|| !body.properties?.[dataParseName]) return outDataTypeIsArray
+    return Object.prototype.hasOwnProperty.call(body.properties?.[dataParseName], 'items')
 }
 
 /** 处理请求的return response参数 */
