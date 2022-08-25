@@ -1,6 +1,5 @@
 import { hasProperty, getTypeByValue } from '.'
 import { NormalType, prettierDefaultOption, Version, Versions } from './constants'
-import prettier from 'prettier'
 import { getUpperCaseName } from './str-operate'
 /** 后台类型转前端类型 */
 export const transformType = (serviceType: string) => {
@@ -102,6 +101,8 @@ export const getSuitableJsdocType = (noteName: string, noteStr: string, childNot
 
 /** 字符串拼接，缩进处理 */
 export const format = (lines: string[]) => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const prettier = require('prettier')
     const codeString = lines.join('\n')
     return prettier.format(codeString, prettierDefaultOption)
 }

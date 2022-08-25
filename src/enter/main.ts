@@ -1,4 +1,4 @@
-import { CommonFileItem } from '..'
+import { CommonFileItem } from '../prompt'
 import { handleApiRequestError, request } from './request'
 import { getApiToken, getUserId, saveFile } from './file'
 import { baseConfig } from '../utils/constants'
