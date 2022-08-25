@@ -99,7 +99,7 @@ $ npx aomi-yapi-convert
 |isNeedAxiosType|boolean|true|这里设置是否需要axios的插件提示，默认为false, 如果设置为true, axios的额外配置项的类型提示将会是插件引入的axios提示.
 |isNeedSecondType|boolean|false|可以设置true将Ts interface 里面的对象类型拆分其他interface方便引用
 |customerSnippet|string[]||用户自定义片段，字符串数组，每项占据一行
-|customer|Array<{name: string, default: ''}>||这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，建议使用project里面的来定义，可能存在同一个项目调用不同的业务线api的情况
+|customParams|Array<{name: string, default: ''}>||这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，建议使用project里面的来定义，可能存在同一个项目调用不同的业务线api的情况
 |outputStyle|string|defaultExport|支持值defaultExport, nameExport, anonymousExport,分别对应了默认导出，具名导出，匿名函数导出
 |projects|project[]||project配置见下表
 
@@ -112,7 +112,7 @@ $ npx aomi-yapi-convert
 |isLoadFullApi|boolean||这里配置是否全量加载api文件，原有项目已经有api的文件，请设置为false局部更新，全量更新会生成重复代码，徒增冗余
 |hideUnDoneApi|boolean||这里配置是否加载服务端接口显示未完成的Api。开发期间Api接口可能还是未完成状态。方便前端调试,默认加载。
 |prefix|string||一般该项设置为空，但我注意到部分接口服务端不配置服务名（比如超市的接口），需要前端手动添加，所以加了该配置项。这个配置项加了之后会在该项目组下所有接口添加这个字符串
-|customer|Array<{name: string, default: ''}>|| 这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，不设置会默认继承全局的。
+|customParams|Array<{name: string, default: ''}>|| 这里设置自定义的参数类型，该类型会添加进入请求的形参,支持传入任意数量形参，不设置会默认继承全局的。
 |group|Array<{catId: number, outputDir: string, fileName: ''}>|| {          catId: 后台项目下的菜单id   outputDir: 可以自定义生成文件路径，不设置继承project的路径   fileName:  如果不喜欢程序生成的文件名可以自定义文件名        }
 
 
