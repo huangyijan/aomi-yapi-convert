@@ -22,9 +22,9 @@ export default [
         input: 'src/index.ts',
         output: [
             {
-                file: 'dist/aomi-yapi.js',
+                file: 'dist/yapi.js',
                 format: 'es',
-                name: 'aomi-yapi'
+                name: 'yapi'
             }
         ],
         plugins: [
